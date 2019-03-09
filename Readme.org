@@ -2,25 +2,73 @@
 
 This repo contains my init file for Emacs.
 
+It was never intended to be published, so it is not organized and/or contains
+necessarily quality code, but hopefully it will help someone someday.
 
-** Configuration
+Also, I still have some internal dependencies (elisp files) that I can
+not publish, so not 100% of this file will run everywhere. Let me know
+if you are curious about something in particular.
 
-Since I use multiple laptops, some configuration is specific to each
-laptop.  These variables are defined in the beggining of the file, and
-must be set in a config file on  ~~/config/emacs_init.el~.
+** About
 
-*** ~my-font-size~
-    Controls the size of the font.
-    #+BEGIN_SRC elisp
-    (setq my-font-size 14)
-    #+END_SRC
+   Some principles about the init file is:
 
-*** ~my-tern-command~
-    - OPTIONAL
-    - Requires tern
+   1) I actually use this package in my everyday life, and I'll update
+      it accordingly every time I want a new feature or I want to drop
+      a feature.
 
-    Controls the command used for tern. Defaults to ~'("tern")~
-    #+BEGIN_SRC elisp
-    (setq my-tern-command '("~/.npm-global/bin/tern" "--verbose"))
-    #+END_SRC
-    Check ~(describe-variable 'tern-command)~. Requires "tern".
+   2) =(use-package :ensure)= is out friend for all usefull packages.
+      Whenever you have a new computer, just loading the init file will
+      install 90% of what you want.
+
+   3) This init must be flexible enough to fit multiple purposes, which
+      for me means it must fit my home and work laptops.
+
+   4) *Hydras are awesome* and are way easier than remembering keystrokes.
+
+** Setting up
+
+   First, ensure your =~/.emacs= reads the init file:
+
+#+begin_src elisp
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+;; (package-initialize)
+(load-file "<path-to-emacs-init.el>")
+#+end_src
+
+   Secondly, some variables can be customized. Those are described in
+   the very top of =emacs-init.el=. The script will look for a script
+   in =~/.config/emacs_init.el= and trust this script to set the variables
+   it needs to set. I have something like this there:
+
+#+begin_src elisp
+;; file: ~/.config/emacs_init.el
+(custom-set-variables
+ '(my-font-size 7)
+ '(my-journal-dir "/home/vitor/myorg/journal-personal/")
+ '(my-current-profile :home)
+ '(my/custom-libraries-folder "/home/vitor/.emacs.d/other/")
+ '(my/custom-libraries-names '("project-a" "project-b" ...))
+ '(my/custom-welcome-script "/home/vitor/.emacs.d/other/mywelcome/mywelcome.el"))
+#+end_src
+
+   Third, you may want to set a hook script that will be execute only
+   in a specific profile. Those go into
+   =./profile-hooks/<profile-name>.el=. For example, for my =:work=
+   profile I have:
+
+#+begin_src elisp
+;; file: <path-to-repo>/profile-hooks/work.el
+
+(load "<my-personal-library-for-work>.el")
+(add-hook 'after-init-hook (setup-workspace-for-work))
+...
+#+end_src
+
+   Notice this folder is on =.gitignore= (I can't share all that is there).
+
+** More
+   Contact me if you want anything and I'll try to help :)
