@@ -1,0 +1,26 @@
+* My Emacs Init
+
+This repo contains my init file for Emacs.
+
+
+** Configuration
+
+Since I use multiple laptops, some configuration is specific to each
+laptop.  These variables are defined in the beggining of the file, and
+must be set in a config file on  ~~/config/emacs_init.el~.
+
+*** ~my-font-size~
+    Controls the size of the font.
+    #+BEGIN_SRC elisp
+    (setq my-font-size 14)
+    #+END_SRC
+
+*** ~my-tern-command~
+    - OPTIONAL
+    - Requires tern
+
+    Controls the command used for tern. Defaults to ~'("tern")~
+    #+BEGIN_SRC elisp
+    (setq my-tern-command '("~/.npm-global/bin/tern" "--verbose"))
+    #+END_SRC
+    Check ~(describe-variable 'tern-command)~. Requires "tern".
