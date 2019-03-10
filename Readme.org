@@ -9,6 +9,10 @@ Also, I still have some internal dependencies (elisp files) that I can
 not publish, so not 100% of this file will run everywhere. Let me know
 if you are curious about something in particular.
 
+Also, this init file depends on another two personal files,
+published in https://github.com/vitorqb/mylisputils and in
+https://github.com/vitorqb/my-show-definitions.
+
 ** About
 
    Some principles about the init file is:
