@@ -174,6 +174,17 @@
 (global-set-key (kbd "C-c d") #'myutils/duplicate-buffer)
 
 ;; -----------------------------------------------------------------------------
+;; Registers manipulation
+;; -----------------------------------------------------------------------------
+(defun my/setup-hydra/register-hydra ()
+  (defhydra my/register-hydra (:color blue)
+    "An hydra for emacs registers\n"
+    ("p" #'point-to-register "Save point in register\n")
+    ("j" #'jump-to-register  "Jump to point register\n")
+    ("r" #'copy-to-register  "Copy region to register\n")
+    ("i" #'insert-register   "Inserts copied region form register\n")))
+
+;; -----------------------------------------------------------------------------
 ;; Completion (Company)
 ;; -----------------------------------------------------------------------------
 (use-package company
@@ -706,6 +717,7 @@ and the pr number, separated by /. Like this: de-tv/69"
   (my/setup-hydra/projectile-hydra)
   (my/setup-hydra/flymake-hydra)
   (my/setup-hydra/journal-hydra)
+  (my/setup-hydra/register-hydra)
 
   (defhydra my/ag-hydra (:color blue)
     "An hydra for ag!\n"
@@ -713,6 +725,7 @@ and the pr number, separated by /. Like this: de-tv/69"
     ("r" #'ag-regexp "Ag with regexp\n"))
 
   (defhydra myhydra (:color blue)
+    ("0" #'my/register-hydra/body "Register Hydra\n")
     ("a" #'my/ag-hydra/body "Ag Hydra\n")
     ("d" #'my-show-definitions "Show definitions\n")
     ("e" #'my/eval-elisp-hydra/body "Evaluate Elisp hydra\n")
