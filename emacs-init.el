@@ -66,6 +66,10 @@
 (add-custom-lib-to-load-path "mylisputils")
 (use-package mylisputils)
 
+;; my-show-definitions as well
+(add-custom-lib-to-load-path "my-show-definitions")
+(use-package my-show-definitions)
+
 ;; We like recursion
 (setq max-lisp-eval-depth (* 32000))
 
