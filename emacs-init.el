@@ -19,6 +19,8 @@
   "The base url used to visit a PR. Currently works only for bitbucket.")
 (defvar my/custom-welcome-script nil
   "If set, inhibit emacs default init and executes this script instead.")
+(defvar my/user-temp-directory "~/mytmp"
+  "A directory used to save temporary files.")
 
 ;; Loads the config
 (load (expand-file-name "~/.config/emacs_init") t)
@@ -66,6 +68,12 @@
 
 ;; We like recursion
 (setq max-lisp-eval-depth (* 32000))
+
+;; Ensure the tempdir is created
+(and my/user-temp-directory
+     (not (file-directory-p my/user-temp-directory))
+     (progn (mkdir my/user-temp-directory t)
+            (message "Created %s" my/user-temp-directory)))
 
 ;; ------------------------------------------------------------------------------
 ;; Global Appearence
@@ -339,6 +347,14 @@ and the pr number, separated by /. Like this: de-tv/69"
     (-let [default-directory "~"]
       (call-interactively #'find-file-other-window)))
 
+  (defun find-file-my-temp-file (file-ext)
+    (interactive "sEnter a file extension: .")
+    (--> "%Y%m%d%H%M%S%3N"
+         (format-time-string it)
+         (myutils/concat-file my/user-temp-directory it)
+         (if (not (equal file-ext "")) (concat it "." file-ext) it)
+         (find-file it)))
+
   (defhydra my/files-hydra (:color blue)
     "Manipulate files!"
     ("w" #'write-file "Write file to...\n")
@@ -348,6 +364,7 @@ and the pr number, separated by /. Like this: de-tv/69"
     ("H" #'find-file-home-other-window "Find file at home other window\n")
     ("p" #'projectile-find-file "Projectile find file\n")
     ("P" #'projectile-find-file-other-window "Projectile find file other window\n")
+    ("t" #'find-file-my-temp-file "New temporary file\n")
     ("e" (lambda () (interactive) (async-shell-command (buffer-file-name)))
      "Executes current buffer file as async shell command.\n")
     ("x" #'myutils/chmod-current-buffer "Chmod\n")))
