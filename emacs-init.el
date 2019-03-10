@@ -841,7 +841,7 @@ and the pr number, separated by /. Like this: de-tv/69"
   "In org-mode, marks an example block at point (if any). 
    Usefull with expand-region."
   (-if-let (el (org-element-at-point))
-      (when (equal (car el) 'example-block)
+      (when (-any? (-partial #'equal (car el)) '(example-block src-block))
         (-let* ((block-begin (plist-get (car (cdr el)) :begin))
                 (block-end (plist-get (car (cdr el)) :end))
                 ;; we want 1 line after begin and 2 before end
