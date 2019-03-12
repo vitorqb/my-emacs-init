@@ -226,6 +226,9 @@
 ;; -----------------------------------------------------------------------------
 ;; Org Mode
 ;; -----------------------------------------------------------------------------
+;; We don't like visual-line-mode ()
+(add-hook 'org-mode-hook (lambda () (visual-line-mode -1)))
+
 ;; Define custom apps to open files
 (setq org-file-apps
       (quote
