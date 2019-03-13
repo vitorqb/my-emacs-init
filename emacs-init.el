@@ -104,7 +104,9 @@
 ;; Display date and time, line and col numbers
 (setq display-time-day-and-date t)
 (display-time-mode 1)
-(global-linum-mode 1)
+(if (version< emacs-version "26.1")
+    (global-linum-mode 1)
+  (global-display-line-numbers-mode))
 (column-number-mode)
 
 ;; Don't use tabs
@@ -122,7 +124,10 @@
 
 ;; Don't use linum-mode in compilation buffers
 (dolist (hook '(compilation-mode-hook comint-mode-hook))
-  (add-hook hook (myutils/li (linum-mode -1))))
+  (add-hook hook (lambda () (interactive)
+                   (if (version< emacs-version "26.1")
+                       (linum-mode -1)
+                     (display-line-numbers-mode -1)))))
 
 (defun my/setup-hydra/compile-hydra ()
   "Prepares an hydra for compilation mode."
