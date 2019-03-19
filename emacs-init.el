@@ -411,8 +411,15 @@ and the pr number, separated by /. Like this: de-tv/69"
 (use-package cider
   :ensure
   :config (progn
+            (setq nrepl-log-messages t)
             (define-key cider-mode-map (kbd "C-c C-o")
-              #'myutils/clojure-occur-def)))
+              #'myutils/clojure-occur-def)
+            ;; Don's use linum mode on repl
+            (add-hook 'cider-repl-mode-hook
+                      (lambda ()
+                        (linum-mode -1)
+                        (if (not (version<= emacs-version "26.1"))
+                            (display-line-numbers-mode -1))))))
 
 ;; -----------------------------------------------------------------------------
 ;; Go
