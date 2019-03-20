@@ -70,6 +70,10 @@
 (add-custom-lib-to-load-path "my-show-definitions")
 (use-package my-show-definitions)
 
+;; my-fuzzy-cmd-selector as well
+(add-custom-lib-to-load-path "my-fuzzy-cmd-selector")
+(use-package my-fuzzy-cmd-selector)
+
 ;; We like recursion
 (setq max-lisp-eval-depth (* 32000))
 
@@ -112,10 +116,6 @@
 ;; Don't use tabs
 (setq-default indent-tabs-mode nil)
 
-;; -----------------------------------------------------------------------------
-;; ido-mode!
-;; -----------------------------------------------------------------------------
-(ido-mode 1)
 
 ;; -----------------------------------------------------------------------------
 ;; Compilation and processes
@@ -424,16 +424,42 @@ and the pr number, separated by /. Like this: de-tv/69"
 
 (use-package cider
   :ensure
-  :config (progn
-            (setq nrepl-log-messages t)
-            (define-key cider-mode-map (kbd "C-c C-o")
-              #'myutils/clojure-occur-def)
-            ;; Don's use linum mode on repl
-            (add-hook 'cider-repl-mode-hook
-                      (lambda ()
-                        (linum-mode -1)
-                        (if (not (version<= emacs-version "26.1"))
-                            (display-line-numbers-mode -1))))))
+  :config
+  (progn
+    (setq nrepl-log-messages t)
+    (define-key cider-mode-map (kbd "C-c C-o")
+      #'myutils/clojure-occur-def)
+    ;; Don's use linum mode on repl
+    (add-hook 'cider-repl-mode-hook
+              (lambda ()
+                (linum-mode -1)
+                (if (not (version<= emacs-version "26.1"))
+                    (display-line-numbers-mode -1))))
+
+    ;; Adds commands to fuzzy cmd selector
+    (mfcs-add-command
+     :description "Clojure Lein Test Refresh Watch"
+     :command
+     (lambda () (interactive)
+       (-let [cmd (format "cd %s && lein test-refresh " (projectile-project-root))]
+         (myutils/with-compile-opts "*LeinTestRefresh*" cmd
+           (call-interactively #'compile)))))
+
+    (mfcs-add-command
+     :description "Clojure Lein Run"
+     :command
+     (lambda () (interactive)
+       (let [cmd (format "cd %s && lein run " (projectile-project-root))]
+         (myutils/with-compile-opts "*LeinRun*" cmd
+           (call-interactively #'compile)))))
+
+    (mfcs-add-command
+     :description "Lein Doo Firefox Test"
+     :command
+     (lambda () (interactive)
+       (-let [cmd (format "cd %s && lein doo firefox " (projectile-project-root))]
+         (myutils/with-compile-opts "*LeinDoo*" cmd
+           (call-interactively #'compile)))))))
 
 ;; -----------------------------------------------------------------------------
 ;; Go
@@ -652,7 +678,15 @@ and the pr number, separated by /. Like this: de-tv/69"
     (my/add-jest-errors-to-compilation-regexp)
     ;; Also use the derived mode for jsx
     (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js2-jsx-mode))
-    (add-to-list 'interpreter-mode-alist '("node" . js2-jsx-mode))))
+    (add-to-list 'interpreter-mode-alist '("node" . js2-jsx-mode))
+    ;; Adds usefull commands for js2 to mfcs
+    (mfcs-add-command
+     :description "Npm Js Javascript Run Test"
+     :command
+     (lambda () (interactive)
+       (-let [cmd (format "cd %s && npm run test " (projectile-project-root))]
+         (myutils/with-compile-opts "*NpmTest*" cmd
+           (call-interactively #'compile)))))))
 
 ;; 
 ;; For development with nodejs
@@ -788,6 +822,7 @@ and the pr number, separated by /. Like this: de-tv/69"
     ("0" #'my/register-hydra/body "Register Hydra\n")
     ("a" #'my/ag-hydra/body "Ag Hydra\n")
     ("b" #'my/buffer-hydra/body "Buffer hydra\n")
+    ("c" #'mfcs-call "Calls fuzzy command selector\n")
     ("d" #'my-show-definitions "Show definitions\n")
     ("e" #'my/eval-elisp-hydra/body "Evaluate Elisp hydra\n")
     ("f" #'my/files-hydra/body "Files hydra!\n")
