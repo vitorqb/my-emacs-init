@@ -23,7 +23,7 @@
   "A directory used to save temporary files.")
 
 ;; Loads the config
-(load (expand-file-name "~/.config/emacs_init") t)
+(load (expand-file-name "~/.config/emacs_init/config.el") t)
 
 
 ;; -----------------------------------------------------------------------------
@@ -973,10 +973,10 @@ and the pr number, separated by /. Like this: de-tv/69"
 ;; -----------------------------------------------------------------------------
 ;; Tries to load computer-specific hooks
 (defun my/run-profile-hook ()
-    (-some--> (or load-file-name buffer-file-name)
-              (file-name-directory it)
-              (concat it "profile-hooks/")
+  (when my-current-profile
+    (-some--> "~/.config/emacs_init/profile-hooks/"
+              (and (file-directory-p it) it)
               (concat it (-> my-current-profile symbol-name (substring 1)) ".el")
               (and (file-exists-p it) it)
-              (load it)))
+              (load it))))
 (my/run-profile-hook)

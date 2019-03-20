@@ -45,11 +45,11 @@ https://github.com/vitorqb/my-show-definitions.
 
    Secondly, some variables can be customized. Those are described in
    the very top of =emacs-init.el=. The script will look for a script
-   in =~/.config/emacs_init.el= and trust this script to set the variables
-   it needs to set. I have something like this there:
+   in =~/.config/emacs_init/config.el= and trust this script to set
+   the variables it needs to set. I have something like this there:
 
 #+begin_src elisp
-;; file: ~/.config/emacs_init.el
+;; file: ~/.config/emacs_init/config.el
 (custom-set-variables
  '(my-font-size 7)
  '(my-journal-dir "/home/vitor/myorg/journal-personal/")
@@ -61,18 +61,16 @@ https://github.com/vitorqb/my-show-definitions.
 
    Third, you may want to set a hook script that will be execute only
    in a specific profile. Those go into
-   =./profile-hooks/<profile-name>.el=. For example, for my =:work=
+   =~/.config/emacs_init/profile-hooks/<profile-name>.el=. For example, for my =:work=
    profile I have:
 
 #+begin_src elisp
-;; file: <path-to-repo>/profile-hooks/work.el
+;; file: ~/.config/emacs_init/profile-hooks/work.el
 
 (load "<my-personal-library-for-work>.el")
 (add-hook 'after-init-hook (setup-workspace-for-work))
 ...
 #+end_src
-
-   Notice this folder is on =.gitignore= (I can't share all that is there).
 
 ** More
    Contact me if you want anything and I'll try to help :)
