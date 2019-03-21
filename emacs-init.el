@@ -316,6 +316,11 @@ and the pr number, separated by /. Like this: de-tv/69"
          (browse-url it)))
   (org-add-link-type "pr" 'org-pr-open))
 
+(defun my/setup-hydra/org-hydra ()
+  (defhydra my/org-hydra (:color blue)
+    ("n" #'org-next-block "Jump to the next block\n" :color pink)
+    ("p" #'org-previous-block "Jump to the previous block\n" :color pink)))
+
 ;; -----------------------------------------------------------------------------
 ;; Latex and AucTex
 ;; -----------------------------------------------------------------------------
@@ -760,28 +765,34 @@ and the pr number, separated by /. Like this: de-tv/69"
   (my/setup-hydra/flymake-hydra)
   (my/setup-hydra/journal-hydra)
   (my/setup-hydra/register-hydra)
+  (my/setup-hydra/org-hydra)
 
   (defhydra my/ag-hydra (:color blue)
     "An hydra for ag!\n"
     ("a" #'ag "Simply ag\n")
     ("r" #'ag-regexp "Ag with regexp\n"))
 
+  (defhydra my/buffer-hydra (:color blue)
+    "An hydra for buffer-related functionalities!\n"
+    ("g" #'push-mark-and-avy-goto-char "Avy go to char (tree)\n")
+    ("h" #'highlight-symbol-at-point "Highlights symbol at point.\n")
+    ("l" #'goto-line "Go to a specific line\n")
+    ("o" #'my/occur-symbol-at-point "Occur with current symbol.\n")
+    ("p" #'myutils/copy-file-path-to-clipboard "Copy file path.\n"))
+
   (defhydra myhydra (:color blue)
     ("0" #'my/register-hydra/body "Register Hydra\n")
     ("a" #'my/ag-hydra/body "Ag Hydra\n")
+    ("b" #'my/buffer-hydra/body "Buffer hydra\n")
     ("d" #'my-show-definitions "Show definitions\n")
     ("e" #'my/eval-elisp-hydra/body "Evaluate Elisp hydra\n")
     ("f" #'my/files-hydra/body "Files hydra!\n")
     ("i" #'counsel-imenu "Imenu (find definitions)!\n")
-    ("h" #'highlight-symbol-at-point "Highlights symbol at point.\n")
     ("j" #'my/journal-hydra/body "Hydra for org-journal\n")
     ("r" #'my/projectile-hydra/body "Projectile hydra \n")
     ("m" #'my/flymake-hydra/body "Flymake hydra\n")
-    ("o" #'my/occur-symbol-at-point "Occur with current symbol.\n")
-    ("p" #'myutils/copy-file-path-to-clipboard "Copy file path.\n")
+    ("o" #'my/org-hydra/body "Org hydra\n")
     ("s" #'my/shell-hydra/body "A shell, sh, bash hydra!.\n")
-    ("g" #'push-mark-and-avy-goto-char "Avy go to char (tree)\n")
-    ("l" #'goto-line "Go to a specific line\n")
     ("k" #'my/compile-hydra/body "Kompile dude\n")
     ("t" #'my/typing-hydra/body "Ttping hydra!\n")
     ("y" #'my/python-hydra/body "pYthon Hydra!\n")))
