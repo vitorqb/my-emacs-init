@@ -562,6 +562,7 @@ and the pr number, separated by /. Like this: de-tv/69"
 ;; OpenWith
 ;; -----------------------------------------------------------------------------
 (use-package openwith
+  :ensure
   :config
   (progn
     (openwith-mode 1)
