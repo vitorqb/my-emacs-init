@@ -338,6 +338,9 @@ and the pr number, separated by /. Like this: de-tv/69"
   :ensure
   :bind ("C-c m" . magit-status))
 
+;; Let us use magit links in org mode
+(use-package orgit :ensure t)
+
 ;; -----------------------------------------------------------------------------
 ;; Dired and files manipulation
 ;; -----------------------------------------------------------------------------
