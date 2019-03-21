@@ -254,7 +254,9 @@
 
 ;; Journal configuration
 (use-package org-journal
-  :ensure
+  ;; !!!! TODO -> We are using the git version because of a known bug
+  ;; https://github.com/bastibe/org-journal/issues/146
+  :load-path "~/git-others/org-journal"
   :config (progn
             (custom-set-variables `(org-journal-dir ,my-journal-dir))
             (bind-key* "C-c C-j" #'org-journal-new-entry)))
