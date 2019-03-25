@@ -389,7 +389,11 @@ and the pr number, separated by /. Like this: de-tv/69"
     ("t" #'find-file-my-temp-file "New temporary file\n")
     ("e" (lambda () (interactive) (async-shell-command (buffer-file-name)))
      "Executes current buffer file as async shell command.\n")
-    ("x" #'myutils/chmod-current-buffer "Chmod\n")))
+    ("x" #'myutils/chmod-current-buffer "Chmod\n")
+    ("z" (lambda () (interactive) (fzf/start default-directory))
+     "Fuzzy find file on default-directory\n")
+    ("Z" (lambda () (interactive) (fzf/start "~"))
+     "Fuzzy find at home\n")))
 
 
 ;; -----------------------------------------------------------------------------
