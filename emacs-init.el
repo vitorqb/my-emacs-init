@@ -988,7 +988,7 @@ and the pr number, separated by /. Like this: de-tv/69"
 (global-set-key "\C-x\ \C-r" 'recentf-open-files)
 (setq
  backup-by-copying t
- backup-directory-alist `(("." . , "/home/vitor/emacs-backups"))
+ backup-directory-alist `(("." . , "~/emacs-backups"))
  delete-old-versions t
  kept-new-versions 25
  kept-old-versions 15
