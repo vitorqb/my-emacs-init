@@ -72,7 +72,9 @@
 
 ;; my-fuzzy-cmd-selector as well
 (add-custom-lib-to-load-path "my-fuzzy-cmd-selector")
-(use-package my-fuzzy-cmd-selector)
+(use-package my-fuzzy-cmd-selector
+  :config (progn
+            (cl-pushnew '(:mfcs-call . 20) ivy-height-alist)))
 
 ;; We like recursion
 (setq max-lisp-eval-depth (* 32000))
