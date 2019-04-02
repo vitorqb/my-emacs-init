@@ -320,6 +320,7 @@ and the pr number, separated by /. Like this: de-tv/69"
 
 (defun my/setup-hydra/org-hydra ()
   (defhydra my/org-hydra (:color blue)
+    ("b" #'my/mark-org-example-block "Marks the entire block at point\n")
     ("n" #'org-next-block "Jump to the next block\n" :color pink)
     ("p" #'org-previous-block "Jump to the previous block\n" :color pink)))
 
@@ -934,12 +935,10 @@ and the pr number, separated by /. Like this: de-tv/69"
 (defun my/mark-org-example-block ()
   "In org-mode, marks an example block at point (if any). 
    Usefull with expand-region."
+  (interactive)
   (-if-let (el (org-element-at-point))
-      (when (-any? (-partial #'equal (car el)) '(example-block
-                                                 src-block
-                                                 verse-block
-                                                 quote-block
-                                                 comment-block))
+      (when (-any? (-partial #'equal (car el))
+                   '(example-block src-block verse-block quote-block comment-block))
         (-let* ((block-begin (plist-get (car (cdr el)) :begin))
                 (block-end (plist-get (car (cdr el)) :end))
                 ;; we want 1 line after begin and 2 before end
