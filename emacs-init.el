@@ -131,10 +131,16 @@
                        (linum-mode -1)
                      (display-line-numbers-mode -1)))))
 
+(defun my/copy-region-to-compile (beg end)
+  "Set's compile-command to the text on the currently selected region"
+  (interactive "r")
+  (setq compile-command (buffer-substring-no-properties beg end)))
+
 (defun my/setup-hydra/compile-hydra ()
   "Prepares an hydra for compilation mode."
   (defhydra my/compile-hydra (:color blue)
     "An hydra for compile!\n"
+    ("w" #'my/copy-region-to-compile "Copies current region to compile\n" :color pink)
     ("k" #'compile "Simply compile!\n")
     ("r" #'recompile "REEEcompile\n")
     ("i" (lambda () (interactive) (execute-extended-command '(4) "compile"))
