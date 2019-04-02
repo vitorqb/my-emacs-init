@@ -956,6 +956,8 @@ and the pr number, separated by /. Like this: de-tv/69"
                 (end (save-excursion
                        (goto-char block-end)
                        (-dotimes 3 #'previous-line)
+                       (if (< (point) begin)
+                           (goto-char begin))
                        (end-of-line)
                        (+ 1 (point)))))
           (goto-char begin)
