@@ -136,10 +136,20 @@
   (interactive "r")
   (setq compile-command (buffer-substring-no-properties beg end)))
 
+(defun my/org-copy-block-contents-to-compile ()
+  "Set's compile-command to the text inside the org block at point"
+  (interactive)
+  (save-excursion
+    (my/mark-org-example-block)
+    (my/copy-region-to-compile (region-beginning) (- (region-end) 1))
+    (deactivate-mark)))
+
 (defun my/setup-hydra/compile-hydra ()
   "Prepares an hydra for compilation mode."
   (defhydra my/compile-hydra (:color blue)
     "An hydra for compile!\n"
+    ("b" #'my/org-copy-block-contents-to-compile "Copies org block contents to compile\n"
+     :color pink)
     ("w" #'my/copy-region-to-compile "Copies current region to compile\n" :color pink)
     ("k" #'compile "Simply compile!\n")
     ("r" #'recompile "REEEcompile\n")
