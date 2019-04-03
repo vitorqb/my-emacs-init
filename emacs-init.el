@@ -252,6 +252,9 @@
 ;; We don't like visual-line-mode ()
 (add-hook 'org-mode-hook (lambda () (visual-line-mode -1)))
 
+;; Only jump lines between headers if 3 empty lines
+(custom-set-variables '(org-cycle-separator-lines 3 t))
+
 ;; Define custom apps to open files
 (setq org-file-apps
       (quote
@@ -978,8 +981,6 @@ and the pr number, separated by /. Like this: de-tv/69"
   :config (progn
             (global-set-key (kbd "C--") 'er/contract-region)
             (global-set-key (kbd "C-=") 'er/expand-region)
-            ;; Only jump lines between headers if 3 empty lines
-            (custom-set-variables '(org-cycle-separator-lines 3 t))
             ;; Adds org example blocks
             (add-hook 'org-mode-hook
                       (lambda ()
