@@ -481,7 +481,12 @@ and the pr number, separated by /. Like this: de-tv/69"
      (lambda () (interactive)
        (-let [cmd (format "cd %s && lein doo firefox " (projectile-project-root))]
          (myutils/with-compile-opts "*LeinDoo*" cmd
-           (call-interactively #'compile)))))))
+           (call-interactively #'compile)))))
+
+    (mfcs-add-command
+     :description "Cider Jack In Clojurescript Cljs"
+     :command (lambda () (interactive)
+                (call-interactively #'cider-jack-in-cljs)))))
 
 ;; -----------------------------------------------------------------------------
 ;; Go
@@ -708,6 +713,13 @@ and the pr number, separated by /. Like this: de-tv/69"
      (lambda () (interactive)
        (-let [cmd (format "cd %s && npm run test " (projectile-project-root))]
          (myutils/with-compile-opts "*NpmTest*" cmd
+           (call-interactively #'compile)))))
+    (mfcs-add-command
+     :description "Npm Js Javascript Start"
+     :command
+     (lambda () (interactive)
+       (-let [cmd (format "cd %s && npm run start " (projectile-project-root))]
+         (myutils/with-compile-opts "*NpmStart*" cmd
            (call-interactively #'compile)))))))
 
 ;; 
