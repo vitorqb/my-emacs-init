@@ -74,5 +74,44 @@ in your load path.
 ...
 #+end_src
 
+   Finally, this script depends on other personal libraries I have.
+   Installing those libraries is simply git-clonning their repositories
+   to the =my/custom-libraries-folder=. You can use the scripts
+   =scripts/clone-libs-repos.sh= to do that:
+
+#+begin_example
+$ ./clone-libs-repos.sh /home/vitor/mytmp/some/crazy/dir
+PROCESSING:
+mylisputils           https://github.com/vitorqb/mylisputils.git
+
+Cloning into '/home/vitor/mytmp/some/crazy/dir/mylisputils'...
+remote: Enumerating objects: 135, done.
+remote: Counting objects: 100% (135/135), done.
+remote: Compressing objects: 100% (85/85), done.
+remote: Total 135 (delta 67), reused 111 (delta 46), pack-reused 0
+Receiving objects: 100% (135/135), 20.11 KiB | 643.00 KiB/s, done.
+Resolving deltas: 100% (67/67), done.
+PROCESSING:
+my-show-definitions   https://github.com/vitorqb/my-show-definitions.git
+
+Cloning into '/home/vitor/mytmp/some/crazy/dir/my-show-definitions'...
+remote: Enumerating objects: 21, done.
+remote: Counting objects: 100% (21/21), done.
+remote: Compressing objects: 100% (14/14), done.
+remote: Total 21 (delta 8), reused 19 (delta 6), pack-reused 0
+Unpacking objects: 100% (21/21), done.
+PROCESSING:
+my-fuzzy-cmd-selector https://github.com/vitorqb/my-fuzzy-cmd-selector.git
+
+Cloning into '/home/vitor/mytmp/some/crazy/dir/my-fuzzy-cmd-selector'...
+remote: Enumerating objects: 17, done.
+remote: Counting objects: 100% (17/17), done.
+remote: Compressing objects: 100% (14/14), done.
+remote: Total 17 (delta 3), reused 13 (delta 2), pack-reused 0
+Unpacking objects: 100% (17/17), done.
+#+end_example
+
+   With no argument it clones to =~/.emacs.d/other/=
+
 ** More
    Contact me if you want anything and I'll try to help :)
