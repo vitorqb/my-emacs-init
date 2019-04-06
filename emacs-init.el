@@ -485,8 +485,7 @@ and the pr number, separated by /. Like this: de-tv/69"
 
     (mfcs-add-command
      :description "Cider Jack In Clojurescript Cljs"
-     :command (lambda () (interactive)
-                (call-interactively #'cider-jack-in-cljs)))))
+     :command #'cider-jack-in-cljs)))
 
 ;; -----------------------------------------------------------------------------
 ;; Go
