@@ -1,0 +1,3 @@
+my-fuzzy-cmd-selector==0.0.3
+my-show-definitions==0.0.2
+mylisputils==0.0.7
