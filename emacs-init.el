@@ -9,6 +9,9 @@
   (concat "A profile that can be used to customize your computer-specific settings."
           "for example: :work or :home"))
 (defvar my-journal-dir "~/journal/" "Org Journal directory to use.")
+(defvar my/journal-files-dir-base "files"
+  (concat "A folder (relative to `my-journal-dir` unless it starts with '/') where"
+          " to put files for the org-journal"))
 (defvar my/custom-libraries-folder "~/.emacs.d/other/"
   "A folder in where custom libraries will be searched")
 (defvar my/custom-libraries-names '()
@@ -278,9 +281,26 @@
   ;; !!!! TODO -> We are using the git version because of a known bug
   ;; https://github.com/bastibe/org-journal/issues/146
   :load-path "~/git-others/org-journal"
-  :config (progn
-            (custom-set-variables `(org-journal-dir ,my-journal-dir))
-            (bind-key* "C-c C-j" #'org-journal-new-entry)))
+  :config
+  (progn
+    (custom-set-variables `(org-journal-dir ,my-journal-dir))
+    (bind-key* "C-c C-j" #'org-journal-new-entry)
+
+    (defun my/journal-files-dir ()
+      "Returns the path to the journal directory responsible for holding files"
+      (if (string= (substring my/journal-files-dir-base 0 1) "/")
+          my/journal-files-dir-base
+        (myutils/concat-file my-journal-dir my/journal-files-dir-base)))
+
+    (defun my/journal-find-file (arg)
+      "Calls find-file inside the `journal-files-dir`"
+      (interactive "P")
+      (-let [default-directory (my/journal-files-dir)]
+        (execute-extended-command arg "find-file")))
+
+    (mfcs-add-command
+     :description "Org Find File Journal Find File (Docs Files)"
+     :command (lambda () (interactive) (call-interactively #'my/journal-find-file)))))
 
 (defun my-org-journal-find-last-file (arg)
   "Find-file on the last file for the journal.
