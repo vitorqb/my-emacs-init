@@ -360,6 +360,7 @@ and the pr number, separated by /. Like this: de-tv/69"
 (defun my/setup-hydra/org-hydra ()
   (defhydra my/org-hydra (:color blue)
     ("b" #'my/mark-org-example-block "Marks the entire block at point\n")
+    ("l" #'org-store-link "Org store link\n")
     ("n" #'org-next-block "Jump to the next block\n" :color pink)
     ("p" #'org-previous-block "Jump to the previous block\n" :color pink)))
 
