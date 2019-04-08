@@ -972,6 +972,11 @@ and the pr number, separated by /. Like this: de-tv/69"
     (add-hook 'ag-search-finished-hook 'next-error-follow-minor-mode)
     (global-set-key (kbd "C-c a") 'ag)))
 
+;; Let's add next-error-follow-minnor-mode to mfcs
+(mfcs-add-command
+ :description "Next Error Follow Minnor Mode Follow Next Error"
+ :command (lambda () (interactive) (call-interactively #'next-error-follow-minor-mode)))
+
 ;; Allows you to jump to text on the screen!
 ;; Jumps to text
 (use-package avy :ensure)
