@@ -470,14 +470,24 @@ and the pr number, separated by /. Like this: de-tv/69"
   :config
   (progn
     (setq nrepl-log-messages t)
-    (define-key cider-mode-map (kbd "C-c C-o")
-      #'myutils/clojure-occur-def)
+    (define-key cider-mode-map (kbd "C-c C-o") #'myutils/clojure-occur-def)
     ;; Don's use linum mode on repl
     (add-hook 'cider-repl-mode-hook
               (lambda ()
                 (linum-mode -1)
                 (if (not (version<= emacs-version "26.1"))
                     (display-line-numbers-mode -1))))
+
+    ;; Select a bunch of company backends
+    (add-hook 'cider-mode-hook
+              (lambda ()
+                (make-local-variable 'company-backends)
+                (setq-local company-backends
+                            '((company-dabbrev-code
+                               company-gtags
+                               company-etags
+                               company-keywords
+                               company-dabbrev)))))
 
     ;; Adds commands to fuzzy cmd selector
     (mfcs-add-command
