@@ -405,12 +405,7 @@ and the pr number, separated by /. Like this: de-tv/69"
   (defun find-file-home ()
     (interactive)
     (-let [default-directory "~"]
-      (call-interactively #'find-file)))
-
-  (defun find-file-home-other-window ()
-    (interactive)
-    (-let [default-directory "~"]
-      (call-interactively #'find-file-other-window)))
+      (call-interactively #'counsel-find-file)))
 
   (defun find-file-my-temp-file (file-ext)
     (interactive "sEnter a file extension: .")
@@ -418,15 +413,13 @@ and the pr number, separated by /. Like this: de-tv/69"
          (format-time-string it)
          (myutils/concat-file my/user-temp-directory it)
          (if (not (equal file-ext "")) (concat it "." file-ext) it)
-         (find-file it)))
+         (counsel-find-file it)))
 
   (defhydra my/files-hydra (:color blue)
     "Manipulate files!"
     ("w" #'write-file "Write file to...\n")
-    ("f" #'find-file "Find file\n")
-    ("F" #'find-file-other-window "Find file other window\n")
+    ("f" #'counsel-find-file "Find file\n")
     ("h" #'find-file-home "Find file at home\n")
-    ("H" #'find-file-home-other-window "Find file at home other window\n")
     ("p" #'projectile-find-file "Projectile find file\n")
     ("P" #'projectile-find-file-other-window "Projectile find file other window\n")
     ("t" #'find-file-my-temp-file "New temporary file\n")
