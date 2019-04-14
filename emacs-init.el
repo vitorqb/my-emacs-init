@@ -476,7 +476,8 @@ and the pr number, separated by /. Like this: de-tv/69"
               (lambda ()
                 (make-local-variable 'company-backends)
                 (setq-local company-backends
-                            '((company-dabbrev-code
+                            '((company-capf
+                               company-dabbrev-code
                                company-gtags
                                company-etags
                                company-keywords
