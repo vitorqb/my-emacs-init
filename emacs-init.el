@@ -207,9 +207,26 @@
     ("d" #'flymake-show-diagnostics-buffer "Diagnostic buffer\n")))
 
 ;; -----------------------------------------------------------------------------
-;; Buffer manipulation
+;; Buffer and buffer contents manipulation
 ;; -----------------------------------------------------------------------------
 (global-set-key (kbd "C-c d") #'myutils/duplicate-buffer)
+
+(defun my/highligh-region (beg end)
+  "Highlights text equal to the text between beg and end"
+  (interactive "r")
+  (->> (buffer-substring-no-properties beg end)
+       (regexp-quote)
+       (highlight-phrase)))  
+
+(defun my/setup-hydra/buffer-hydra ()
+  (defhydra my/buffer-hydra (:color blue)
+    "An hydra for buffer-related functionalities!\n"
+    ("g" #'push-mark-and-avy-goto-char "Avy go to char (tree)\n")
+    ("h" #'highlight-symbol-at-point "Highlights symbol at point.\n")
+    ("r" #'my/highligh-region "Highlights selected phrase\n")
+    ("l" #'goto-line "Go to a specific line\n")
+    ("o" #'my/occur-symbol-at-point "Occur with current symbol.\n")
+    ("p" #'myutils/copy-file-path-to-clipboard "Copy file path.\n")))
 
 ;; -----------------------------------------------------------------------------
 ;; Registers manipulation
@@ -862,19 +879,12 @@ and the pr number, separated by /. Like this: de-tv/69"
   (my/setup-hydra/journal-hydra)
   (my/setup-hydra/register-hydra)
   (my/setup-hydra/org-hydra)
+  (my/setup-hydra/buffer-hydra)
 
   (defhydra my/ag-hydra (:color blue)
     "An hydra for ag!\n"
     ("a" #'ag "Simply ag\n")
     ("r" #'ag-regexp "Ag with regexp\n"))
-
-  (defhydra my/buffer-hydra (:color blue)
-    "An hydra for buffer-related functionalities!\n"
-    ("g" #'push-mark-and-avy-goto-char "Avy go to char (tree)\n")
-    ("h" #'highlight-symbol-at-point "Highlights symbol at point.\n")
-    ("l" #'goto-line "Go to a specific line\n")
-    ("o" #'my/occur-symbol-at-point "Occur with current symbol.\n")
-    ("p" #'myutils/copy-file-path-to-clipboard "Copy file path.\n"))
 
   (defhydra myhydra (:color blue)
     ("0" #'my/register-hydra/body "Register Hydra\n")
