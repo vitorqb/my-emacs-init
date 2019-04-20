@@ -381,6 +381,14 @@ and the pr number, separated by /. Like this: de-tv/69"
     ("n" #'org-next-block "Jump to the next block\n" :color pink)
     ("p" #'org-previous-block "Jump to the previous block\n" :color pink)))
 
+;; Adds org store link and toggle link to mfcs
+(mfcs-add-command
+ :description "Org Store Link [Store Org]"
+ :command #'org-store-link)
+(mfcs-add-command
+ :description "Org Toggle Link Display [Display Links Toggle Org]"
+ :command #'org-toggle-link-display)
+
 ;; -----------------------------------------------------------------------------
 ;; Latex and AucTex
 ;; -----------------------------------------------------------------------------
