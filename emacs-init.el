@@ -521,7 +521,7 @@ and the pr number, separated by /. Like this: de-tv/69"
      :description "Clojure Lein Run"
      :command
      (lambda () (interactive)
-       (let [cmd (format "cd %s && lein run " (projectile-project-root))]
+       (-let [cmd (format "cd %s && lein run " (projectile-project-root))]
          (myutils/with-compile-opts "*LeinRun*" cmd
            (call-interactively #'compile)))))
 
