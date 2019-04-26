@@ -179,6 +179,7 @@
     "An hydra for typing shortcuts!\n"
     ("f" #'myutils/fill-to-end "Fill to end with '-'.\n")
     ("d" #'myutils/insert-date "Insert the date.\n")
+    ("e" #'myutils/remove-with-elipsis "Remove with elipsis.\n" :color pink)
     ("c" #'myutils/remove-whitespace-and-newline
      "Clean - remove whitesapces and newlines.\n")
     ("w" #'delete-trailing-whitespace "Delete trailing whitespaces.\n")))
