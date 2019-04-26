@@ -228,6 +228,9 @@
     ("o" #'my/occur-symbol-at-point "Occur with current symbol.\n")
     ("p" #'myutils/copy-file-path-to-clipboard "Copy file path.\n")))
 
+;; Adds rename buffer to mfcs
+(mfcs-add-command :description "Buffer Rename Buffer" :command #'rename-buffer)
+
 ;; -----------------------------------------------------------------------------
 ;; Registers manipulation
 ;; -----------------------------------------------------------------------------
