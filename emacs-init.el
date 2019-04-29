@@ -231,6 +231,9 @@
 
 ;; Adds rename buffer to mfcs
 (mfcs-add-command :description "Buffer Rename Buffer" :command #'rename-buffer)
+(mfcs-add-command
+ :description "Highlight Phrase Word Phrase Highlight"
+ :command #'highlight-phrase)
 
 ;; -----------------------------------------------------------------------------
 ;; Registers manipulation
