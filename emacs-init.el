@@ -317,7 +317,7 @@
       "Calls find-file inside the `journal-files-dir`"
       (interactive "P")
       (-let [default-directory (my/journal-files-dir)]
-        (execute-extended-command arg "find-file")))
+        (execute-extended-command arg "counsel-find-file")))
 
     (mfcs-add-command
      :description "Org Find File Journal Find File (Docs Files)"
