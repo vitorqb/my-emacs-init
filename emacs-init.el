@@ -490,6 +490,9 @@ and the pr number, separated by /. Like this: de-tv/69"
   :ensure
   :config )
 
+;; For refactoring
+(use-package clj-refactor :ensure)
+
 (use-package cider
   :ensure
   :config
