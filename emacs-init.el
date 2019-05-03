@@ -1024,11 +1024,12 @@ and the pr number, separated by /. Like this: de-tv/69"
   "In org-mode, marks an example block at point (if any). 
    Usefull with expand-region."
   (interactive)
-  (-if-let (el (org-element-at-point))
+  (-if-let (el (org-element-context))
       (when (-any? (-partial #'equal (car el))
                    '(example-block src-block verse-block quote-block comment-block))
         (-let* ((block-begin (plist-get (car (cdr el)) :begin))
                 (block-end (plist-get (car (cdr el)) :end))
+                (post-blank (plist-get (car (cdr el)) :post-blank))
                 ;; we want 1 line after begin and 2 before end
                 (begin (save-excursion
                          (goto-char block-begin)
@@ -1037,7 +1038,10 @@ and the pr number, separated by /. Like this: de-tv/69"
                          (point)))
                 (end (save-excursion
                        (goto-char block-end)
-                       (-dotimes 3 #'previous-line)
+                       (previous-line
+                        (+ 1 post-blank (s-count-matches "\n" (thing-at-point 'line t))))
+                       (when (string-match "^\\#\\+end_" (thing-at-point 'line t))
+                         (previous-line))
                        (if (< (point) begin)
                            (goto-char begin))
                        (end-of-line)
