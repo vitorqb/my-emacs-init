@@ -223,11 +223,17 @@
   (defhydra my/buffer-hydra (:color blue)
     "An hydra for buffer-related functionalities!\n"
     ("g" #'push-mark-and-avy-goto-char "Avy go to char (tree)\n")
-    ("h" #'highlight-symbol-at-point "Highlights symbol at point.\n")
-    ("r" #'my/highligh-region "Highlights selected phrase\n")
+    ("r" #'rename-buffer "Rename buffer\n")
     ("l" #'goto-line "Go to a specific line\n")
     ("o" #'my/occur-symbol-at-point "Occur with current symbol.\n")
     ("p" #'myutils/copy-file-path-to-clipboard "Copy file path.\n")))
+
+(defun my/setup-hydra/highlight-hydra ()
+  (defhydra my/highlight-hydra (:color blue)
+    "An hydra for highlighting things\n"
+    ("h" #'highlight-symbol-at-point "Highlights symbol at point.\n")
+    ("r" #'my/highligh-region "Highlights selected region.\n")
+    ("p" #'highlight-phrase "Highlights phrase.\n")))
 
 ;; Adds rename buffer to mfcs
 (mfcs-add-command :description "Buffer Rename Buffer" :command #'rename-buffer)
@@ -898,6 +904,7 @@ and the pr number, separated by /. Like this: de-tv/69"
   (my/setup-hydra/register-hydra)
   (my/setup-hydra/org-hydra)
   (my/setup-hydra/buffer-hydra)
+  (my/setup-hydra/highlight-hydra)
 
   (defhydra my/ag-hydra (:color blue)
     "An hydra for ag!\n"
@@ -912,6 +919,7 @@ and the pr number, separated by /. Like this: de-tv/69"
     ("d" #'my-show-definitions "Show definitions\n")
     ("e" #'my/eval-elisp-hydra/body "Evaluate Elisp hydra\n")
     ("f" #'my/files-hydra/body "Files hydra!\n")
+    ("h" #'my/highlight-hydra/body "Highligh hydra!\n")
     ("i" #'counsel-imenu "Imenu (find definitions)!\n")
     ("j" #'my/journal-hydra/body "Hydra for org-journal\n")
     ("r" #'my/projectile-hydra/body "Projectile hydra \n")
