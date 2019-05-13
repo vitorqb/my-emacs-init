@@ -658,6 +658,11 @@ and the pr number, separated by /. Like this: de-tv/69"
     ("p" #'my/install-elpy-pip-requirements "Install elpy pip dependencies\n")
     ("w" #'my/which-python "Which python")))
 
+;; Adds commans do mfcs
+(mfcs-add-command
+ :description "Python Deactivate Venv [pyvenv-deactivate] [Deactivate Python]"
+ :command #'pyvenv-deactivate)
+
 
 ;; -----------------------------------------------------------------------------
 ;; Scala
