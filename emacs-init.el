@@ -648,7 +648,7 @@ and the pr number, separated by /. Like this: de-tv/69"
 
 (defun my/which-python ()
   (interactive)
-  (async-shell-command "bash -x -c 'which python'"))
+  (myutils/call-shell-command "bash -x -c 'which python'"))
 
 (defun my/setup-hydra/python-hydra ()
   (defhydra my/python-hydra (:color blue)
