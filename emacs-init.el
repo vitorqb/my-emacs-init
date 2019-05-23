@@ -101,10 +101,10 @@
 (set-frame-font (format "Hack %s" my-font-size) nil t)
 
 ;; Choose theme
-(use-package distinguished-theme
+(use-package gruvbox-theme
   :ensure t
   :no-require t
-  :config (load-theme 'distinguished t))
+  :config (load-theme 'gruvbox-dark-hard t))
 
 ;; Highlight parenthesis
 (setq show-paren-delay 0)
