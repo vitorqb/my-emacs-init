@@ -116,11 +116,17 @@
 (if (version< emacs-version "26.1")
     (global-linum-mode 1)
   (global-display-line-numbers-mode))
+
+(defun my/disable-linum ()
+  "Disables linum or line-numbers, depending on emacs version"
+  (if (version< emacs-version "26.1")
+      (linum-mode -1)
+    (display-line-numbers-mode -1)))
+
 (column-number-mode)
 
 ;; Don't use tabs
 (setq-default indent-tabs-mode nil)
-
 
 ;; -----------------------------------------------------------------------------
 ;; Compilation and processes
@@ -129,10 +135,7 @@
 
 ;; Don't use linum-mode in compilation buffers
 (dolist (hook '(compilation-mode-hook comint-mode-hook))
-  (add-hook hook (lambda () (interactive)
-                   (if (version< emacs-version "26.1")
-                       (linum-mode -1)
-                     (display-line-numbers-mode -1)))))
+  (add-hook hook #'my/disable-linum))
 
 (defun my/copy-region-to-compile (beg end)
   "Set's compile-command to the text on the currently selected region"
@@ -511,11 +514,7 @@ and the pr number, separated by /. Like this: de-tv/69"
     (setq nrepl-log-messages t)
     (define-key cider-mode-map (kbd "C-c C-o") #'myutils/clojure-occur-def)
     ;; Don's use linum mode on repl
-    (add-hook 'cider-repl-mode-hook
-              (lambda ()
-                (linum-mode -1)
-                (if (not (version<= emacs-version "26.1"))
-                    (display-line-numbers-mode -1))))
+    (add-hook 'cider-repl-mode-hook #'my/disable-linum)
 
     ;; Select a bunch of company backends
     (add-hook 'cider-mode-hook
