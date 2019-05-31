@@ -519,7 +519,12 @@ and the pr number, separated by /. Like this: de-tv/69"
   :config )
 
 ;; For refactoring
-(use-package clj-refactor :ensure)
+(use-package clj-refactor :ensure
+  :config (progn
+            ;; Let's put a more usefull test import for cljs
+            (setq-default cljr-cljs-clojure-test-declaration
+                  (concat "[cljs.test :refer-macros [is are"
+                          " deftest testing use-fixtures async]]"))))
 
 (use-package cider
   :ensure
