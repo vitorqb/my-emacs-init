@@ -358,6 +358,12 @@
       (car)
       (->> (funcall (if arg #'find-file-other-window #'find-file)))))
 
+(defun my/org-journal-search-regexp ()
+  "A terrible hack to call orj-journal-function with regexps."
+  (interactive)
+  (letf (((symbol-function 'search-forward) #'search-forward-regexp))
+    (call-interactively #'org-journal-search)))
+
 ;; Org Hydra configuration
 (defun my/setup-hydra/journal-hydra ()
   (defhydra my/journal-hydra (:color blue)
@@ -373,7 +379,8 @@
              (call-interactively #'my-org-journal-find-last-file)))
      "Open most recent file new window\n")
     ("p" #'org-journal-open-previous-entry "Previous entry\n")
-    ("s" #'org-journal-search "Search\n")))
+    ("s" #'org-journal-search "Search\n")
+    ("r" #'my/org-journal-search-regexp "Regexp Search")))
 
 ;; Adds jira as a link to org
 (progn
