@@ -3,7 +3,7 @@
 # If an argument is passed, clones to that directory. Defaults to
 # ~/.emacs.d/other/
 
-DEST=${1:-"~/.emacs.d/other/"}
+DEST=${1:-~/.emacs.d/other/}
 
 function extract_name_from_row() {
     echo "$1" | grep -oP '^.+\s' | tr -d '[:space:]'
