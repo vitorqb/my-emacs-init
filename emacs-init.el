@@ -99,7 +99,8 @@
 
 ;; Choose font
 ;; https://github.com/source-foundry/Hack
-(set-frame-font (format "Hack %s" my-font-size) nil t)
+;; This way of setting fonts works both for emacsclient and emacs.
+(setq default-frame-alist `((font . ,(format "Hack %s" my-font-size))))
 
 ;; Choose theme
 (use-package gruvbox-theme
