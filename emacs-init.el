@@ -64,6 +64,7 @@
 (use-package dash :ensure)
 (use-package dash-functional :ensure)
 (use-package s :ensure)
+(use-package ivy :ensure)
 
 ;; mylisputils is mandatory requirement
 (add-custom-lib-to-load-path "mylisputils")
@@ -237,6 +238,7 @@
 (defun my/setup-hydra/buffer-hydra ()
   (defhydra my/buffer-hydra (:color blue)
     "An hydra for buffer-related functionalities!\n"
+    ("c" #'myutils/copy-buffer-contents "Copy buffer contents.\n")
     ("g" #'push-mark-and-avy-goto-char "Avy go to char (tree)\n")
     ("r" #'rename-buffer "Rename buffer\n")
     ("l" #'goto-line "Go to a specific line\n")
