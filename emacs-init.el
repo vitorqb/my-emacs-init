@@ -5,6 +5,7 @@
 ;; and then we load a file ~/config/emacs_init.el, hoping that this file will
 ;; customize any variable it needs to customize.
 (defvar my-font-size 14 "The default font size used.")
+(defvar my-font-name nil "The name for the font")
 (defvar my-current-profile :home
   (concat "A profile that can be used to customize your computer-specific settings."
           "for example: :work or :home"))
@@ -100,7 +101,8 @@
 ;; Choose font
 ;; https://github.com/source-foundry/Hack
 ;; This way of setting fonts works both for emacsclient and emacs.
-(setq default-frame-alist `((font . ,(format "Hack %s" my-font-size))))
+(when (and my-font-size my-font-name)
+  (setq default-frame-alist `((font . ,(format "%s %s" my-font-name my-font-size)))))
 
 ;; Choose theme
 (use-package gruvbox-theme
