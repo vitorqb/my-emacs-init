@@ -95,7 +95,7 @@
 ;; -----------------------------------------------------------------------------
 ;; Don't show menu, scroll, toolbar
 (menu-bar-mode -1)
-(scroll-bar-mode -1)
+(custom-set-variables '(scroll-bar-mode nil))
 (tool-bar-mode -1)
 
 ;; Choose font
