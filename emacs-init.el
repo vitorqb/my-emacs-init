@@ -74,6 +74,8 @@
 ;; my-show-definitions as well
 (add-custom-lib-to-load-path "my-show-definitions")
 (use-package my-show-definitions)
+;; Clean the buffer created using myutils/clean-buffers
+(add-to-list 'myutils/clean-buffers-names-regexs "\\*MyShowDefinitions\\*")
 
 ;; my-fuzzy-cmd-selector as well
 (add-custom-lib-to-load-path "my-fuzzy-cmd-selector")
