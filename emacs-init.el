@@ -711,9 +711,11 @@ and the pr number, separated by /. Like this: de-tv/69"
   :pin melpa-stable)
 
 (use-package sbt-mode
+  :ensure t
   :pin melpa-stable)
 
 (use-package scala-mode
+  :ensure t
   :pin melpa-stable)
 
 ;; -----------------------------------------------------------------------------
