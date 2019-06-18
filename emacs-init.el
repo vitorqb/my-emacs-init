@@ -330,9 +330,7 @@
 
 ;; Journal configuration
 (use-package org-journal
-  ;; !!!! TODO -> We are using the git version because of a known bug
-  ;; https://github.com/bastibe/org-journal/issues/146
-  :load-path "~/git-others/org-journal"
+  :ensure
   :config
   (progn
     (custom-set-variables `(org-journal-dir ,my-journal-dir))
