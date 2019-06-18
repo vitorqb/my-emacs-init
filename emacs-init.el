@@ -1170,6 +1170,12 @@ and the pr number, separated by /. Like this: de-tv/69"
       browse-url-firefox-new-window-is-tab t)
 
 ;; -----------------------------------------------------------------------------
+;; C Sharp
+;; -----------------------------------------------------------------------------
+(use-package omnisharp :ensure)
+(use-package csharp-mode :ensure)
+
+;; -----------------------------------------------------------------------------
 ;; Computer specific hooks
 ;; -----------------------------------------------------------------------------
 ;; Tries to load computer-specific hooks
