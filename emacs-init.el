@@ -511,13 +511,24 @@ and the pr number, separated by /. Like this: de-tv/69"
 (setq intero-package-version "0.1.32")
 
 ;; -----------------------------------------------------------------------------
+;; Lispy
+;; -----------------------------------------------------------------------------
+(use-package lispy
+  :load-path "/home/vbarbosa/tmp-git/lispy/")
+
+;; -----------------------------------------------------------------------------
 ;; Clojure
 ;; -----------------------------------------------------------------------------
-(use-package clojure-mode :ensure
+(use-package clojure-mode
+  :ensure
+  :after (lispy)
   :config (progn
             ;; Use 1 indent for match macro
             (put-clojure-indent 'match 1)
-            (add-hook 'clojure-mode-hook #'yas-minor-mode-on)))
+            (add-hook 'clojurescript-mode-hook #'yas-minor-mode-on)
+            (add-hook 'clojurescript-mode-hook #'lispy-mode)
+            (add-hook 'clojure-mode-hook #'yas-minor-mode-on)
+            (add-hook 'clojure-mode-hook #'lispy-mode)))
 
 (use-package clojure-mode-extra-font-locking
   :ensure
