@@ -9,11 +9,12 @@ Also, I still have some internal dependencies (elisp files) that I can
 not publish, so not 100% of this file will run everywhere. Let me know
 if you are curious about something in particular.
 
-Also, this init file depends on another three personal libraries,
+Also, this init file depends on another four personal libraries,
 published in https://github.com/vitorqb/mylisputils, in
-https://github.com/vitorqb/my-show-definitions and
-https://github.com/vitorqb/my-fuzzy-cmd-selector. Be sure to have then
-in your load path.
+https://github.com/vitorqb/my-show-definitions, in
+https://github.com/vitorqb/my-fuzzy-cmd-selector and in
+https://github.com/vitorqb/orgext. Be sure to have then in your load
+path (see [[*Setting up][Setting up]]).
 
 ** About
 
