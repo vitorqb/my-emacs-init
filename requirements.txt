@@ -1,3 +1,4 @@
 my-fuzzy-cmd-selector==0.0.2
 my-show-definitions==0.0.2
-mylisputils==0.2.0
+mylisputils==0.3.0
+orgext==0.1.0

@@ -248,7 +248,8 @@
     ("r" #'rename-buffer "Rename buffer\n")
     ("l" #'goto-line "Go to a specific line\n")
     ("o" #'my/occur-symbol-at-point "Occur with current symbol.\n")
-    ("p" #'myutils/copy-file-path-to-clipboard "Copy file path.\n")))
+    ("p" #'myutils/copy-file-path-to-clipboard "Copy file path.\n")
+    ("P" #'myutils/copy-file-path-from-other-window-to-clipboard "Copy file path (other window)\n")))
 
 (defun my/setup-hydra/highlight-hydra ()
   (defhydra my/highlight-hydra (:color blue)
