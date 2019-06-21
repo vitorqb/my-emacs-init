@@ -550,6 +550,7 @@ and the pr number, separated by /. Like this: de-tv/69"
   (progn
     (setq nrepl-log-messages t)
     (define-key cider-mode-map (kbd "C-c C-o") #'myutils/clojure-occur-def)
+    (define-key cider-mode-map (kbd "C-c C-f") nil)
     ;; Don's use linum mode on repl
     (add-hook 'cider-repl-mode-hook #'my/disable-linum)
 
