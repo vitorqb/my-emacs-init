@@ -26,9 +26,12 @@
 (defvar my/user-temp-directory "~/mytmp"
   "A directory used to save temporary files.")
 
+;; Saves the file for the modules directory
+(defvar my/path-to-modules-dir
+  (concat (file-name-directory load-file-name) "modules"))
+
 ;; Loads the config
 (load (expand-file-name "~/.config/emacs_init/config.el") t)
-
 
 ;; -----------------------------------------------------------------------------
 ;; Packages and load settings
@@ -95,6 +98,27 @@
      (not (file-directory-p my/user-temp-directory))
      (progn (mkdir my/user-temp-directory t)
             (message "Created %s" my/user-temp-directory)))
+
+;; -----------------------------------------------------------------------------
+;; Emacs Init Modules
+;; -----------------------------------------------------------------------------
+(defun my/load-module (file-name)
+  "Loads a module file."
+  (message "Loading module %s" file-name)
+  (load (concat my/path-to-modules-dir "/" file-name)))
+
+(defmacro my/defmodule (module-name)
+  "Returns a `defun` to load a module called module-name."
+  (-let* ((module-name-str (symbol-name module-name))
+          (load-module-fn-name (->> module-name-str
+                                    (concat "emacs-init-load-module-")
+                                    intern))
+          (load-module-fn-docstring (concat "Loads module " module-name-str))
+          (load-module-file-name (concat module-name-str ".el")))
+    `(defun ,load-module-fn-name ()
+       ,load-module-fn-docstring
+       (interactive)
+       (my/load-module ,load-module-file-name))))
 
 ;; ------------------------------------------------------------------------------
 ;; Global Appearence
@@ -227,6 +251,9 @@
     ("n" #'flymake-goto-next-error "Next error\n")
     ("p" #'flymake-goto-prev-error "Prev error\n")
     ("d" #'flymake-show-diagnostics-buffer "Diagnostic buffer\n")))
+
+;; We use compilation a lot and we don't want flymake to be prevented from running
+(setq-default flymake-compilation-prevents-syntax-check nil)
 
 ;; -----------------------------------------------------------------------------
 ;; Buffer and buffer contents manipulation
@@ -388,6 +415,7 @@
     ("s" #'org-journal-search "Search\n")
     ("r" #'my/org-journal-search-regexp "Regexp Search")))
 
+;; !!!! TODO -> Move to orgext
 ;; Adds jira as a link to org
 (progn
   (defun org-jira-open (ticket)
@@ -430,22 +458,6 @@ and the pr number, separated by /. Like this: de-tv/69"
 (mfcs-add-command
  :description "Org Toggle Link Display [Display Links Toggle Org]"
  :command #'org-toggle-link-display)
-
-;; -----------------------------------------------------------------------------
-;; Latex and AucTex
-;; -----------------------------------------------------------------------------
-;; Auctex is a pain to install using use-package, so we don't
-(defun my-latex-add-symbols ()
-  "Add some symbols to Latex. Use on TeX-add-style-hook"
-  (TeX-add-symbols
-   '("frametitle" 1)
-   '("framesubtitle" 1)))
-
-(add-hook 'TeX-mode-hook 'my-latex-add-symbols)
-(add-hook 'LaTeX-mode-hook 'jas-minor-mode-on)
-
-;; This allows auctex to recognize the \usepackage and \documentclass
-(setq TeX-parse-self t)
 
 ;; -----------------------------------------------------------------------------
 ;; Git Magit
@@ -498,19 +510,6 @@ and the pr number, separated by /. Like this: de-tv/69"
     ("Z" (lambda () (interactive) (fzf/start "~"))
      "Fuzzy find at home\n")))
 
-
-;; -----------------------------------------------------------------------------
-;; Haskell
-;; -----------------------------------------------------------------------------
-(use-package intero :ensure)
-(use-package haskell-mode
-  :ensure
-  :after intero
-  :hook ((intero-mode . (lambda () (setq flycheck-display-errors-delay 0.3)))))
-
-(intero-global-mode 1)
-;; Use most recent version
-(setq intero-package-version "0.1.32")
 
 ;; -----------------------------------------------------------------------------
 ;; Lispy
@@ -775,12 +774,6 @@ and the pr number, separated by /. Like this: de-tv/69"
 (use-package mustache :ensure)
 
 ;; -----------------------------------------------------------------------------
-;; Flymake
-;; -----------------------------------------------------------------------------
-;; We use compilation a lot and we don't want flymake to be prevented from running
-(setq-default flymake-compilation-prevents-syntax-check nil)
-
-;; -----------------------------------------------------------------------------
 ;; Web Development
 ;; -----------------------------------------------------------------------------
 (use-package web-mode :ensure
@@ -788,70 +781,6 @@ and the pr number, separated by /. Like this: de-tv/69"
   (progn
     (dolist (regxp (list "\\.html?\\'" "\\.css?\\'"))
       (add-to-list 'auto-mode-alist (cons regxp 'web-mode)))))
-
-;;
-;; js2-mode for javascript
-;;
-(defun my/add-jest-errors-to-compilation-regexp ()
-  "Make compilation aware of how to find the path to jest errors"
-  (interactive)
-  (push 'npm-jest-errors compilation-error-regexp-alist)
-  (push '(npm-jest-errors
-          "^[ ]*at.*[ ](?\\([^:]+\\):\\([0-9]+\\):\\([0-9]+\\)" 1 2)
-        compilation-error-regexp-alist-alist))
-
-(use-package js2-mode
-  :ensure
-  :after (:all flycheck)
-  :config
-  (progn
-    (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-    (dolist (fun (list #'js2-imenu-extras-mode #'yas-minor-mode-on
-                       #'flymake-mode-on))
-      (add-hook 'js2-mode-hook fun))
-    ;; Force C-c d to duplicate buffer, overriding existing bind
-    (define-key js2-mode-map (kbd "C-c d") #'myutils/duplicate-buffer)
-    ;; Same with C-c C-j
-    (define-key js2-mode-map (kbd "C-c C-j") #'org-journal-new-entry)
-    ;; Bound yas to shit + TAB to avoid conflict
-    (define-key js2-mode-map (kbd "<backtab>") 'yas-expand)
-    (setq js2-basic-offset 2)
-    (my/add-jest-errors-to-compilation-regexp)
-    ;; Also use the derived mode for jsx
-    (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js2-jsx-mode))
-    (add-to-list 'interpreter-mode-alist '("node" . js2-jsx-mode))
-    ;; Adds usefull commands for js2 to mfcs
-    (mfcs-add-command
-     :description "Npm Js Javascript Run Test"
-     :command
-     (lambda () (interactive)
-       (-let [cmd (format "cd %s && npm run test " (projectile-project-root))]
-         (myutils/with-compile-opts "*NpmTest*" cmd
-           (call-interactively #'compile)))))
-    (mfcs-add-command
-     :description "Npm Js Javascript Start"
-     :command
-     (lambda () (interactive)
-       (-let [cmd (format "cd %s && npm run start " (projectile-project-root))]
-         (myutils/with-compile-opts "*NpmStart*" cmd
-           (call-interactively #'compile)))))))
-
-;; 
-;; For development with nodejs
-;; 
-(use-package indium
-  :ensure
-  :after js2-mode
-  :init   (add-hook 'js2-mode-hook #'indium-interaction-mode)
-  ;; Force C-c d to duplicate buffer, overriding existing bind
-  :config
-  (progn
-    (define-key indium-interaction-mode-map (kbd "C-c d") #'myutils/duplicate-buffer)))
-
-;; 
-;; For jinaj2 template engine
-;; 
-(use-package jinja2-mode :ensure)
 
 ;; -----------------------------------------------------------------------------
 ;; Ansi colors
@@ -879,6 +808,7 @@ and the pr number, separated by /. Like this: de-tv/69"
   (setq inhibit-startup-screen t)		;Don't show me the ugly emacs start
   (add-hook 'after-init-hook
 	    (lambda () (load my/custom-welcome-script))))
+
 
 ;; -----------------------------------------------------------------------------
 ;; Elisp and evaluation
@@ -929,14 +859,6 @@ and the pr number, separated by /. Like this: de-tv/69"
      "Toggle between implementation and test\n")))
 
 ;; -----------------------------------------------------------------------------
-;; fzf
-;; -----------------------------------------------------------------------------
-;; Demands fzf to be installed (pacman -S fzf)
-(use-package fzf
-  :ensure
-  :bind (("C-c C-v" . #'fzf-projectile)))
-
-;; -----------------------------------------------------------------------------
 ;; My Hydra!
 ;; -----------------------------------------------------------------------------
 (defun my/hydras-setup ()
@@ -945,7 +867,6 @@ and the pr number, separated by /. Like this: de-tv/69"
   (my/setup-hydra/typing-hydra)
   (my/setup-hydra/eval-elisp-hydra)
   (my/setup-hydra/files-hydra)
-  (my/setup-hydra/python-hydra)
   (my/setup-hydra/shell-hydra)
   (my/setup-hydra/projectile-hydra)
   (my/setup-hydra/flymake-hydra)
@@ -976,8 +897,7 @@ and the pr number, separated by /. Like this: de-tv/69"
     ("o" #'my/org-hydra/body "Org hydra\n")
     ("s" #'my/shell-hydra/body "A shell, sh, bash hydra!.\n")
     ("k" #'my/compile-hydra/body "Kompile dude\n")
-    ("t" #'my/typing-hydra/body "Ttping hydra!\n")
-    ("y" #'my/python-hydra/body "pYthon Hydra!\n")))
+    ("t" #'my/typing-hydra/body "Ttping hydra!\n")))
 
 (use-package hydra :ensure
   :config (my/hydras-setup)
@@ -1020,7 +940,6 @@ and the pr number, separated by /. Like this: de-tv/69"
   :after ivy
   :bind (("C-s" . swiper)
          ("C-r" . swiper)))
-
 
 ;; -----------------------------------------------------------------------------
 ;; Connection/networks/internet utils
@@ -1126,11 +1045,6 @@ and the pr number, separated by /. Like this: de-tv/69"
 (use-package yaml-mode :ensure)
 
 ;; -----------------------------------------------------------------------------
-;; Kotlin
-;; -----------------------------------------------------------------------------
-(use-package kotlin-mode :ensure)
-
-;; -----------------------------------------------------------------------------
 ;; Flyspell
 ;; -----------------------------------------------------------------------------
 ;; We use C-., so lets make flyspell forget about it
@@ -1146,10 +1060,18 @@ and the pr number, separated by /. Like this: de-tv/69"
       browse-url-firefox-new-window-is-tab t)
 
 ;; -----------------------------------------------------------------------------
-;; C Sharp
+;; Language specific modules
 ;; -----------------------------------------------------------------------------
-(use-package omnisharp :ensure)
-(use-package csharp-mode :ensure)
+(my/defmodule clojure)
+(my/defmodule go)
+(my/defmodule haskell)
+(my/defmodule latex-and-auctex)
+(my/defmodule typescript)
+(my/defmodule python)
+(my/defmodule scala)
+(my/defmodule elm)
+(my/defmodule javascript)
+(my/defmodule kotlin)
 
 ;; -----------------------------------------------------------------------------
 ;; Computer specific hooks
