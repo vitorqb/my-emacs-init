@@ -83,6 +83,10 @@
   :config (progn
             (cl-pushnew '(:mfcs-call . 20) ivy-height-alist)))
 
+;; And orgext
+(add-custom-lib-to-load-path "orgext")
+(use-package orgext)
+
 ;; We like recursion
 (setq max-lisp-eval-depth (* 32000))
 
@@ -158,20 +162,13 @@
   (interactive "r")
   (setq compile-command (buffer-substring-no-properties beg end)))
 
-(defun my/org-copy-block-contents-to-compile ()
-  "Set's compile-command to the text inside the org block at point"
-  (interactive)
-  (save-excursion
-    (my/mark-org-example-block)
-    (my/copy-region-to-compile (region-beginning) (- (region-end) 1))
-    (deactivate-mark)))
-
 (defun my/setup-hydra/compile-hydra ()
   "Prepares an hydra for compilation mode."
   (defhydra my/compile-hydra (:color blue)
     "An hydra for compile!\n"
-    ("b" #'my/org-copy-block-contents-to-compile "Copies org block contents to compile\n"
-     :color pink)
+    ("b" #'orgext-copy-block-contents-to-compile-command
+         "Copies org block contents to compile\n"
+         :color pink)
     ("w" #'my/copy-region-to-compile "Copies current region to compile\n" :color pink)
     ("k" #'compile "Simply compile!\n")
     ("r" #'recompile "REEEcompile\n")
@@ -420,7 +417,8 @@ and the pr number, separated by /. Like this: de-tv/69"
 
 (defun my/setup-hydra/org-hydra ()
   (defhydra my/org-hydra (:color blue)
-    ("b" #'my/mark-org-example-block "Marks the entire block at point\n")
+    ("b" #'orgext-mark-block "Marks the entire block at point\n")
+    ("c" #'orgext-copy-block-from-above "Copies the above org block to point\n")
     ("l" #'org-store-link "Org store link\n")
     ("n" #'org-next-block "Jump to the next block\n" :color pink)
     ("p" #'org-previous-block "Jump to the previous block\n" :color pink)))
@@ -1078,35 +1076,6 @@ and the pr number, separated by /. Like this: de-tv/69"
   (call-interactively #'avy-goto-char))
 
 ;; Expand-region is the best package ever. We love it.
-(defun my/mark-org-example-block ()
-  "In org-mode, marks an example block at point (if any). 
-   Usefull with expand-region."
-  (interactive)
-  (-if-let (el (org-element-context))
-      (when (-any? (-partial #'equal (car el))
-                   '(example-block src-block verse-block quote-block comment-block))
-        (-let* ((block-begin (plist-get (car (cdr el)) :begin))
-                (block-end (plist-get (car (cdr el)) :end))
-                (post-blank (plist-get (car (cdr el)) :post-blank))
-                ;; we want 1 line after begin and 2 before end
-                (begin (save-excursion
-                         (goto-char block-begin)
-                         (next-line)
-                         (beginning-of-line)
-                         (point)))
-                (end (save-excursion
-                       (goto-char block-end)
-                       (previous-line
-                        (+ 1 post-blank (s-count-matches "\n" (thing-at-point 'line t))))
-                       (when (string-match "^\\#\\+end_" (thing-at-point 'line t))
-                         (previous-line))
-                       (if (< (point) begin)
-                           (goto-char begin))
-                       (end-of-line)
-                       (+ 1 (point)))))
-          (goto-char begin)
-          (set-mark end)))))
-
 (use-package expand-region
   :ensure
   :config (progn
@@ -1116,7 +1085,7 @@ and the pr number, separated by /. Like this: de-tv/69"
             (add-hook 'org-mode-hook
                       (lambda ()
                         (make-variable-buffer-local 'er/try-expand-list)
-                        (cl-pushnew #'my/mark-org-example-block er/try-expand-list)))))
+                        (cl-pushnew #'orgext-mark-block er/try-expand-list)))))
 
 ;; Edit ag and grep results
 (use-package wgrep
