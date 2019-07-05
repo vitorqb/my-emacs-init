@@ -449,7 +449,8 @@ and the pr number, separated by /. Like this: de-tv/69"
     ("c" #'orgext-copy-block-from-above "Copies the above org block to point\n")
     ("l" #'org-store-link "Org store link\n")
     ("n" #'org-next-block "Jump to the next block\n" :color pink)
-    ("p" #'org-previous-block "Jump to the previous block\n" :color pink)))
+    ("p" #'org-previous-block "Jump to the previous block\n" :color pink)
+    ("o" #'orgext-new-block-from-other-window "New block from other window\n")))
 
 ;; Adds org store link and toggle link to mfcs
 (mfcs-add-command
