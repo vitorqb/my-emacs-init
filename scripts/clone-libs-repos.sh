@@ -51,4 +51,5 @@ mylisputils           https://github.com/vitorqb/mylisputils.git
 my-show-definitions   https://github.com/vitorqb/my-show-definitions.git
 my-fuzzy-cmd-selector https://github.com/vitorqb/my-fuzzy-cmd-selector.git
 orgext                https://github.com/vitorqb/orgext.git
+lightlispy            https://github.com/vitorqb/lightlispy.git
 EOF

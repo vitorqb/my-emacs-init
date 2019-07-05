@@ -512,10 +512,14 @@ and the pr number, separated by /. Like this: de-tv/69"
 
 
 ;; -----------------------------------------------------------------------------
-;; Lispy
+;; (Light)Lispy
 ;; -----------------------------------------------------------------------------
-(use-package lispy
-  :load-path "/home/vbarbosa/tmp-git/lispy/")
+;; https://github.com/vitorqb/lightlispy
+(add-custom-lib-to-load-path "lightlispy")
+(use-package lightlispy
+  :config (progn
+            (add-hook 'emacs-lisp-mode-hook 'lightlispy-mode)
+            (defalias 'lispy-mode #'lightlispy-mode)))
 
 ;; -----------------------------------------------------------------------------
 ;; OpenWith
