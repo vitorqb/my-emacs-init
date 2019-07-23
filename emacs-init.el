@@ -9,9 +9,8 @@
 (defvar my-current-profile :home
   (concat "A profile that can be used to customize your computer-specific settings."
           "for example: :work or :home"))
-(defvar my-journal-dir "~/journal/" "Org Journal directory to use.")
 (defvar my/journal-files-dir-base "files"
-  (concat "A folder (relative to `my-journal-dir` unless it starts with '/') where"
+  (concat "A folder (relative to `org-journal-dir` unless it starts with '/') where"
           " to put files for the org-journal"))
 (defvar my/custom-libraries-folder "~/.emacs.d/other/"
   "A folder in where custom libraries will be searched")
@@ -374,14 +373,13 @@
   :ensure
   :config
   (progn
-    (custom-set-variables `(org-journal-dir ,my-journal-dir))
     (bind-key* "C-c C-j" #'org-journal-new-entry)
 
     (defun my/journal-files-dir ()
       "Returns the path to the journal directory responsible for holding files"
       (if (string= (substring my/journal-files-dir-base 0 1) "/")
           my/journal-files-dir-base
-        (myutils/concat-file my-journal-dir my/journal-files-dir-base)))
+        (myutils/concat-file org-journal-dir my/journal-files-dir-base)))
 
     (defun my/journal-find-file (arg)
       "Calls find-file inside the `journal-files-dir`"
