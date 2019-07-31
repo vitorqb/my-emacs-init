@@ -872,6 +872,7 @@ and the pr number, separated by /. Like this: de-tv/69"
 (my/defmodule kotlin)
 (my/defmodule fsharp)
 (my/defmodule csharp)
+(my/defmodule vue)
 
 ;; -----------------------------------------------------------------------------
 ;; Computer specific hooks
