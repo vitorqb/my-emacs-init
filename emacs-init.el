@@ -274,6 +274,7 @@
 ;; Buffer and buffer contents manipulation
 ;; -----------------------------------------------------------------------------
 (global-set-key (kbd "C-c d") #'myutils/duplicate-buffer)
+(global-set-key (kbd "C-\\") (lambda () (interactive) (switch-to-buffer (other-buffer))))
 
 (defun my/highligh-region (beg end)
   "Highlights text equal to the text between beg and end"
