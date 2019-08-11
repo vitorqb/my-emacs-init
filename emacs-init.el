@@ -724,15 +724,15 @@ and the pr number, separated by /. Like this: de-tv/69"
   (ivy-use-virtual-buffers t)
   :config (ivy-mode))
 
-(use-package ivy-rich
-  :ensure
-  :after ivy
-  :config
-  (ivy-rich-mode 1))
+;; (use-package ivy-rich
+;;   :ensure
+;;   :after ivy
+;;   :config
+;;   (ivy-rich-mode 1))
 
-(use-package ivy-hydra
-  :ensure
-  :after ivy)
+;; (use-package ivy-hydra
+;;   :ensure
+;;   :after ivy)
 
 (use-package swiper
   :ensure
