@@ -18,7 +18,8 @@
     (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
     (dolist (fun (list #'js2-imenu-extras-mode #'yas-minor-mode-on
                        #'flymake-mode-on))
-      (add-hook 'js2-mode-hook fun))
+      (add-hook 'js2-mode-hook fun)
+      (add-hook 'js-mode-hook fun))
     ;; Force C-c d to duplicate buffer, overriding existing bind
     (define-key js2-mode-map (kbd "C-c d") #'myutils/duplicate-buffer)
     ;; Same with C-c C-j
@@ -27,9 +28,15 @@
     (define-key js2-mode-map (kbd "<backtab>") 'yas-expand)
     (setq js2-basic-offset 2)
     (my/add-jest-errors-to-compilation-regexp)
+
     ;; Also use the derived mode for jsx
-    (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js2-jsx-mode))
+    ;; See https://github.com/mooz/js2-mode/blob/bb73461c2c7048d811b38e6b533a30fb5fdcea93/js2-mode.el#L57
+    (if (version< emacs-version "27")
+        (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js2-jsx-mode))
+      (add-hook 'js-mode-hook 'js2-minor-mode))
+    
     (add-to-list 'interpreter-mode-alist '("node" . js2-jsx-mode))
+
     ;; Adds usefull commands for js2 to mfcs
     (mfcs-add-command
      :description "Npm Js Javascript Run Test"
