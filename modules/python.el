@@ -21,7 +21,10 @@
 
     ;; By default, use flycheck.
     (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-    (add-hook 'elpy-mode-hook 'flycheck-mode)))
+    (add-hook 'elpy-mode-hook 'flycheck-mode)
+
+    ;; Don't use elpy-find-file (projectile-find-file is better)
+    (define-key elpy-mode-map (kbd "C-c C-f") nil)))
 
 (use-package hy-mode :ensure
   :config (add-to-list 'auto-mode-alist '("\\.hy\\'" . hy-mode)))
