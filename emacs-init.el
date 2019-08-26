@@ -83,11 +83,21 @@
 (use-package dash :ensure)
 (use-package dash-functional :ensure)
 (use-package s :ensure)
-(use-package ivy :ensure)
 
 ;; mylisputils is mandatory requirement
 (add-custom-lib-to-load-path "mylisputils")
 (use-package mylisputils)
+
+;; Ivy as well
+(use-package ivy
+  :ensure
+  :bind (("C-c C-r" . ivy-resume)
+         ("C-x B" . ivy-switch-buffer-other-window))
+  :custom
+  (ivy-count-format "(%d/%d) ")
+  (ivy-display-style 'fancy)
+  (ivy-use-virtual-buffers t)
+  :config (ivy-mode))
 
 ;; my-show-definitions as well
 (add-custom-lib-to-load-path "my-show-definitions")
@@ -706,23 +716,20 @@ and the pr number, separated by /. Like this: de-tv/69"
 ;; Ivy - Counsell - Swipe
 ;; -----------------------------------------------------------------------------
 ;; Ivy configuration from https://www.reddit.com/r/emacs/comments/910pga/tip_how_to_use_ivy_and_its_utilities_in_your/
+
+;; Notice we installed ivy up because it is a dep for other things.
+;; However, we configure it here (because it wasn't working thre)
+
 (use-package counsel
   :ensure
   :after ivy
   :config (counsel-mode)
-  :bind (("C-x C-f" . counsel-find-file)))
-
-(use-package ivy
-  :ensure
-  :defer 0.1
-  :diminish
-  :bind (("C-c C-r" . ivy-resume)
-         ("C-x B" . ivy-switch-buffer-other-window))
-  :custom
-  (ivy-count-format "(%d/%d) ")
-  (ivy-display-style 'fancy)
-  (ivy-use-virtual-buffers t)
-  :config (ivy-mode))
+  :bind (("C-x C-f" . counsel-find-file))
+  :config (progn
+            ;; Adds extra action for find-file
+            (ivy-add-actions
+             'counsel-find-file
+             '(("W" myutils/copy-relative-path "Copies relative path.")))))
 
 ;; (use-package ivy-rich
 ;;   :ensure
@@ -771,6 +778,7 @@ and the pr number, separated by /. Like this: de-tv/69"
 
 ;; Very cool search package!
 (use-package ag
+  :load-path "/home/vitor/mygit/ag.el/"
   :ensure
   :config
   (progn
