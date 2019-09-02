@@ -70,3 +70,18 @@
     (mfcs-add-command
      :description "Cider Jack In Clojurescript Cljs"
      :command #'cider-jack-in-cljs)))
+
+;; Misc functions
+(defun emacs-init-modules-clojure/map-with (str)
+  "Given a space-separated list of words, inserts a clojure map with keys and values
+   of those words."
+  (interactive "sEnter a space-separated list of symbols: ")
+  (->> str
+       (s-split "\\s-")
+       (-mapcat (lambda (x) (list (concat ":" x) x)))
+       (s-join " ")
+       insert))
+
+(mfcs-add-command
+ :description "Clojure insert map with keys and values [keys map insert clojure]"
+ :command #'emacs-init-modules-clojure/map-with)
