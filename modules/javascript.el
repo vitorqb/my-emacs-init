@@ -24,6 +24,11 @@
     (define-key js2-mode-map (kbd "C-c d") #'myutils/duplicate-buffer)
     ;; Same with C-c C-j
     (define-key js2-mode-map (kbd "C-c C-j") #'org-journal-new-entry)
+    ;; Use xref to find references. See http://docs.ctags.io/en/latest/ to generate
+    ;; the tags file.
+    (define-key js2-mode-map (kbd "M-.") #'xref-find-definitions)
+    (define-key js-mode-map (kbd "M-.") #'xref-find-definitions)
+
     ;; Bound yas to shit + TAB to avoid conflict
     (define-key js2-mode-map (kbd "<backtab>") 'yas-expand)
     (setq js2-basic-offset 2)
