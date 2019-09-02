@@ -24,6 +24,8 @@
   "If set, inhibit emacs default init and executes this script instead.")
 (defvar my/user-temp-directory "~/mytmp"
   "A directory used to save temporary files.")
+(defvar my/default-browser-cmd "firefox"
+  "The default command to open a browser.")
 
 ;; Saves the file for the modules directory
 (defvar my/path-to-modules-dir
@@ -368,11 +370,10 @@
 
 ;; Define custom apps to open files
 (setq org-file-apps
-      (quote
-       ((auto-mode . emacs)
-	("\\.mm\\'" . default)
-	("\\.x?html?\\'" . "firefox %s")
-	("\\.pdf\\'" . "evince %s"))))
+      `((auto-mode . emacs)
+        ("\\.mm\\'" . default)
+        ("\\.x?html?\\'" . ,(concat my/default-browser-cmd " %s"))
+        ("\\.pdf\\'" . "evince %s")))
 
 ;; Org Babel configuration
 (setq org-confirm-babel-evaluate nil)
@@ -558,10 +559,10 @@ and the pr number, separated by /. Like this: de-tv/69"
   (progn
     (openwith-mode 1)
     (setq openwith-associations
-	  '(("\\.pdf\\'" "evince" (file))
+	  `(("\\.pdf\\'" "evince" (file))
 	    ("\\.xls\\'" "libreoffice5.3" (file))
 	    ("\\.xlsx\\'" "libreoffice5.3" (file))
-	    ("\\.html\\'" "firefox" (file))
+	    ("\\.html\\'" ,my/default-browser-cmd (file))
 	    ("\\.\\(?:jp?g\\|png\\)\\'" "display" (file))
 	    ("\\.mp3\\'" "xmms" (file))))))
 
@@ -861,12 +862,17 @@ and the pr number, separated by /. Like this: de-tv/69"
   :config (progn (define-key flyspell-mode-map (kbd "C-.") nil)))
 
 ;; -----------------------------------------------------------------------------
-;; Browser (firefox)
+;; Browser
 ;; -----------------------------------------------------------------------------
-;; Use firefox for browsing!
-(setq browse-url-browser-function 'browse-url-firefox
-      browse-url-new-window-flag  t
-      browse-url-firefox-new-window-is-tab t)
+;; Use the default browser for browsing, if we know it
+(setq browse-url-new-window-flag t)
+(when (string= my/default-browser-cmd "firefox")
+  (setq browse-url-browser-function 'browse-url-firefox
+        browse-url-firefox-new-window-is-tab t))
+(when (or (string= my/default-browser-cmd "google-chrome-stable")
+          (string= my/default-browser-cmd "google-chrome"))
+  (setq browse-url-browser-function 'browse-url-chrome))
+
 
 ;; -----------------------------------------------------------------------------
 ;; Language specific modules
