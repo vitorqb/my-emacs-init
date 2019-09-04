@@ -26,6 +26,10 @@
   "A directory used to save temporary files.")
 (defvar my/default-browser-cmd "firefox"
   "The default command to open a browser.")
+(defvar my/tfs-work-item-url-prefix nil
+  "The url to visit a tfs work item. The id will be appended at the end.")
+(defvar my/tfs-pr-url-prefix nil
+  "The url to visit a tfs PR. The id will be appended at the end.")
 
 ;; Saves the file for the modules directory
 (defvar my/path-to-modules-dir
