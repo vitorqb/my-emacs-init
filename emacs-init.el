@@ -30,6 +30,8 @@
   "The url to visit a tfs work item. The id will be appended at the end.")
 (defvar my/tfs-pr-url-prefix nil
   "The url to visit a tfs PR. The id will be appended at the end.")
+(defvar my/tfs-commit-hash-prefix nil
+  "The url to visit a tfs commit. The id will be appended at the end.")
 
 ;; Saves the file for the modules directory
 (defvar my/path-to-modules-dir
