@@ -18,7 +18,11 @@
             ;; Let's put a more usefull test import for cljs
             (setq-default cljr-cljs-clojure-test-declaration
                   (concat "[cljs.test :refer-macros [is are"
-                          " deftest testing use-fixtures async]]"))))
+                          " deftest testing use-fixtures async]]"))
+            ;; And for clojure
+            (setq-default cljr-clojure-test-declaration
+                          (concat "[clojure.test :as t :refer [is are deftest testing"
+                                  " use-fixtures]]"))))
 
 (use-package cider
   :ensure
