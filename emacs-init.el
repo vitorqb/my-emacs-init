@@ -700,6 +700,14 @@ and the pr number, separated by /. Like this: de-tv/69"
     ("t" #'projectile-toggle-between-implementation-and-test
      "Toggle between implementation and test\n")))
 
+;; Adds create test file to mfcs
+(mfcs-add-command
+ :description "Projectile Create Test File For [File Test Create Projectile]"
+ :command (lambda () (interactive) (-> (current-buffer)
+                                       (buffer-file-name)
+                                       (projectile-create-test-file-for)
+                                       (find-file))))
+
 ;; -----------------------------------------------------------------------------
 ;; My Hydra!
 ;; -----------------------------------------------------------------------------
