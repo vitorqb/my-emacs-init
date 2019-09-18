@@ -686,7 +686,7 @@ and the pr number, separated by /. Like this: de-tv/69"
     (projectile-mode +1)
 
     ;; This one is on me
-    (define-key projectile-mode-map (kbd "C-c C-f") 'projectile-find-file)
+    (bind-key* "C-c C-f" 'projectile-find-file)
 
     ;; And use ivy (S2) for completion
     (setq projectile-completion-system 'ivy)))
