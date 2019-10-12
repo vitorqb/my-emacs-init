@@ -624,6 +624,13 @@ and the pr number, separated by /. Like this: de-tv/69"
     (dolist (regxp (list "\\.html?\\'" "\\.css?\\'"))
       (add-to-list 'auto-mode-alist (cons regxp 'web-mode)))))
 
+(use-package scss-mode :ensure
+  :init
+  (progn
+    (add-hook 'scss-mode-hook 'flymake-mode-on)
+    (setq scss-compile-at-save nil)
+    (add-to-list 'auto-mode-alist (cons "\\.scss?\\'" 'scss-mode))))
+
 ;; -----------------------------------------------------------------------------
 ;; Ansi colors
 ;; -----------------------------------------------------------------------------
