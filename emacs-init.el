@@ -537,27 +537,26 @@ and the pr number, separated by /. Like this: de-tv/69"
 (add-hook 'dired-mode-hook '(lambda () (dired-hide-details-mode t)))
 (setq dired-omit-mode t)
 
+(defun my/find-file-home ()
+  (interactive)
+  (counsel-find-file "~"))
+
+(defun find-file-my-temp-file (file-ext)
+  (interactive "sEnter a file extension: .")
+  (--> "%Y%m%d%H%M%S%3N"
+       (format-time-string it)
+       (myutils/concat-file my/user-temp-directory it)
+       (if (not (equal file-ext "")) (concat it "." file-ext) it)
+       (counsel-find-file it)))
+
 (defun my/setup-hydra/files-hydra ()
   "Defines an hydra to file manipulation."
-
-  (defun find-file-home ()
-    (interactive)
-    (-let [default-directory "~"]
-      (call-interactively #'counsel-find-file)))
-
-  (defun find-file-my-temp-file (file-ext)
-    (interactive "sEnter a file extension: .")
-    (--> "%Y%m%d%H%M%S%3N"
-         (format-time-string it)
-         (myutils/concat-file my/user-temp-directory it)
-         (if (not (equal file-ext "")) (concat it "." file-ext) it)
-         (counsel-find-file it)))
 
   (defhydra my/files-hydra (:color blue)
     "Manipulate files!"
     ("w" #'write-file "Write file to...\n")
     ("f" #'counsel-find-file "Find file\n")
-    ("h" #'find-file-home "Find file at home\n")
+    ("h" #'my/find-file-home "Find file at home\n")
     ("p" #'projectile-find-file "Projectile find file\n")
     ("P" #'projectile-find-file-other-window "Projectile find file other window\n")
     ("t" #'find-file-my-temp-file "New temporary file\n")
