@@ -524,7 +524,10 @@ and the pr number, separated by /. Like this: de-tv/69"
 ;; Magit: Love is in the air S2
 (use-package magit
   :ensure
-  :bind ("C-c m" . magit-status))
+  :bind ("C-c m" . magit-status)
+  :config (progn
+           (custom-set-variables
+            '(magit-diff-refine-hunk 'all))))
 
 ;; Let us use magit links in org mode
 (use-package orgit :ensure t)
