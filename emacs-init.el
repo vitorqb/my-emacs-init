@@ -249,7 +249,7 @@
 ;; Typing shortcuts functions
 ;; -----------------------------------------------------------------------------
 (global-set-key (kbd "C-c f") 'myutils/fill-to-end)
-(global-set-key (kbd "<f12>") 'myutils/insert-date)
+(global-set-key (kbd "<f12>") 'myutils/insert-formated-date)
 (global-set-key (kbd "C-c u") 'myutils/remove-whitespace-and-newline)
 (global-set-key (kbd "C-~") 'delete-trailing-whitespace)
 (global-set-key (kbd "<f11>") (myutils/li (insert (projectile-project-root))))
@@ -283,7 +283,7 @@
     "An hydra for typing shortcuts!\n"
     ("c" #'myutils/remove-whitespace-and-newline
      "Clean - remove whitesapces and newlines.\n")
-    ("d" #'myutils/insert-date "Insert the date.\n")
+    ("d" #'myutils/insert-formated-date "Insert the date.\n")
     ("e" #'myutils/remove-with-elipsis "Remove with elipsis.\n" :color pink)
     ("f" #'myutils/fill-to-end "Fill to end with '-'.\n")
     ("l" #'copy-line "Copies current line down.\n")
