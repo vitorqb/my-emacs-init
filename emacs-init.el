@@ -140,7 +140,8 @@
 (defun my/load-module (file-name)
   "Loads a module file."
   (message "Loading module %s" file-name)
-  (load (concat my/path-to-modules-dir "/" file-name)))
+  (load (concat my/path-to-modules-dir "/" file-name))
+  (yas-reload-all))
 
 (defmacro my/defmodule (module-name)
   "Returns a `defun` to load a module called module-name."
