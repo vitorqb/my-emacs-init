@@ -253,6 +253,8 @@
 (global-set-key (kbd "C-c u") 'myutils/remove-whitespace-and-newline)
 (global-set-key (kbd "C-~") 'delete-trailing-whitespace)
 (global-set-key (kbd "<f11>") (myutils/li (insert (projectile-project-root))))
+(global-set-key (kbd "<f10>") (myutils/li (kill-buffer (current-buffer))))
+(global-set-key (kbd "<S-f10>") #'menu-bar-open)
 (global-set-key (kbd "C-c C-/") 'other-window)
 
 ;; Copied from emacs wiki
