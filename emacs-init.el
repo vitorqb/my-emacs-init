@@ -125,6 +125,10 @@
 (add-custom-lib-to-load-path "orgext")
 (use-package orgext)
 
+;; And compile-transient
+(add-custom-lib-to-load-path "compile-transient")
+(use-package compile-transient)
+
 ;; We like recursion
 (setq max-lisp-eval-depth (* 32000))
 
@@ -216,24 +220,6 @@
 ;; Don't use linum-mode in compilation buffers
 (dolist (hook '(compilation-mode-hook comint-mode-hook))
   (add-hook hook #'my/disable-linum))
-
-(defun my/copy-region-to-compile (beg end)
-  "Set's compile-command to the text on the currently selected region"
-  (interactive "r")
-  (setq compile-command (buffer-substring-no-properties beg end)))
-
-(defun my/setup-hydra/compile-hydra ()
-  "Prepares an hydra for compilation mode."
-  (defhydra my/compile-hydra (:color blue)
-    "An hydra for compile!\n"
-    ("b" #'orgext-copy-block-contents-to-compile-command
-         "Copies org block contents to compile\n"
-         :color pink)
-    ("w" #'my/copy-region-to-compile "Copies current region to compile\n" :color pink)
-    ("k" #'compile "Simply compile!\n")
-    ("r" #'recompile "REEEcompile\n")
-    ("i" (lambda () (interactive) (execute-extended-command '(4) "compile"))
-     "Compile interactively (comint)!\n")))
 
 ;; -----------------------------------------------------------------------------
 ;; Shell
@@ -725,7 +711,6 @@ and the pr number, separated by /. Like this: de-tv/69"
 ;; -----------------------------------------------------------------------------
 (defun my/hydras-setup ()
   " My custom setup for hydras "
-  (my/setup-hydra/compile-hydra)
   (my/setup-hydra/typing-hydra)
   (my/setup-hydra/eval-elisp-hydra)
   (my/setup-hydra/files-hydra)
@@ -758,7 +743,7 @@ and the pr number, separated by /. Like this: de-tv/69"
     ("m" #'my/flymake-hydra/body "Flymake hydra\n")
     ("o" #'my/org-hydra/body "Org hydra\n")
     ("s" #'my/shell-hydra/body "A shell, sh, bash hydra!.\n")
-    ("k" #'my/compile-hydra/body "Kompile dude\n")
+    ("k" #'compile-transient "Kompile dude\n")
     ("t" #'my/typing-hydra/body "Ttping hydra!\n")))
 
 (use-package hydra :ensure
