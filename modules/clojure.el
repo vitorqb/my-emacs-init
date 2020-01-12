@@ -73,7 +73,11 @@
 
     (mfcs-add-command
      :description "Cider Jack In Clojurescript Cljs"
-     :command #'cider-jack-in-cljs)))
+     :command #'cider-jack-in-cljs)
+
+    (mfcs-add-command
+     :description "Cider Jack In"
+     :command #'cider-jack-in)))
 
 ;; Misc functions
 (defun emacs-init-modules-clojure/map-with (str)
