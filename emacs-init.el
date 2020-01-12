@@ -747,7 +747,7 @@
 
 ;; Very cool search package!
 (use-package ag
-  :load-path "/home/vitor/mygit/ag.el/"
+  :load-path (lambda () (get-dep-library-load-path "ag"))
   :ensure
   :config
   (progn
