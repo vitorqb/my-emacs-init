@@ -1,14 +1,14 @@
 #!/bin/bash
 USAGE="$0"' [--skip-existing] -- [DESTINATION]
 Clones all personal git repositories needed for emacs-init.el from
-github to sub folders of `DESTINATION`. Defaults to `~/.emacs.d/other`.
+github to sub folders of `DESTINATION`. Defaults to `~/.emacs.d/emacs_init_deps`.
 
   --skip-existing) 
      Skip a clone if the destination dir already exists, instead of stopping
      with an error.'
 
 # Defaults
-DEST=~/.emacs.d/other/
+DEST=~/.emacs.d/emacs_init_deps/
 SKIP_EXISTING=0
 
 # Args definition and parsing

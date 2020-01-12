@@ -5,17 +5,6 @@ This repo contains my init file for Emacs.
 It was never intended to be published, so it is not organized and/or contains
 necessarily quality code, but hopefully it will help someone someday.
 
-Also, I still have some internal dependencies (elisp files) that I can
-not publish, so not 100% of this file will run everywhere. Let me know
-if you are curious about something in particular.
-
-Also, this init file depends on another four personal libraries,
-published in https://github.com/vitorqb/mylisputils, in
-https://github.com/vitorqb/my-show-definitions, in
-https://github.com/vitorqb/my-fuzzy-cmd-selector and in
-https://github.com/vitorqb/orgext. Be sure to have then in your load
-path (see [[*Setting up][Setting up]]).
-
 ** About
 
    Some principles about the init file is:
@@ -47,23 +36,25 @@ path (see [[*Setting up][Setting up]]).
 #+end_src
 
    Secondly, some variables can be customized. Those are described in
-   the very top of =emacs-init.el=. The script will look for a script
-   in =~/.config/emacs_init/config.el= and trust this script to set
-   the variables it needs to set. I have something like this there:
+   the very top of =emacs-init.el=. We will look for a file in
+   =~/.config/emacs_init/config.el=, load it and trust it to set the
+   variables it needs to set. You can use this to have
+   computer-specific settings, and to setup some vars needed for the
+   emacs-init itself.
+
+   You will have oportunity later to set other variables depending on your [[*Profiles][Profile]].
+
+   I have something like this there:
 
 #+begin_src elisp
 ;; file: ~/.config/emacs_init/config.el
 (custom-set-variables
- '(my-font-size 7)
- '(my-journal-dir "/home/vitor/myorg/journal-personal/")
- '(my-current-profile :home)
- '(my/custom-libraries-folder "/home/vitor/.emacs.d/other/")
- '(my/custom-libraries-names '("project-a" "project-b" ...))
- '(my/custom-welcome-script "/home/vitor/.emacs.d/other/mywelcome/mywelcome.el"))
+ '(my-font-size "11")
+ '(my-font-name "Hack"))
 #+end_src
 
    Third, you may want to set a hook script that will be execute only
-   in a specific profile. Those go into
+   in a specific profile (see [[*Profiles][Profiles]]). Those go into
    =~/.config/emacs_init/profile-hooks/<profile-name>.el=. For example, for my =:work=
    profile I have:
 
@@ -76,43 +67,51 @@ path (see [[*Setting up][Setting up]]).
 #+end_src
 
    Finally, this script depends on other personal libraries I have.
-   Installing those libraries is simply git-clonning their repositories
-   to the =my/custom-libraries-folder=. You can use the scripts
+   Installing those libraries is simply git-clonning their
+   repositories to the directory pointed by
+   ~my/emacs-init-deps-path~. You can use the scripts
    =scripts/clone-libs-repos.sh= to do that:
 
 #+begin_example
-$ ./clone-libs-repos.sh /home/vitor/mytmp/some/crazy/dir
-PROCESSING:
-mylisputils           https://github.com/vitorqb/mylisputils.git
-
-Cloning into '/home/vitor/mytmp/some/crazy/dir/mylisputils'...
-remote: Enumerating objects: 135, done.
-remote: Counting objects: 100% (135/135), done.
-remote: Compressing objects: 100% (85/85), done.
-remote: Total 135 (delta 67), reused 111 (delta 46), pack-reused 0
-Receiving objects: 100% (135/135), 20.11 KiB | 643.00 KiB/s, done.
-Resolving deltas: 100% (67/67), done.
-PROCESSING:
-my-show-definitions   https://github.com/vitorqb/my-show-definitions.git
-
-Cloning into '/home/vitor/mytmp/some/crazy/dir/my-show-definitions'...
-remote: Enumerating objects: 21, done.
-remote: Counting objects: 100% (21/21), done.
-remote: Compressing objects: 100% (14/14), done.
-remote: Total 21 (delta 8), reused 19 (delta 6), pack-reused 0
-Unpacking objects: 100% (21/21), done.
-PROCESSING:
-my-fuzzy-cmd-selector https://github.com/vitorqb/my-fuzzy-cmd-selector.git
-
-Cloning into '/home/vitor/mytmp/some/crazy/dir/my-fuzzy-cmd-selector'...
-remote: Enumerating objects: 17, done.
-remote: Counting objects: 100% (17/17), done.
-remote: Compressing objects: 100% (14/14), done.
-remote: Total 17 (delta 3), reused 13 (delta 2), pack-reused 0
-Unpacking objects: 100% (17/17), done.
+./scripts/clone-libs-repos.sh
 #+end_example
 
-   With no argument it clones to =~/.emacs.d/other/=
+   With no argument it clones to =~/.emacs.d/emacs_init_deps/=.
+
+** Profiles
+
+   Profiles allows you to execute hooks specific for your current project.
+   I use it to have customized setups and autoloads when I'm at work or when
+   I'm at home. It works like this:
+
+   1) Read a profile from =~/.emacs_init_profile=.
+
+   2) Tries to load
+      ~${USER_HOME}/.config/emacs_init/profile-hooks/${PROFILE_NAME}.el~
+      if exists.
+
+   Profiles must be a symbol beggining with ~:~, like ~:home~ or ~:work~.
+
+** Modules
+
+   The ~modules~ folder defines setups for languages/programs that we don't load
+   when loading the init so we can increase our startup time.
+
+   You can load a module at any time by calling ~emacs-init-load-module-<name>~.
+
+   For example, if I'm going to work with python I just have to call
+
+   : M-x emacs-init-load-module-python
+
+   You can use [[*Profiles][Profiles]] to automatically load modules you always use:
+
+#+begin_src elisp
+;; file: ~/.config/emacs_init/profile-hooks/work.el
+(emacs-init-load-module-python)
+
+;; file: ~/.config/emacs_init/profile-hooks/home.el
+(emacs-init-load-module-clojure)
+#+end_src
 
 ** More
    Contact me if you want anything and I'll try to help :)

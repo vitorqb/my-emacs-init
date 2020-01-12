@@ -6,16 +6,14 @@
 ;; customize any variable it needs to customize.
 (defvar my-font-size 14 "The default font size used.")
 (defvar my-font-name nil "The name for the font")
-(defvar my-current-profile :home
+(defvar my-current-profile nil
   (concat "A profile that can be used to customize your computer-specific settings."
-          "for example: :work or :home"))
+          " For example: :work or :home."))
 (defvar my/journal-files-dir-base "files"
   (concat "A folder (relative to `org-journal-dir` unless it starts with '/') where"
           " to put files for the org-journal"))
-(defvar my/custom-libraries-folder "~/.emacs.d/other/"
-  "A folder in where custom libraries will be searched")
-(defvar my/custom-libraries-names '()
-  "Libraries to load from the `my/custom-libraries-folder`")
+(defvar my/emacs-init-deps-path "~/.emacs.d/emacs_init_deps/"
+  "Path to a directory which contains all emacs-init dependencies.")
 (defvar my/jira-base-url nil
   "The base url used to visit tickets in jira")
 (defvar my/pr-base-url nil
@@ -32,15 +30,15 @@
   "The url to visit a tfs PR. The id will be appended at the end.")
 (defvar my/tfs-commit-hash-prefix nil
   "The url to visit a tfs commit. The id will be appended at the end.")
+(defvar my/path-to-modules-dir (concat (file-name-directory load-file-name) "modules")
+  "The directory where the emacs-init `modules` can be found.")
 
-;; Saves the file for the modules directory
-(defvar my/path-to-modules-dir
-  (concat (file-name-directory load-file-name) "modules"))
-
-;; Loads the config
+;; Loads the config. This is your oportunity to customize any of the variables.
 (let ((config-file-name (expand-file-name "~/.config/emacs_init/config.el")))
-  (message (concat "Loading config from " config-file-name))
-  (load config-file-name t))
+  (if (file-exists-p config-file-name)
+      (progn (message (concat "Loading config from " config-file-name))
+             (load config-file-name))
+    (message "WARNING: Could not locate emacs-init config file!")))
 
 ;; Loads the current profile from ~/.emacs_init_profile
 (let ((current-profile-file (expand-file-name "~/.emacs_init_profile")))
@@ -72,19 +70,9 @@
 (require 'use-package)
 (require 'bind-key)
 
-;; 
-;; Adds custom libraries to load list
-;;
-(defun add-to-load-path (x)
-  "Adds a path fo load-path"
-  (add-to-list 'load-path x))
-
-(defun add-custom-lib-to-load-path (x)
-  " Adds a folder in `my/custom-libraries-folder` to load-path "
-  (add-to-load-path (concat (file-name-as-directory my/custom-libraries-folder) x)))
-
-(add-to-load-path my/custom-libraries-folder)
-(mapc #'add-custom-lib-to-load-path my/custom-libraries-names)
+(defun get-dep-library-load-path (x)
+  "Returns the load-path for a dependency library."
+  (concat my/emacs-init-deps-path "/" x))
 
 ;; -----------------------------------------------------------------------------
 ;; Global requirements
@@ -93,12 +81,6 @@
 (use-package dash :ensure)
 (use-package dash-functional :ensure)
 (use-package s :ensure)
-
-;; mylisputils is mandatory requirement
-(add-custom-lib-to-load-path "mylisputils")
-(use-package mylisputils)
-
-;; Ivy as well
 (use-package ivy
   :ensure
   :bind (("C-c C-r" . ivy-resume)
@@ -108,29 +90,9 @@
   (ivy-display-style 'fancy)
   (ivy-use-virtual-buffers t)
   :config (ivy-mode))
-
-;; my-show-definitions as well
-(add-custom-lib-to-load-path "my-show-definitions")
-(use-package my-show-definitions)
-;; Clean the buffer created using myutils/clean-buffers
-(add-to-list 'myutils/clean-buffers-names-regexs "\\*MyShowDefinitions\\*")
-
-;; my-fuzzy-cmd-selector as well
-(add-custom-lib-to-load-path "my-fuzzy-cmd-selector")
-(use-package my-fuzzy-cmd-selector
-  :config (progn
-            (cl-pushnew '(:mfcs-call . 20) ivy-height-alist)))
-
-;; And orgext
-(add-custom-lib-to-load-path "orgext")
-(use-package orgext)
-
-;; And compile-transient
-(add-custom-lib-to-load-path "compile-transient")
-(use-package compile-transient)
-
-;; We like recursion
-(setq max-lisp-eval-depth (* 32000))
+(use-package mylisputils
+  ;; https://github.com/vitorqb/mylisputils/
+  :load-path (lambda () (get-dep-library-load-path "mylisputils")))
 
 ;; Ensure the tempdir is created
 (and my/user-temp-directory
@@ -148,7 +110,7 @@
   (yas-reload-all))
 
 (defmacro my/defmodule (module-name)
-  "Returns a `defun` to load a module called module-name."
+  "Returns a `defun` to load a module called `module-name`."
   (-let* ((module-name-str (symbol-name module-name))
           (load-module-fn-name (->> module-name-str
                                     (concat "emacs-init-load-module-")
@@ -169,7 +131,6 @@
 (tool-bar-mode -1)
 
 ;; Choose font
-;; https://github.com/source-foundry/Hack
 ;; This way of setting fonts works both for emacsclient and emacs.
 (when (and my-font-size my-font-name)
   (setq default-frame-alist `((font . ,(format "%s %s" my-font-name my-font-size)))))
@@ -213,6 +174,25 @@
   :hook (after-init . which-key-mode))
 
 ;; -----------------------------------------------------------------------------
+;; Show Definitions
+;; -----------------------------------------------------------------------------
+(use-package my-show-definitions
+  ;; https://github.com/vitorqb/my-show-definitions
+  :load-path (lambda () (get-dep-library-load-path "my-show-definitions"))
+  :config (progn
+            ;; Also deletes my-show-definition buffers when cleaning buffers.
+            (add-to-list 'myutils/clean-buffers-names-regexs "\\*MyShowDefinitions\\*")))
+
+;; -----------------------------------------------------------------------------
+;; Fuzzy command selector
+;; -----------------------------------------------------------------------------
+(use-package my-fuzzy-cmd-selector
+  ;; https://github.com/vitorqb/my-fuzzy-cmd-selector
+  :load-path (lambda () (get-dep-library-load-path "my-fuzzy-cmd-selector"))
+  :config (progn
+            (cl-pushnew '(:mfcs-call . 20) ivy-height-alist)))
+
+;; -----------------------------------------------------------------------------
 ;; Compilation and processes
 ;; -----------------------------------------------------------------------------
 (global-set-key (kbd "<f5>") 'recompile)
@@ -220,6 +200,10 @@
 ;; Don't use linum-mode in compilation buffers
 (dolist (hook '(compilation-mode-hook comint-mode-hook))
   (add-hook hook #'my/disable-linum))
+
+(use-package compile-transient
+  ;; https://github.com/vitorqb/compile-transient
+  :load-path (lambda () (get-dep-library-load-path "compile-transient")))
 
 ;; -----------------------------------------------------------------------------
 ;; Shell
@@ -306,15 +290,16 @@
 ;; -----------------------------------------------------------------------------
 ;; Buffer and buffer contents manipulation
 ;; -----------------------------------------------------------------------------
+(custom-set-variables '(hi-lock-auto-select-face t))
 (global-set-key (kbd "C-c d") #'myutils/duplicate-buffer)
-(global-set-key (kbd "C-\\") (lambda () (interactive) (switch-to-buffer (other-buffer))))
+(global-set-key (kbd "C-\\") (myutils/li (switch-to-buffer (other-buffer))))
 
 (defun my/highligh-region (beg end)
   "Highlights text equal to the text between beg and end"
   (interactive "r")
-  (->> (buffer-substring-no-properties beg end)
-       (regexp-quote)
-       (highlight-phrase)))  
+  (-> (buffer-substring-no-properties beg end)
+      (regexp-quote)
+      (highlight-phrase (hi-lock-read-face-name))))  
 
 (defun my/setup-hydra/buffer-hydra ()
   (defhydra my/buffer-hydra (:color blue)
@@ -334,7 +319,7 @@
     ("r" #'my/highligh-region "Highlights selected region.\n")
     ("p" #'highlight-phrase "Highlights phrase.\n")))
 
-;; Adds rename buffer to mfcs
+;; Adds some shortcuts to fuzzy cmd match
 (mfcs-add-command :description "Buffer Rename Buffer" :command #'rename-buffer)
 (mfcs-add-command
  :description "Highlight Phrase Word Phrase Highlight"
@@ -364,16 +349,6 @@
 (use-package company-web :ensure)
 
 ;; -----------------------------------------------------------------------------
-;; Language Server Protocol
-;; -----------------------------------------------------------------------------
-(use-package eglot :ensure
-  :config (progn
-            ;; If we are using eglot, bind M-. to xref, that eglot itself uses
-            (add-hook
-             'eglot--managed-mode-hook
-             (lambda () (local-set-key (kbd "M-.") 'xref-find-definitions)))))
-
-;; -----------------------------------------------------------------------------
 ;; Markdown mode
 ;; -----------------------------------------------------------------------------
 (use-package markdown-mode :ensure)
@@ -381,7 +356,7 @@
 ;; -----------------------------------------------------------------------------
 ;; Org Mode
 ;; -----------------------------------------------------------------------------
-;; We don't like visual-line-mode ()
+;; We don't like visual-line-mode
 (add-hook 'org-mode-hook (lambda () (visual-line-mode -1)))
 
 ;; Only jump lines between headers if 3 empty lines
@@ -401,8 +376,13 @@
  '((emacs-lisp . t) (python . t) (ditaa . t) (plantuml . t)
    (shell . t) (dot . t) (latex . t) (gnuplot . t) (maxima . t)))
 (setq org-src-preserve-indentation t)
-(setq org-babel-python-command "python3.6")
+(setq org-babel-python-command "python")
 (setq org-plantuml-jar-path (expand-file-name "/usr/local/bin/plantuml.jar"))
+
+;; Some extensions
+(use-package orgext
+  ;; https://github.com/vitorqb/orgext
+  :load-path (lambda () (get-dep-library-load-path "orgext")))
 
 ;; Journal configuration
 (use-package org-journal
@@ -425,7 +405,7 @@
 
     (mfcs-add-command
      :description "Org Find File Journal Find File (Docs Files)"
-     :command (lambda () (interactive) (call-interactively #'my/journal-find-file)))))
+     :command (myutils/li (call-interactively #'my/journal-find-file)))))
 
 (defun my-org-journal-find-last-file (arg)
   "Find-file on the last file for the journal.
@@ -439,9 +419,9 @@
       (->> (funcall (if arg #'find-file-other-window #'find-file)))))
 
 (defun my/org-journal-search-regexp ()
-  "A terrible hack to call orj-journal-function with regexps."
+  "Search org-journal using regex."
   (interactive)
-  (letf (((symbol-function 'search-forward) #'search-forward-regexp))
+  (-let [org-journal-search-forward-fn #'search-forward-regexp]
     (call-interactively #'org-journal-search)))
 
 ;; Org Hydra configuration
@@ -461,34 +441,6 @@
     ("p" #'org-journal-open-previous-entry "Previous entry\n")
     ("s" #'org-journal-search "Search\n")
     ("r" #'my/org-journal-search-regexp "Regexp Search")))
-
-;; !!!! TODO -> Move to orgext
-;; Adds jira as a link to org
-(progn
-  (defun org-jira-open (ticket)
-    "Visit the jira ticket page on browser."
-    (assert my/jira-base-url)
-    (-> my/jira-base-url file-name-as-directory (concat ticket) browse-url))
-  (org-add-link-type "jira" 'org-jira-open))
-
-;; Adds PR as a link to org
-(progn
-  (defun org-pr-open (pr)
-    "Visits the PR. pr must be a string that contains the repo name
-and the pr number, separated by /. Like this: de-tv/69"
-    (assert my/pr-base-url)
-    (--> pr
-         (s-split "/" it)
-         (or (and (equal (length it) 2) it)
-             (error "A single '/' is expected in a pr link"))
-         (apply
-          #'format
-          "%s%s/pull-requests/%s"
-          (file-name-as-directory my/pr-base-url)
-          it)
-         (and (print it) it)
-         (browse-url it)))
-  (org-add-link-type "pr" 'org-pr-open))
 
 (defun my/setup-hydra/org-hydra ()
   (defhydra my/org-hydra (:color blue)
@@ -560,13 +512,12 @@ and the pr number, separated by /. Like this: de-tv/69"
     ("Z" (lambda () (interactive) (fzf/start "~"))
      "Fuzzy find at home\n")))
 
-
 ;; -----------------------------------------------------------------------------
 ;; (Light)Lispy
 ;; -----------------------------------------------------------------------------
 ;; https://github.com/vitorqb/lightlispy
-(add-custom-lib-to-load-path "lightlispy")
 (use-package lightlispy
+  :load-path (lambda () (get-dep-library-load-path "lightlispy"))
   :config (progn
             (add-hook 'emacs-lisp-mode-hook 'lightlispy-mode)
             (defalias 'lispy-mode #'lightlispy-mode)))
@@ -640,15 +591,6 @@ and the pr number, separated by /. Like this: de-tv/69"
           (lambda ()
             (unless (equal major-mode #'ag-mode)
               (my/ansi-colorize-buffer))))
-
-;; -----------------------------------------------------------------------------
-;; Loads custom welcome script
-;; ----------------------------------------------------------------------------
-(when my/custom-welcome-script
-  (setq inhibit-startup-screen t)		;Don't show me the ugly emacs start
-  (add-hook 'after-init-hook
-	    (lambda () (load my/custom-welcome-script))))
-
 
 ;; -----------------------------------------------------------------------------
 ;; Elisp and evaluation
@@ -756,8 +698,7 @@ and the pr number, separated by /. Like this: de-tv/69"
 ;; Ivy configuration from https://www.reddit.com/r/emacs/comments/910pga/tip_how_to_use_ivy_and_its_utilities_in_your/
 
 ;; Notice we installed ivy up because it is a dep for other things.
-;; However, we configure it here (because it wasn't working thre)
-
+;; However, we configure it here.
 (use-package counsel
   :ensure
   :after ivy
@@ -768,16 +709,6 @@ and the pr number, separated by /. Like this: de-tv/69"
             (ivy-add-actions
              'counsel-find-file
              '(("W" myutils/copy-relative-path "Copies relative path.")))))
-
-;; (use-package ivy-rich
-;;   :ensure
-;;   :after ivy
-;;   :config
-;;   (ivy-rich-mode 1))
-
-;; (use-package ivy-hydra
-;;   :ensure
-;;   :after ivy)
 
 (use-package swiper
   :ensure
@@ -901,13 +832,16 @@ and the pr number, separated by /. Like this: de-tv/69"
 ;; -----------------------------------------------------------------------------
 ;; Use the default browser for browsing, if we know it
 (setq browse-url-new-window-flag t)
-(when (string= my/default-browser-cmd "firefox")
-  (setq browse-url-browser-function 'browse-url-firefox
-        browse-url-firefox-new-window-is-tab t))
-(when (or (string= my/default-browser-cmd "google-chrome-stable")
-          (string= my/default-browser-cmd "google-chrome"))
-  (setq browse-url-browser-function 'browse-url-chrome))
+(pcase my/default-browser-cmd
 
+  ("firefox"
+   (setq browse-url-browser-function 'browse-url-firefox
+         browse-url-firefox-new-window-is-tab t))
+  
+  ((or "google-chrome" "google-chrome-stable")
+   (setq browse-url-browser-function 'browse-url-chrome))
+
+  (_ nil))
 
 ;; -----------------------------------------------------------------------------
 ;; Language specific modules
@@ -925,16 +859,23 @@ and the pr number, separated by /. Like this: de-tv/69"
 (my/defmodule fsharp)
 (my/defmodule csharp)
 (my/defmodule vue)
+(my/defmodule eglot)
+
+;; -----------------------------------------------------------------------------
+;; Loads custom welcome script
+;; ----------------------------------------------------------------------------
+(when (and my/custom-welcome-script (file-exists-p my/custom-welcome-script))
+  (setq inhibit-startup-screen t)		;Don't show me the ugly emacs start
+  (add-hook 'after-init-hook
+	    (lambda () (load my/custom-welcome-script))))
 
 ;; -----------------------------------------------------------------------------
 ;; Computer specific hooks
 ;; -----------------------------------------------------------------------------
 ;; Tries to load computer-specific hooks
-(defun my/run-profile-hook ()
-  (when my-current-profile
-    (-some--> "~/.config/emacs_init/profile-hooks/"
-              (and (file-directory-p it) it)
-              (concat it (-> my-current-profile symbol-name (substring 1)) ".el")
-              (and (file-exists-p it) it)
-              (load it))))
-(my/run-profile-hook)
+(when my-current-profile
+  (-some--> (expand-file-name "~/.config/emacs_init/profile-hooks/")
+    (and (file-directory-p it) it)
+    (concat it (-> my-current-profile symbol-name (substring 1)) ".el")
+    (and (file-exists-p it) it)
+    (load it)))
