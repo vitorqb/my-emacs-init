@@ -66,7 +66,7 @@ necessarily quality code, but hopefully it will help someone someday.
 ...
 #+end_src
 
-   Finally, this script depends on other personal libraries I have.
+   Finally, this script depends on other personal libraries I have (see [[*Dependencies][Dependencies]]).
    Installing those libraries is simply git-clonning their
    repositories to the directory pointed by
    ~my/emacs-init-deps-path~. You can use the scripts
@@ -91,6 +91,25 @@ necessarily quality code, but hopefully it will help someone someday.
       if exists.
 
    Profiles must be a symbol beggining with ~:~, like ~:home~ or ~:work~.
+
+** Dependencies
+
+   I keep some very tiny personal libraries in separate github repositories. Those
+   are required dependencies for my init file, and they are not published in melpa
+   nor any other place.
+
+   The script [[scripts/clone-libs-repos.sh]] takes care of downloading and then updating
+   those dependencies.
+
+#+begin_src shell
+# On a fresh install, run:
+./scripts/clone-libs-repos.sh
+
+# On a update, run:
+./scripts/clone-libs-repos.sh --update-existing
+#+end_src
+
+   To bring these dependencies 
 
 ** Modules
 

@@ -5,11 +5,11 @@ github to sub folders of `DESTINATION`. Defaults to `~/.emacs.d/emacs_init_deps`
 
   --skip-existing) 
      Skip a clone if the destination dir already exists, instead of stopping
-     with an error.
+     with an error. Use this if you just want to download a new dependency.
 
   --update-existing)
      If a destination already exists, assumes it has the correct git repository,
-     updates it and resets HEAD to the ref.'
+     updates it and resets HEAD to the ref. Use this if you are updating.'
 
 # Defaults
 DEST=~/.emacs.d/emacs_init_deps/
