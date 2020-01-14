@@ -648,6 +648,17 @@
 ;; -----------------------------------------------------------------------------
 ;; My Hydra!
 ;; -----------------------------------------------------------------------------
+(cl-defgeneric my/run-hydra-for-major-mode (mode)
+  "Generic function that returns the hydra function to run for a given major mode.
+You can register an hydra for a given mode with something like:
+
+(cl-defmethod mode-hydra ((mode (eql emacs-lisp-mode))) (myhydra/body))"
+  nil)
+
+(defun my/run-hydra-for-current-major-mode ()
+  (interactive)
+  (my/run-hydra-for-major-mode major-mode))
+
 (defun my/hydras-setup ()
   " My custom setup for hydras "
   (my/setup-hydra/typing-hydra)
@@ -683,7 +694,8 @@
     ("o" #'my/org-hydra/body "Org hydra")
     ("s" #'my/shell-hydra/body "A shell, sh, bash hydra!.")
     ("k" #'compile-transient "Kompile dude")
-    ("t" #'my/typing-hydra/body "Typing hydra!")))
+    ("t" #'my/typing-hydra/body "Typing hydra!")
+    ("." #'my/run-hydra-for-current-major-mode "Mode specific hydra")))
 
 (use-package hydra :ensure
   :config (my/hydras-setup)

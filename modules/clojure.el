@@ -1,3 +1,6 @@
+(require 'cider)
+(require 'cider-find)
+
 (use-package clojure-mode
   :ensure
   :config (progn
@@ -78,7 +81,7 @@
     (mfcs-add-command
      :description "Cider Jack In"
      :command #'cider-jack-in)))
-
+ 
 ;; Misc functions
 (defun emacs-init-modules-clojure/map-with (str)
   "Given a space-separated list of words, inserts a clojure map with keys and values
@@ -93,3 +96,35 @@
 (mfcs-add-command
  :description "Clojure insert map with keys and values [keys map insert clojure]"
  :command #'emacs-init-modules-clojure/map-with)
+
+;; Small hack for adding ivy to cider-find-ns
+(defun emacs-init-modules-clojure/find-ns (&optional arg ns)
+  "Same as `cider-find-ns`, but uses ivy to have different actions with it."
+  (interactive "P")
+  (cider-ensure-connected)
+  (cider-ensure-op-supported "ns-path")
+  (let* ((namespaces (cider-sync-request:ns-list)))
+    (ivy-read
+     "Namespace: "
+     namespaces
+     :require-match t
+     :caller :my/cider-find-ns
+     :history 'my/cider-find-ns--history
+     :action '(1
+               ("o" (lambda (x) (cider--find-ns x (cider--open-other-window-p arg))) "Open")
+               ("w" kill-new "Copy")
+               ("i" insert "Insert")
+               ("s" (lambda (x) (ag x (projectile-project-root))) "Search")))))
+
+;; Hydra for clojure
+(defhydra clojure-mode-hydra (:color blue)
+  ("p" #'emacs-init-modules-clojure/map-with "Inserts pairs of `:keywords symbol`"
+       :column "Clojure Mode")
+  ("j" #'cider-jack-in "Cider Jack In")
+  ("n" #'emacs-init-modules-clojure/find-ns "Find ns"))
+
+(cl-defmethod my/run-hydra-for-major-mode ((mode (eql clojure-mode)))
+  (clojure-mode-hydra/body))
+
+(cl-defmethod my/run-hydra-for-major-mode ((mode (eql cider-repl-mode)))
+  (clojure-mode-hydra/body))
