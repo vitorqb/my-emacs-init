@@ -252,14 +252,14 @@
 (defun my/setup-hydra/typing-hydra ()
   "Prepares an hydra for typing shortcuts."
   (defhydra my/typing-hydra (:color blue)
-    "An hydra for typing shortcuts!\n"
     ("c" #'myutils/remove-whitespace-and-newline
-     "Clean - remove whitesapces and newlines.\n")
-    ("d" #'myutils/insert-formated-date "Insert the date.\n")
-    ("e" #'myutils/remove-with-elipsis "Remove with elipsis.\n" :color pink)
-    ("f" #'myutils/fill-to-end "Fill to end with '-'.\n")
-    ("l" #'copy-line "Copies current line down.\n")
-    ("w" #'delete-trailing-whitespace "Delete trailing whitespaces.\n")))
+     "Clean - remove whitesapces and newlines."
+     :column "Typing")
+    ("d" #'myutils/insert-formated-date "Insert the date.")
+    ("e" #'myutils/remove-with-elipsis "Remove with elipsis." :color pink)
+    ("f" #'myutils/fill-to-end "Fill to end with '-'.")
+    ("l" #'copy-line "Copies current line down.")
+    ("w" #'delete-trailing-whitespace "Delete trailing whitespaces.")))
 
 ;; -----------------------------------------------------------------------------
 ;; Flycheck
@@ -279,10 +279,9 @@
 ;; -----------------------------------------------------------------------------
 (defun my/setup-hydra/flymake-hydra ()
   (defhydra my/flymake-hydra (:color blue)
-    "An hydra for flymake\n"
-    ("n" #'flymake-goto-next-error "Next error\n")
-    ("p" #'flymake-goto-prev-error "Prev error\n")
-    ("d" #'flymake-show-diagnostics-buffer "Diagnostic buffer\n")))
+    ("n" #'flymake-goto-next-error "Next error" :column "Flymake!")
+    ("p" #'flymake-goto-prev-error "Prev error")
+    ("d" #'flymake-show-diagnostics-buffer "Diagnostic buffer")))
 
 ;; We use compilation a lot and we don't want flymake to be prevented from running
 (setq-default flymake-compilation-prevents-syntax-check nil)
@@ -303,21 +302,19 @@
 
 (defun my/setup-hydra/buffer-hydra ()
   (defhydra my/buffer-hydra (:color blue)
-    "An hydra for buffer-related functionalities!\n"
-    ("c" #'myutils/copy-buffer-contents "Copy buffer contents.\n")
-    ("g" #'push-mark-and-avy-goto-char "Avy go to char (tree)\n")
-    ("r" #'rename-buffer "Rename buffer\n")
-    ("l" #'goto-line "Go to a specific line\n")
-    ("o" #'my/occur-symbol-at-point "Occur with current symbol.\n")
-    ("p" #'myutils/copy-file-path-to-clipboard "Copy file path.\n")
-    ("P" #'myutils/copy-file-path-from-other-window-to-clipboard "Copy file path (other window)\n")))
+    ("c" #'myutils/copy-buffer-contents "Copy buffer contents." :column "Buffers!")
+    ("g" #'push-mark-and-avy-goto-char "Avy go to char (tree)")
+    ("r" #'rename-buffer "Rename buffer")
+    ("l" #'goto-line "Go to a specific line")
+    ("o" #'my/occur-symbol-at-point "Occur with current symbol.")
+    ("p" #'myutils/copy-file-path-to-clipboard "Copy file path.")
+    ("P" #'myutils/copy-file-path-from-other-window-to-clipboard "Copy file path (other window)")))
 
 (defun my/setup-hydra/highlight-hydra ()
   (defhydra my/highlight-hydra (:color blue)
-    "An hydra for highlighting things\n"
-    ("h" #'highlight-symbol-at-point "Highlights symbol at point.\n")
-    ("r" #'my/highligh-region "Highlights selected region.\n")
-    ("p" #'highlight-phrase "Highlights phrase.\n")))
+    ("h" #'highlight-symbol-at-point "Symbol at point." :column "Highlight!")
+    ("r" #'my/highligh-region "Selected region.")
+    ("p" #'highlight-phrase "Phrase.")))
 
 ;; Adds some shortcuts to fuzzy cmd match
 (mfcs-add-command :description "Buffer Rename Buffer" :command #'rename-buffer)
@@ -330,11 +327,10 @@
 ;; -----------------------------------------------------------------------------
 (defun my/setup-hydra/register-hydra ()
   (defhydra my/register-hydra (:color blue)
-    "An hydra for emacs registers\n"
-    ("p" #'point-to-register "Save point in register\n")
-    ("j" #'jump-to-register  "Jump to point register\n")
-    ("r" #'copy-to-register  "Copy region to register\n")
-    ("i" #'insert-register   "Inserts copied region form register\n")))
+    ("p" #'point-to-register "Save point in register" :column "Registers!")
+    ("j" #'jump-to-register  "Jump to point register")
+    ("r" #'copy-to-register  "Copy region to register")
+    ("i" #'insert-register   "Inserts copied region form register")))
 
 ;; -----------------------------------------------------------------------------
 ;; Completion (Company)
@@ -427,29 +423,29 @@
 ;; Org Hydra configuration
 (defun my/setup-hydra/journal-hydra ()
   (defhydra my/journal-hydra (:color blue)
-    "An hydra for Org Journal\n"
-    ("j" #'org-journal-new-entry "New entry\n")
+    ("j" #'org-journal-new-entry "New entry" :column "Org Journal")
     ("v" (lambda () (interactive) (let ((current-prefix-arg '(4)))
                                     (call-interactively #'org-journal-new-entry)))
-     "Visit last entry\n")
-    ("n" #'org-journal-open-next-entry "Open next entry\n")
-    ("o" #'my-org-journal-find-last-file "Open most recent file\n")
+     "Visit last entry")
+    ("n" #'org-journal-open-next-entry "Open next entry")
+    ("o" #'my-org-journal-find-last-file "Open most recent file")
     ("O" (lambda () (interactive)
            (let ((current-prefix-arg '(4)))
              (call-interactively #'my-org-journal-find-last-file)))
-     "Open most recent file new window\n")
-    ("p" #'org-journal-open-previous-entry "Previous entry\n")
-    ("s" #'org-journal-search "Search\n")
+     "Open most recent file new window")
+    ("p" #'org-journal-open-previous-entry "Previous entry")
+    ("s" #'org-journal-search "Search")
     ("r" #'my/org-journal-search-regexp "Regexp Search")))
 
 (defun my/setup-hydra/org-hydra ()
   (defhydra my/org-hydra (:color blue)
-    ("b" #'orgext-mark-block "Marks the entire block at point\n")
-    ("c" #'orgext-copy-block-from-above "Copies the above org block to point\n")
-    ("l" #'org-store-link "Org store link\n")
-    ("n" #'org-next-block "Jump to the next block\n" :color pink)
-    ("p" #'org-previous-block "Jump to the previous block\n" :color pink)
-    ("o" #'orgext-new-block-from-other-window "New block from other window\n")))
+    ("b" #'orgext-mark-block "Marks the entire block at point"
+     :column "Org!")
+    ("c" #'orgext-copy-block-from-above "Copies the above org block to point")
+    ("l" #'org-store-link "Org store link")
+    ("n" #'org-next-block "Jump to the next block" :color pink)
+    ("p" #'org-previous-block "Jump to the previous block" :color pink)
+    ("o" #'orgext-new-block-from-other-window "New block from other window")))
 
 ;; Adds org store link and toggle link to mfcs
 (mfcs-add-command
@@ -497,20 +493,20 @@
   "Defines an hydra to file manipulation."
 
   (defhydra my/files-hydra (:color blue)
-    "Manipulate files!"
-    ("w" #'write-file "Write file to...\n")
-    ("f" #'counsel-find-file "Find file\n")
-    ("h" #'my/find-file-home "Find file at home\n")
-    ("p" #'projectile-find-file "Projectile find file\n")
-    ("P" #'projectile-find-file-other-window "Projectile find file other window\n")
-    ("t" #'find-file-my-temp-file "New temporary file\n")
+    ("w" #'write-file "Write file to..."
+     :column "Files!")
+    ("f" #'counsel-find-file "Find file")
+    ("h" #'my/find-file-home "Find file at home")
+    ("p" #'projectile-find-file "Projectile find file")
+    ("P" #'projectile-find-file-other-window "Projectile find file other window")
+    ("t" #'find-file-my-temp-file "New temporary file")
     ("e" (lambda () (interactive) (async-shell-command (buffer-file-name)))
-     "Executes current buffer file as async shell command.\n")
-    ("x" #'myutils/chmod-current-buffer "Chmod\n")
+     "Executes current buffer file as async shell command.")
+    ("x" #'myutils/chmod-current-buffer "Chmod")
     ("z" (lambda () (interactive) (fzf/start default-directory))
-     "Fuzzy find file on default-directory\n")
+     "Fuzzy find file on default-directory")
     ("Z" (lambda () (interactive) (fzf/start "~"))
-     "Fuzzy find at home\n")))
+     "Fuzzy find at home")))
 
 ;; -----------------------------------------------------------------------------
 ;; (Light)Lispy
@@ -597,21 +593,22 @@
 ;; -----------------------------------------------------------------------------
 (defun my/setup-hydra/eval-elisp-hydra ()
   "An hydra to evaluate elisp code quickly"
+
   (defhydra my/eval-elisp-hydra (:color blue)
-    "Evaluate elisp code!"
-    ("b" #'eval-buffer "Eval buffer\n")
-    ("f" #'eval-defun "Eval defun\n")
-    ("r" #'eval-region "Eval region\n")))
+    ("b" #'eval-buffer "Eval buffer" :column "Evaluate Elisp!")
+    ("f" #'eval-defun "Eval defun")
+    ("r" #'eval-region "Eval region")))
 
 ;; -----------------------------------------------------------------------------
 ;; Shell, sh, bash. Scripting.
 ;; -----------------------------------------------------------------------------
 (defun my/setup-hydra/shell-hydra ()
+  "Shell, sh, bash etc!"
+  
   (defhydra my/shell-hydra (:color blue)
-    "Shell, sh, bash etc!\n"
-    ("s" #'shell "A new shell for you\n")
+    ("s" #'shell "A new shell for you" :column "Shell!")
     ("c" #'myutils/call-shell-command
-     "Calls a shell command, shows the result, and asks you if kill the buffer\n")))
+     "Calls a shell command, shows the result, and asks you if kill the buffer")))
 
 ;; -----------------------------------------------------------------------------
 ;; Projectile
@@ -632,13 +629,13 @@
     (setq projectile-completion-system 'ivy)))
 
 (defun my/setup-hydra/projectile-hydra ()
-  "Prepares an hydra for projectile"
+  "An hydra with projectile functionalities =D"
+
   (defhydra my/projectile-hydra (:color blue)
-    "An hydra with projectile functionalities =D\n"
-    ("r" #'projectile-dired "Dired at to project root\n")
-    ("R" #'projectile-dired-other-window "Dired at to project root (other window)\n")
+    ("r" #'projectile-dired "Dired at to project root" :column "Projectile!")
+    ("R" #'projectile-dired-other-window "Dired at to project root (other window)")
     ("t" #'projectile-toggle-between-implementation-and-test
-     "Toggle between implementation and test\n")))
+     "Toggle between implementation and test")))
 
 ;; Adds create test file to mfcs
 (mfcs-add-command
@@ -665,28 +662,28 @@
   (my/setup-hydra/buffer-hydra)
   (my/setup-hydra/highlight-hydra)
 
+  ;; An hydra for ag!
   (defhydra my/ag-hydra (:color blue)
-    "An hydra for ag!\n"
-    ("a" #'ag "Simply ag\n")
-    ("r" #'ag-regexp "Ag with regexp\n"))
+    ("a" #'ag "Simply ag" :column "Ag!")
+    ("r" #'ag-regexp "Ag with regexp"))
 
   (defhydra myhydra (:color blue)
-    ("0" #'my/register-hydra/body "Register Hydra\n")
-    ("a" #'my/ag-hydra/body "Ag Hydra\n")
-    ("b" #'my/buffer-hydra/body "Buffer hydra\n")
-    ("c" #'mfcs-call "Calls fuzzy command selector\n")
-    ("d" #'my-show-definitions "Show definitions\n")
-    ("e" #'my/eval-elisp-hydra/body "Evaluate Elisp hydra\n")
-    ("f" #'my/files-hydra/body "Files hydra!\n")
-    ("h" #'my/highlight-hydra/body "Highligh hydra!\n")
-    ("i" #'counsel-imenu "Imenu (find definitions)!\n")
-    ("j" #'my/journal-hydra/body "Hydra for org-journal\n")
-    ("r" #'my/projectile-hydra/body "Projectile hydra \n")
-    ("m" #'my/flymake-hydra/body "Flymake hydra\n")
-    ("o" #'my/org-hydra/body "Org hydra\n")
-    ("s" #'my/shell-hydra/body "A shell, sh, bash hydra!.\n")
-    ("k" #'compile-transient "Kompile dude\n")
-    ("t" #'my/typing-hydra/body "Ttping hydra!\n")))
+    ("0" #'my/register-hydra/body "Register Hydra" :column "Main Hydra")
+    ("a" #'my/ag-hydra/body "Ag Hydra")
+    ("b" #'my/buffer-hydra/body "Buffer hydra")
+    ("c" #'mfcs-call "Calls fuzzy command selector")
+    ("d" #'my-show-definitions "Show definitions")
+    ("e" #'my/eval-elisp-hydra/body "Evaluate Elisp hydra")
+    ("f" #'my/files-hydra/body "Files hydra!")
+    ("h" #'my/highlight-hydra/body "Highligh hydra!")
+    ("i" #'counsel-imenu "Imenu (find definitions)!")
+    ("j" #'my/journal-hydra/body "Hydra for org-journal")
+    ("r" #'my/projectile-hydra/body "Projectile hydra ")
+    ("m" #'my/flymake-hydra/body "Flymake hydra")
+    ("o" #'my/org-hydra/body "Org hydra")
+    ("s" #'my/shell-hydra/body "A shell, sh, bash hydra!.")
+    ("k" #'compile-transient "Kompile dude")
+    ("t" #'my/typing-hydra/body "Typing hydra!")))
 
 (use-package hydra :ensure
   :config (my/hydras-setup)
