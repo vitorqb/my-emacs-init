@@ -100,6 +100,9 @@
      (progn (mkdir my/user-temp-directory t)
             (message "Created %s" my/user-temp-directory)))
 
+;; We like recursion
+(setq max-lisp-eval-depth (* 100 max-lisp-eval-depth))
+
 ;; -----------------------------------------------------------------------------
 ;; Emacs Init Modules
 ;; -----------------------------------------------------------------------------
