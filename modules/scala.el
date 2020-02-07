@@ -1,11 +1,6 @@
-(use-package ensime
-  :ensure t
-  :pin melpa-stable)
-
-(use-package sbt-mode
-  :ensure t
-  :pin melpa-stable)
+(emacs-init-load-module-eglot)
 
 (use-package scala-mode
-  :ensure t
-  :pin melpa-stable)
+  :ensure
+  :config (progn
+            (add-hook 'scala-mode-hook #'yas-minor-mode-on)))
