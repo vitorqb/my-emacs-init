@@ -10,6 +10,7 @@
             (add-hook 'clojure-mode-hook #'eldoc-mode)
             (add-hook 'clojure-mode-hook #'lightlispy-mode)))
 
+(use-package edn :ensure)
 (use-package clojure-mode-extra-font-locking :ensure)
 
 ;; For refactoring
