@@ -81,6 +81,7 @@
 (use-package dash :ensure)
 (use-package dash-functional :ensure)
 (use-package s :ensure)
+(use-package counsel :ensure)
 (use-package ivy
   :ensure
   :bind (("C-c C-r" . ivy-resume)
