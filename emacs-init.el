@@ -209,6 +209,11 @@
   ;; https://github.com/vitorqb/compile-transient
   :load-path (lambda () (get-dep-library-load-path "compile-transient")))
 
+;; Adds a (by default ridicularly high) limit for the max number of rows in a
+;; compilation buffer
+(add-hook 'compilation-filter-hook 'comint-truncate-buffer)
+(setq comint-buffer-maximum-size 100000)
+
 ;; -----------------------------------------------------------------------------
 ;; Shell
 ;; -----------------------------------------------------------------------------
