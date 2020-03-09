@@ -451,7 +451,8 @@
   (defhydra my/org-hydra (:color blue)
     ("b" #'orgext-mark-block "Marks the entire block at point"
      :column "Org!")
-    ("c" #'orgext-copy-block-from-above "Copies the above org block to point")
+    ("c" #'orgext-capture-with-task "Captures a new entry for a potential TODO")
+    ("C" #'orgext-copy-block-from-above "Copies the above org block to point")
     ("l" #'org-store-link "Org store link")
     ("n" #'org-next-block "Jump to the next block" :color pink)
     ("p" #'org-previous-block "Jump to the previous block" :color pink)
