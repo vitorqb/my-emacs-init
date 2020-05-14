@@ -871,6 +871,7 @@
 (my/defmodule csharp)
 (my/defmodule vue)
 (my/defmodule eglot)
+(my/defmodule R)
 
 ;; -----------------------------------------------------------------------------
 ;; Loads custom welcome script
