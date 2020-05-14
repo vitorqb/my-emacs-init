@@ -140,10 +140,12 @@
   (setq default-frame-alist `((font . ,(format "%s %s" my-font-name my-font-size)))))
 
 ;; Choose theme
-(use-package gruvbox-theme
+(use-package monokai-theme
   :ensure t
   :no-require t
-  :config (load-theme 'gruvbox-dark-hard t))
+  :config (progn
+            (setq monokai-background "#0d1824" )
+            (load-theme 'monokai t)))
 
 ;; Highlight parenthesis
 (setq show-paren-delay 0)
