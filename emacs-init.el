@@ -394,7 +394,6 @@
 ;; Journal configuration
 (use-package org-journal
   :ensure
-  :load-path "/home/vitor/mygit/org-journal/"
   :config
   (progn
     (bind-key* "C-c C-j" #'org-journal-new-entry)
