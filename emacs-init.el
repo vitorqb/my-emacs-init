@@ -386,6 +386,13 @@
 (setq org-babel-python-command "python")
 (setq org-plantuml-jar-path (expand-file-name "/usr/local/bin/plantuml.jar"))
 
+;; Set the default header for source code blocks :result to verbatim, so org don't
+;; try to create weird tables.
+(setq org-babel-default-header-args
+      (->> org-babel-default-header-args
+           (-remove (-lambda ((k . _)) (equal k :results)))
+           (cons '(:results . "replace verbatim"))))
+
 ;; Some extensions
 (use-package orgext
   ;; https://github.com/vitorqb/orgext
