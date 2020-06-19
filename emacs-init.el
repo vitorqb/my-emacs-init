@@ -475,6 +475,18 @@
  :description "Org Toggle Link Display [Display Links Toggle Org]"
  :command #'org-toggle-link-display)
 
+;; I3wm helpers
+(defun my-org-capture-from-emacsclient ()
+  "Calls `org-capture`, makes sure it's fullscreen, waits for the user to input something and,
+   when the user closes the buffer, closes the frame.
+   Thought to be used by a keyboard shortcut that opens an `emacsclient` for the suer to capture
+   a TODO."
+  (interactive)
+  (set-frame-name "OrgCapture")
+  (orgext-capture-with-task)
+  (delete-other-windows)
+  (add-hook 'kill-buffer-hook #'delete-frame 0 t))
+
 ;; -----------------------------------------------------------------------------
 ;; Git Magit
 ;; -----------------------------------------------------------------------------
@@ -897,3 +909,9 @@
     (concat it (-> my-current-profile symbol-name (substring 1)) ".el")
     (and (file-exists-p it) it)
     (load it)))
+
+;; -----------------------------------------------------------------------------
+;; Emacs Server
+;; -----------------------------------------------------------------------------
+(unless (server-running-p)
+  (server-start))
