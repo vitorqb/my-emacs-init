@@ -482,7 +482,6 @@
    Thought to be used by a keyboard shortcut that opens an `emacsclient` for the suer to capture
    a TODO."
   (interactive)
-  (set-frame-name "OrgCapture")
   (orgext-capture-with-task)
   (delete-other-windows)
   (add-hook 'kill-buffer-hook #'delete-frame 0 t))
