@@ -403,6 +403,10 @@
   :ensure
   :config
   (progn
+    ;; Use nice datetime
+    (custom-set-variables
+     '(org-journal-date-format "%A, %Y%m%d"))
+    
     (bind-key* "C-c C-j" #'org-journal-new-entry)
 
     (defun my/journal-files-dir ()
