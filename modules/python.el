@@ -1,6 +1,5 @@
 (use-package elpy
   :ensure
-  :after (:all yasnippet flycheck)
   :config
   (progn
     (elpy-enable)
@@ -18,10 +17,6 @@
     ;; Use yas
     (-each (list 'inferior-python-mode-hook 'python-mode-hook)
       (-rpartial 'add-hook 'yas-minor-mode-on))
-
-    ;; By default, use flycheck.
-    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-    (add-hook 'elpy-mode-hook 'flycheck-mode)
 
     ;; Don't use elpy-find-file (projectile-find-file is better)
     (define-key elpy-mode-map (kbd "C-c C-f") nil)))
