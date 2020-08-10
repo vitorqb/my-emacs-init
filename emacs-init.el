@@ -893,6 +893,7 @@
 (my/defmodule vue)
 (my/defmodule eglot)
 (my/defmodule R)
+(my/defmodule rust)
 
 ;; -----------------------------------------------------------------------------
 ;; Loads custom welcome script
