@@ -423,7 +423,11 @@
 
     (mfcs-add-command
      :description "Org Find File Journal Find File (Docs Files)"
-     :command (myutils/li (call-interactively #'my/journal-find-file)))))
+     :command (myutils/li (call-interactively #'my/journal-find-file)))
+
+    (setq org-todo-keywords
+          '((sequence "TODO(t)" "|" "DONE(d)" "WONTFIX(n)")
+            (sequence "BLOCKED()" "WAITING(w)")))))
 
 (defun my-org-journal-find-last-file (arg)
   "Find-file on the last file for the journal.
