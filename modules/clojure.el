@@ -18,18 +18,27 @@
 
 (use-package edn :ensure)
 (use-package clojure-mode-extra-font-locking :ensure)
+(use-package hydra :ensure)
 
 ;; For refactoring
 (use-package clj-refactor :ensure
   :config (progn
+
             ;; Let's put a more usefull test import for cljs
             (setq-default cljr-cljs-clojure-test-declaration
                   (concat "[cljs.test :refer-macros [is are"
                           " deftest testing use-fixtures async]]"))
+
             ;; And for clojure
             (setq-default cljr-clojure-test-declaration
                           (concat "[clojure.test :as t :refer [is are deftest testing"
-                                  " use-fixtures]]"))))
+                                  " use-fixtures]]"))
+
+            ;; Helper functions
+            (defun emacs-init-clojure-mode/add-require-to-ns-no-sort ()
+              (interactive)
+              (let ((cljr-auto-sort-ns nil))
+                (call-interactively #'cljr-add-require-to-ns)))))
 
 (use-package cider
   :ensure
@@ -52,6 +61,14 @@
                                company-etags
                                company-keywords
                                company-dabbrev)))))
+
+    
+    ;; This seems to fix a problem with eldoc not finding the proper support for cljr
+    (defun emacs-init-clojure-mode-setup-eldoc ()
+      (setq-local eldoc-documentation-function #'cider-eldoc))
+
+    (add-hook 'clojure-mode-hook #'emacs-init-clojure-mode-setup-eldoc)
+    (add-hook 'clojurescript-mode-hook #'emacs-init-clojure-mode-setup-eldoc)
 
     ;; Adds commands to fuzzy cmd selector
     (mfcs-add-command
@@ -85,6 +102,17 @@
     (mfcs-add-command
      :description "Cider Jack In"
      :command #'cider-jack-in)))
+
+;; Adds hydra for clojure and clojurescript
+(defhydra emacs-init-clojure-mode/hydra (:color blue)
+  ("r" #'cljr-add-require-to-ns "Adds a require to the ns" :column "Clojure Hydra")
+  ("R" #'emacs-init-clojure-mode/add-require-to-ns-no-sort "Adds require without sorting."))
+
+(add-hook 'clojure-mode-hook
+          (lambda () (setq-local my/language-hydra/body #'emacs-init-clojure-mode/hydra/body)))
+
+(add-hook 'clojurescript-mode-hook
+          (lambda () (setq-local my/language-hydra/body #'emacs-init-clojure-mode/hydra/body)))
 
 ;; Misc functions
 (defun emacs-init-modules-clojure/map-with (str)

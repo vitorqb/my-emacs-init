@@ -717,6 +717,7 @@
     ("h" #'my/highlight-hydra/body "Highligh hydra!")
     ("i" #'counsel-imenu "Imenu (find definitions)!")
     ("j" #'my/journal-hydra/body "Hydra for org-journal")
+    ("l" (lambda () (interactive) (funcall my/language-hydra/body)) "Language specific hydra")
     ("r" #'my/projectile-hydra/body "Projectile hydra ")
     ("m" #'my/flymake-hydra/body "Flymake hydra")
     ("o" #'my/org-hydra/body "Org hydra")
