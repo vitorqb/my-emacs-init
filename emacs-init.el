@@ -434,7 +434,7 @@
    Sorts by string comparison, so depends on the journals being sortable
    this way (like 2018-01-01, 2018-01-02, ..."
   (interactive "P")
-  (-> (org-journal-list-files)
+  (-> (org-journal--list-files)
       (sort #'string<)
       (last)
       (car)
