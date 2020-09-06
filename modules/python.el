@@ -1,11 +1,14 @@
+(require 'eldoc)
+
 (use-package elpy
   :ensure
   :config
   (progn
-    (elpy-enable)
     (setq elpy-syntax-check-command "flake8"
           elpy-rpc-backend "jedi"
           elpy-shell-display-buffer-after-send nil)
+
+    (elpy-enable)
 
     ;; Uses pytest by default
     (elpy-set-test-runner #'elpy-test-pytest-runner)
