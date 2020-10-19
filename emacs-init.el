@@ -22,8 +22,8 @@
   "If set, inhibit emacs default init and executes this script instead.")
 (defvar my/user-temp-directory "~/mytmp"
   "A directory used to save temporary files.")
-(defvar my/default-browser-cmd "firefox"
-  "The default command to open a browser.")
+(defvar my/default-browser-cmd "firefox %s"
+  "The default command to open a browser. The '%s' will be substituted by the url to be openned.")
 (defvar my/tfs-work-item-url-prefix nil
   "The url to visit a tfs work item. The id will be appended at the end.")
 (defvar my/tfs-pr-url-prefix nil
@@ -373,7 +373,7 @@
 (setq org-file-apps
       `((auto-mode . emacs)
         ("\\.mm\\'" . default)
-        ("\\.x?html?\\'" . ,(concat my/default-browser-cmd " %s"))
+        ("\\.x?html?\\'" . ,my/default-browser-cmd)
         ("\\.pdf\\'" . "evince %s")))
 
 ;; Org Babel configuration
