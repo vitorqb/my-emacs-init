@@ -198,6 +198,13 @@
   :config (progn
             (cl-pushnew '(:mfcs-call . 20) ivy-height-alist)))
 
+;; ------------------------------------------------------------
+;; Runc - Runc Command
+;; ------------------------------------------------------------
+(use-package runc
+  ;; http://github.com/vitorqb/runc
+  :load-path (lambda () (get-dep-library-load-path "runc")))
+
 ;; -----------------------------------------------------------------------------
 ;; Compilation and processes
 ;; -----------------------------------------------------------------------------
