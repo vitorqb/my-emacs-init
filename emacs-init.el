@@ -779,7 +779,9 @@
 (global-set-key (kbd "<M-next>")  (myutils/li (scroll-other-window 6)))
 (global-set-key (kbd "<M-prior>") (myutils/li (scroll-other-window -6)))
 (global-set-key (kbd "<prior>")   (myutils/li (scroll-down 6)))
+(global-set-key (kbd "C-v")       (myutils/li (scroll-up 6)))
 (global-set-key (kbd "<next>")    (myutils/li (scroll-up 6)))
+(global-set-key (kbd "M-v")       (myutils/li (scroll-down 6)))
 
 ;; We got too used with undo on C-M-q.
 ;; bind-key, shipped with use-package, does that for us
