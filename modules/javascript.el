@@ -69,3 +69,21 @@
   :config
   (progn
     (define-key indium-interaction-mode-map (kbd "C-c d") #'myutils/duplicate-buffer)))
+
+
+;;
+;; Tide for company completion
+;; 
+(use-package tide
+  :ensure
+  :after js2-mode
+  :init (progn
+          (defun setup-tide-mode ()
+            (interactive)
+            (tide-setup)
+            (flycheck-mode +1)
+            (eldoc-mode +1)
+            (tide-hl-identifier-mode +1)
+            (company-mode +1))
+          (add-hook 'js2-mode-hook #'setup-tide-mode)
+          (add-hook 'js-mode-hook #'setup-tide-mode)))
