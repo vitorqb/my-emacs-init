@@ -570,22 +570,6 @@
             (defalias 'lispy-mode #'lightlispy-mode)))
 
 ;; -----------------------------------------------------------------------------
-;; OpenWith
-;; -----------------------------------------------------------------------------
-(use-package openwith
-  :ensure
-  :config
-  (progn
-    (openwith-mode 1)
-    (setq openwith-associations
-	  `(("\\.pdf\\'" "evince" (file))
-	    ("\\.xls\\'" "libreoffice5.3" (file))
-	    ("\\.xlsx\\'" "libreoffice5.3" (file))
-	    ("\\.html\\'" ,my/default-browser-cmd (file))
-	    ("\\.\\(?:jp?g\\|png\\)\\'" "display" (file))
-	    ("\\.mp3\\'" "xmms" (file))))))
-
-;; -----------------------------------------------------------------------------
 ;; Ediff
 ;; -----------------------------------------------------------------------------
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
