@@ -370,8 +370,13 @@
 ;; -----------------------------------------------------------------------------
 ;; Org Mode
 ;; -----------------------------------------------------------------------------
+(require 'org)
+
 ;; We don't like visual-line-mode
 (add-hook 'org-mode-hook (lambda () (visual-line-mode -1)))
+
+;; We use "C-," for something else
+(define-key org-mode-map (kbd "C-,") nil)
 
 ;; Only jump lines between headers if 3 empty lines
 (custom-set-variables '(org-cycle-separator-lines 3 t))
