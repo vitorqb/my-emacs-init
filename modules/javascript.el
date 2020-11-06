@@ -15,23 +15,25 @@
   :after (:all flycheck)
   :config
   (progn
+
+    ;; Auto load for js files
     (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-    (dolist (fun (list #'js2-imenu-extras-mode #'yas-minor-mode-on
-                       #'flymake-mode-on))
+
+    ;; Use yas, flymake and js2-imenu-extra
+    (dolist (fun (list #'js2-imenu-extras-mode #'yas-minor-mode-on))
       (add-hook 'js2-mode-hook fun)
       (add-hook 'js-mode-hook fun))
-    ;; Force C-c d to duplicate buffer, overriding existing bind
-    (define-key js2-mode-map (kbd "C-c d") #'myutils/duplicate-buffer)
-    ;; Same with C-c C-j
-    (define-key js2-mode-map (kbd "C-c C-j") #'org-journal-new-entry)
-    ;; Use xref to find references. See http://docs.ctags.io/en/latest/ to generate
-    ;; the tags file.
-    (define-key js2-mode-map (kbd "M-.") #'xref-find-definitions)
-    (define-key js-mode-map (kbd "M-.") #'xref-find-definitions)
 
-    ;; Bound yas to shit + TAB to avoid conflict
-    (define-key js2-mode-map (kbd "<backtab>") 'yas-expand)
+    ;; Remove keys that we bind globally
+    ;; Force C-c d to duplicate buffer, overriding existing bind
+    (define-key js2-mode-map (kbd "C-c d") nil)
+    (define-key js2-mode-map (kbd "C-c C-j") nil)
+    (define-key js2-mode-map (kbd "<backtab>") nil)
+
+    ;; Set's offset
     (setq js2-basic-offset 2)
+
+    ;; Adds jest errors to compilation
     (my/add-jest-errors-to-compilation-regexp)
 
     ;; Also use the derived mode for jsx
@@ -39,24 +41,9 @@
     (if (version< emacs-version "27")
         (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js2-jsx-mode))
       (add-hook 'js-mode-hook 'js2-minor-mode))
-    
-    (add-to-list 'interpreter-mode-alist '("node" . js2-jsx-mode))
 
-    ;; Adds usefull commands for js2 to mfcs
-    (mfcs-add-command
-     :description "Npm Js Javascript Run Test"
-     :command
-     (lambda () (interactive)
-       (-let [cmd (format "cd %s && npm run test " (projectile-project-root))]
-         (myutils/with-compile-opts "*NpmTest*" cmd
-           (call-interactively #'compile)))))
-    (mfcs-add-command
-     :description "Npm Js Javascript Start"
-     :command
-     (lambda () (interactive)
-       (-let [cmd (format "cd %s && npm run start " (projectile-project-root))]
-         (myutils/with-compile-opts "*NpmStart*" cmd
-           (call-interactively #'compile)))))))
+    ;; Use js2 in mode interpreter
+    (add-to-list 'interpreter-mode-alist '("node" . js2-jsx-mode))))
 
 ;; 
 ;; For development with nodejs
@@ -65,10 +52,9 @@
   :ensure
   :after js2-mode
   :init   (add-hook 'js2-mode-hook #'indium-interaction-mode)
-  ;; Force C-c d to duplicate buffer, overriding existing bind
   :config
   (progn
-    (define-key indium-interaction-mode-map (kbd "C-c d") #'myutils/duplicate-buffer)))
+    (define-key indium-interaction-mode-map (kbd "C-c d") nil)))
 
 
 ;;
@@ -82,8 +68,6 @@
             (interactive)
             (tide-setup)
             (flycheck-mode +1)
-            (eldoc-mode +1)
-            (tide-hl-identifier-mode +1)
-            (company-mode +1))
+            (eldoc-mode +1))
           (add-hook 'js2-mode-hook #'setup-tide-mode)
           (add-hook 'js-mode-hook #'setup-tide-mode)))
