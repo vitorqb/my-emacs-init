@@ -663,12 +663,20 @@
     ;; And use ivy (S2) for completion
     (setq projectile-completion-system 'ivy)))
 
+;; Adds a fn to insert relative files
+(defun my/projectile/insert-relative-file ()
+  (interactive)
+  (let* ((project-root (projectile-ensure-project (projectile-project-root)))
+         (file (projectile-completing-read "File: " (projectile-project-files project-root))))
+    (insert (myutils/copy-relative-path (myutils/concat-file project-root file)))))
+
 (defun my/setup-hydra/projectile-hydra ()
   "An hydra with projectile functionalities =D"
 
   (defhydra my/projectile-hydra (:color blue)
-    ("r" #'projectile-dired "Dired at to project root" :column "Projectile!")
-    ("R" #'projectile-dired-other-window "Dired at to project root (other window)")
+    ("h" #'projectile-dired "Dired at to project root" :column "Projectile!")
+    ("H" #'projectile-dired-other-window "Dired at to project root (other window)")
+    ("r" #'my/projectile/insert-relative-file "Insert relative file")
     ("t" #'projectile-toggle-between-implementation-and-test
      "Toggle between implementation and test")))
 
