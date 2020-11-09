@@ -36,14 +36,14 @@
     ;; Adds jest errors to compilation
     (my/add-jest-errors-to-compilation-regexp)
 
-    ;; Also use the derived mode for jsx
-    ;; See https://github.com/mooz/js2-mode/blob/bb73461c2c7048d811b38e6b533a30fb5fdcea93/js2-mode.el#L57
-    (if (version< emacs-version "27")
-        (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js2-jsx-mode))
-      (add-hook 'js-mode-hook 'js2-minor-mode))
-
     ;; Use js2 in mode interpreter
     (add-to-list 'interpreter-mode-alist '("node" . js2-jsx-mode))))
+
+(use-package rjsx-mode
+  :ensure
+  :config
+  (progn
+    (add-to-list 'auto-mode-alist '("\\.jsx\\'" . rjsx-mode))))
 
 ;; 
 ;; For development with nodejs
