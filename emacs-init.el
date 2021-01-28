@@ -14,8 +14,6 @@
           " to put files for the org-journal"))
 (defvar my/emacs-init-deps-path "~/.emacs.d/emacs_init_deps/"
   "Path to a directory which contains all emacs-init dependencies.")
-(defvar my/jira-base-url nil
-  "The base url used to visit tickets in jira")
 (defvar my/pr-base-url nil
   "The base url used to visit a PR. Currently works only for bitbucket.")
 (defvar my/custom-welcome-script nil
@@ -103,6 +101,21 @@
 
 ;; We like recursion
 (setq max-lisp-eval-depth (* 100 max-lisp-eval-depth))
+
+;; Allow searching the bash history
+(defun counsel-yank-bash-history ()
+  "Yank the bash history"
+  (interactive)
+  (shell-command "history -r") ; reload history
+  (let* ((history (s-lines (with-temp-buffer
+                             (insert-file-contents (file-truename "~/.bash_history"))
+                             (buffer-string))))
+         (collection (nreverse history)))
+    (when (and collection (> (length collection) 0))
+      (when-let ((val (ivy-read (format "Bash history:") collection)))
+          (kill-new val)
+          (message "%s => kill-ring" val)))))
+
 
 ;; -----------------------------------------------------------------------------
 ;; Emacs Init Modules
