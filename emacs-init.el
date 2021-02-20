@@ -918,6 +918,7 @@
 (my/defmodule eglot)
 (my/defmodule R)
 (my/defmodule rust)
+(my/defmodule ohmycards)
 
 ;; -----------------------------------------------------------------------------
 ;; Loads custom welcome script
