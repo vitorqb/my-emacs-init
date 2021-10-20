@@ -615,6 +615,7 @@
   (progn
     (add-hook 'scss-mode-hook 'flymake-mode-on)
     (setq scss-compile-at-save nil)
+    (custom-set-variables '(css-indent-offset 2))
     (add-to-list 'auto-mode-alist (cons "\\.scss?\\'" 'scss-mode))))
 
 ;; -----------------------------------------------------------------------------
@@ -672,6 +673,7 @@
 
     ;; This one is on me
     (bind-key* "C-c C-f" 'projectile-find-file)
+    (bind-key* "C-c C-d" 'projectile-find-dir)
 
     ;; And use ivy (S2) for completion
     (setq projectile-completion-system 'ivy)))
@@ -687,7 +689,9 @@
   "An hydra with projectile functionalities =D"
 
   (defhydra my/projectile-hydra (:color blue)
-    ("h" #'projectile-dired "Dired at to project root" :column "Projectile!")
+    ("d" #'projectile-find-dir "Find's a directory" :column "Projectile!")
+    ("f" #'projectile-find-file "Find's a file")
+    ("h" #'projectile-dired "Dired at to project root")
     ("H" #'projectile-dired-other-window "Dired at to project root (other window)")
     ("r" #'my/projectile/insert-relative-file "Insert relative file")
     ("t" #'projectile-toggle-between-implementation-and-test
