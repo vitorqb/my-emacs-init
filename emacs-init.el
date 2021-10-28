@@ -923,6 +923,7 @@
 (my/defmodule R)
 (my/defmodule rust)
 (my/defmodule ohmycards)
+(my/defmodule jenkinsfile)
 
 ;; -----------------------------------------------------------------------------
 ;; Loads custom welcome script
