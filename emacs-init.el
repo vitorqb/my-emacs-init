@@ -30,6 +30,9 @@
   "The url to visit a tfs commit. The id will be appended at the end.")
 (defvar my/path-to-modules-dir (concat (file-name-directory load-file-name) "modules")
   "The directory where the emacs-init `modules` can be found.")
+(defcustom my/theme 'dark
+  "Which theme to use (either dark or light)"
+  :type '(symbol))
 
 ;; Loads the config. This is your oportunity to customize any of the variables.
 (let ((config-file-name (expand-file-name "~/.config/emacs_init/config.el")))
@@ -153,12 +156,26 @@
   (setq default-frame-alist `((font . ,(format "%s %s" my-font-name my-font-size)))))
 
 ;; Choose theme
-(use-package monokai-theme
-  :ensure t
-  :no-require t
-  :config (progn
-            (setq monokai-background "#0d1824" )
-            (load-theme 'monokai t)))
+(defun my/load-dark-theme ()
+  (use-package monokai-theme
+    :ensure t
+    :no-require t
+    :config (progn
+              (setq monokai-background "#0d1824" )
+              (load-theme 'monokai t))))
+
+(defun my/load-light-theme ()
+  (use-package leuven-theme
+    :ensure t
+    :no-require t
+    :config (progn
+              (load-theme 'leuven t))))
+
+(cond
+ ((equal my/theme 'dark)  (my/load-dark-theme))
+ ((equal my/theme 'light) (my/load-light-theme))
+ (:else
+  (error "Invalid value for my/theme!")))
 
 ;; Highlight parenthesis
 (setq show-paren-delay 0)
