@@ -515,7 +515,8 @@
     ("n" #'org-next-block "Jump to the next block" :color pink)
     ("p" #'org-previous-block "Jump to the previous block" :color pink)
     ("o" #'orgext-new-block-from-other-window "New block from other window")
-    ("t" (lambda () (interactive) (find-file org-default-notes-file)) "Goto `todo` file.")))
+    ("t" (lambda () (interactive) (find-file org-default-notes-file)) "Goto `todo` file.")
+    ("v" #'orgext-element-at-point-on-new-buffer "Element at point on new buffer (read-only)")))
 
 ;; Adds org store link and toggle link to mfcs
 (mfcs-add-command
