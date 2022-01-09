@@ -24,10 +24,11 @@
 (use-package web-mode :ensure t) ;; Needed for tsx
 (use-package typescript-mode :ensure
   :after (tide web-mode)
-  :hook ((typescript-mode . my/setup-tide-mode)
-         (before-save . tide-format-before-save))
+  :hook ((typescript-mode . my/setup-tide-mode))
   :config
   (progn
     (add-hook 'tide-mode-hook
               (lambda () (cl-pushnew 'company-tide company-backends)))
+    (setq typescript-indent-level 2)
+    (myutils/active-flycheck-for-typescript)
     (my/setup-tsx)))
