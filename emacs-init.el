@@ -14,8 +14,6 @@
           " to put files for the org-journal"))
 (defvar my/emacs-init-deps-path "~/.emacs.d/emacs_init_deps/"
   "Path to a directory which contains all emacs-init dependencies.")
-(defvar my/pr-base-url nil
-  "The base url used to visit a PR. Currently works only for bitbucket.")
 (defvar my/custom-welcome-script nil
   "If set, inhibit emacs default init and executes this script instead.")
 (defvar my/user-temp-directory "~/mytmp"
