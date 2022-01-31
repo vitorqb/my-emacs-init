@@ -376,7 +376,9 @@
 (defun my/setup-hydra/register-hydra ()
   (defhydra my/register-hydra (:color blue)
     ("p" #'point-to-register "Save point in register" :column "Registers!")
+    ("P" (lambda () (interactive) (point-to-register 1)) "Save point in register 1")
     ("j" #'jump-to-register  "Jump to point register")
+    ("J" (lambda () (interactive) (jump-to-register 1))  "Jump to point register 1")
     ("r" #'copy-to-register  "Copy region to register")
     ("i" #'insert-register   "Inserts copied region form register")))
 
@@ -536,6 +538,9 @@
   (orgext-capture-with-task)
   (delete-other-windows)
   (add-hook 'kill-buffer-hook #'delete-frame 0 t))
+
+;; Nicer image handling
+(setq org-image-actual-width nil)
 
 ;; -----------------------------------------------------------------------------
 ;; Git Magit
