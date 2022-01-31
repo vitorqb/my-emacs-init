@@ -18,7 +18,10 @@
   (flycheck-add-mode 'typescript-tslint 'web-mode)
   ;; We usually want 2 indent spaces, not 4
   (setq web-mode-code-indent-offset 2
-        web-mode-markup-indent-offset 2))
+        web-mode-markup-indent-offset 2)
+  ;; Don't be annoying
+  (setq-local web-mode-auto-pairs nil
+              web-mode-auto-quote-style nil))
 
 (use-package tide :ensure t)
 (use-package web-mode :ensure t) ;; Needed for tsx
@@ -28,7 +31,9 @@
   :config
   (progn
     (add-hook 'tide-mode-hook
-              (lambda () (cl-pushnew 'company-tide company-backends)))
+              (lambda ()
+                (setq-local company-backends '(company-tide company-bbdb company-semantic company-files
+                                               company-dabbrev-code company-keywords))))
     (setq typescript-indent-level 2)
     (myutils/active-flycheck-for-typescript)
     (my/setup-tsx)))
