@@ -20,8 +20,8 @@
   (setq web-mode-code-indent-offset 2
         web-mode-markup-indent-offset 2)
   ;; Don't be annoying
-  (setq-local web-mode-auto-pairs nil
-              web-mode-auto-quote-style nil))
+  (setq web-mode-auto-pairs nil
+        web-mode-auto-quote-style nil))
 
 (use-package tide :ensure t)
 (use-package web-mode :ensure t) ;; Needed for tsx
