@@ -348,7 +348,8 @@
 
 (defun my/setup-hydra/buffer-hydra ()
   (defhydra my/buffer-hydra (:color blue)
-    ("c" #'myutils/copy-buffer-contents "Copy buffer contents." :column "Buffers!")
+    ("a" #'my/ansi-colorize-buffer "Colorize buffer with ansi colors" :column "Buffers!")
+    ("c" #'myutils/copy-buffer-contents "Copy buffer contents.")
     ("g" #'push-mark-and-avy-goto-char "Avy go to char (tree)")
     ("r" #'rename-buffer "Rename buffer")
     ("l" #'goto-line "Go to a specific line")
@@ -646,6 +647,7 @@
 
 (defun my/ansi-colorize-buffer ()
   " Colorize a buffer "
+  (interactive)
   (let ((buffer-read-only nil))
     (ansi-color-apply-on-region (point-min) (point-max))))
 
