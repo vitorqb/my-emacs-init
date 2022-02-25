@@ -200,6 +200,9 @@
 ;; Delete active region
 (delete-selection-mode +1)
 
+;; Always use y-or-n rather than yes-or-no
+(defalias 'yes-or-no-p 'y-or-n-p)
+
 ;; -----------------------------------------------------------------------------
 ;; Which Key
 ;; -----------------------------------------------------------------------------
