@@ -597,6 +597,12 @@
     ("Z" (lambda () (interactive) (fzf/start "~"))
      "Fuzzy find at home")))
 
+(defun my/setup-hydra/dired-hydra ()
+  "Defines an hydra for dired-related commands"
+
+  (defhydra my/dired-hydra (:color blue)
+    ("f" #'find-dired "Find dired" :column "Dired!")))
+
 ;; -----------------------------------------------------------------------------
 ;; (Light)Lispy
 ;; -----------------------------------------------------------------------------
@@ -748,6 +754,7 @@
   (my/setup-hydra/org-hydra)
   (my/setup-hydra/buffer-hydra)
   (my/setup-hydra/highlight-hydra)
+  (my/setup-hydra/dired-hydra)
 
   ;; An hydra for ag!
   (defhydra my/ag-hydra (:color blue)
@@ -759,7 +766,8 @@
     ("a" #'my/ag-hydra/body "Ag Hydra")
     ("b" #'my/buffer-hydra/body "Buffer hydra")
     ("c" #'mfcs-call "Calls fuzzy command selector")
-    ("d" #'my-show-definitions "Show definitions")
+    ("d" #'my/dired-hydra/body "Dired hydra")
+    ("D" #'my-show-definitions "Show definitions")
     ("e" #'my/eval-elisp-hydra/body "Evaluate Elisp hydra")
     ("f" #'my/files-hydra/body "Files hydra!")
     ("h" #'my/highlight-hydra/body "Highligh hydra!")
