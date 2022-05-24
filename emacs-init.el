@@ -155,7 +155,7 @@
 
 ;; Choose theme
 (defun my/load-dark-theme ()
-  (use-package monokai-theme
+  (use-package solarized-theme
     :ensure t
     :no-require t
     :config (progn
