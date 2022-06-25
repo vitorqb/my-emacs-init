@@ -939,14 +939,23 @@
   (_ nil))
 
 ;; -----------------------------------------------------------------------------
+;; Javascript/Js/Json
+;; -----------------------------------------------------------------------------
+;; This was just so annoying that I'll just put it here and pretend it's emacs' default
+(setq js2-basic-offset 2)
+(setq js-indent-level 2)
+
+;; -----------------------------------------------------------------------------
 ;; Language specific modules
 ;; -----------------------------------------------------------------------------
 (my/defmodule clojure)
+(my/defmodule elixir)
 (my/defmodule go)
 (my/defmodule haskell)
 (my/defmodule latex-and-auctex)
 (my/defmodule typescript)
 (my/defmodule python)
+(my/defmodule python-eglot)
 (my/defmodule scala)
 (my/defmodule elm)
 (my/defmodule javascript)
