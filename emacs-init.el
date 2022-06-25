@@ -157,10 +157,7 @@
 (defun my/load-dark-theme ()
   (use-package solarized-theme
     :ensure t
-    :no-require t
-    :config (progn
-              (setq monokai-background "#0d1824" )
-              (load-theme 'monokai t))))
+    :no-require t))
 
 (defun my/load-light-theme ()
   (use-package leuven-theme
