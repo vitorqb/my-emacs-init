@@ -259,7 +259,10 @@
 ;; -----------------------------------------------------------------------------
 ;; Yas and Snippets
 ;; -----------------------------------------------------------------------------
-(use-package yasnippet :ensure)
+(use-package yasnippet :ensure
+  :config (progn
+            (add-to-list 'yas-snippet-dirs
+                         (s-concat (getenv "VITOR_MYGIT_DIR") "/snippets/snippets"))))
 
 ;; -----------------------------------------------------------------------------
 ;; Typing shortcuts functions
