@@ -968,6 +968,7 @@
 (my/defmodule rust)
 (my/defmodule ohmycards)
 (my/defmodule jenkinsfile)
+(my/defmodule terraform)
 
 ;; -----------------------------------------------------------------------------
 ;; Loads custom welcome script
