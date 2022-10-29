@@ -132,7 +132,7 @@ my-show-definitions   https://github.com/vitorqb/my-show-definitions.git   0.0.2
 my-fuzzy-cmd-selector https://github.com/vitorqb/my-fuzzy-cmd-selector.git 0.0.3
 orgext                https://github.com/vitorqb/orgext.git                0.2.2
 lightlispy            https://github.com/vitorqb/lightlispy.git            ffd4b38
-compile-transient     https://github.com/vitorqb/compile-transient.git     0.1.1
+compile-transient     https://github.com/vitorqb/compile-transient.git     0.1.2
 ag                    https://github.com/vitorqb/ag.el.git                 98a383a
 runc                  https://github.com/vitorqb/runc.git                  origin/master
 EOF
