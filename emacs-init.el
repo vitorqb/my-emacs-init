@@ -973,6 +973,7 @@
 (my/defmodule ohmycards)
 (my/defmodule jenkinsfile)
 (my/defmodule terraform)
+(my/defmodule asdf)
 
 ;; -----------------------------------------------------------------------------
 ;; Loads custom welcome script
