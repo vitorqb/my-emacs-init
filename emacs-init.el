@@ -362,7 +362,8 @@
     ("l" #'goto-line "Go to a specific line")
     ("o" #'my/occur-symbol-at-point "Occur with current symbol.")
     ("p" #'myutils/copy-file-path-to-clipboard "Copy file path.")
-    ("P" #'myutils/copy-file-path-from-other-window-to-clipboard "Copy file path (other window)")))
+    ("P" #'myutils/copy-file-path-from-other-window-to-clipboard "Copy file path (other window)")
+    ("t" #'toggle-truncate-lines "Toggle truncate lines")))
 
 (defun my/setup-hydra/highlight-hydra ()
   (defhydra my/highlight-hydra (:color blue)
