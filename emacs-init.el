@@ -402,6 +402,33 @@
 
 
 ;; -----------------------------------------------------------------------------
+;; Github CLI integration
+;; -----------------------------------------------------------------------------
+(defvar my/gh/on-browser-open-request
+  (lambda ()
+    (interactive)
+    (shell-command "i3-msg [urgent=latest] focus"))
+  "Callback to be run when we send something to the browser")
+
+(defun my/gh/open-repo-on-browser ()
+  "Opens tmux on the current directory (new pane)."
+  (interactive)
+  (shell-command "gh repo view --web")
+  (funcall my/gh/on-browser-open-request))
+
+(defun my/gh/open-pr-on-browser ()
+  "Opens tmux on the current directory (new pane)."
+  (interactive)
+  (shell-command "gh pr view --web")
+  (funcall my/gh/on-browser-open-request))
+
+(defun my/setup-hydra/gh-hydra ()
+  (defhydra my/gh-hydra (:color blue)
+    ("r" #'my/gh/open-repo-on-browser "Open repo on browser" :column "Github CLI!")
+    ("p" #'my/gh/open-pr-on-browser "Open PR on browser")))
+
+
+;; -----------------------------------------------------------------------------
 ;; Completion (Company)
 ;; -----------------------------------------------------------------------------
 (use-package company
@@ -772,6 +799,7 @@
   (my/setup-hydra/buffer-hydra)
   (my/setup-hydra/highlight-hydra)
   (my/setup-hydra/dired-hydra)
+  (my/setup-hydra/gh-hydra)
 
   ;; An hydra for ag!
   (defhydra my/ag-hydra (:color blue)
@@ -788,6 +816,7 @@
     ("e" #'my/eval-elisp-hydra/body "Evaluate Elisp hydra")
     ("f" #'my/files-hydra/body "Files hydra!")
     ("g" #'my/open-tmux-i3-on-current-dir "Open tmux on current dir")
+    ("G" #'my/gh-hydra/body "Opens GithubCLI hydra")
     ("h" #'my/highlight-hydra/body "Highligh hydra!")
     ("i" #'counsel-imenu "Imenu (find definitions)!")
     ("j" #'my/journal-hydra/body "Hydra for org-journal")
