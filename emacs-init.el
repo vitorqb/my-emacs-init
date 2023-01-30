@@ -390,6 +390,18 @@
     ("i" #'insert-register   "Inserts copied region form register")))
 
 ;; -----------------------------------------------------------------------------
+;; I3 + Tmux integration
+;; -----------------------------------------------------------------------------
+(defvar i3-tmux-class "URxvt")
+(defun my/open-tmux-i3-on-current-dir (currdir)
+  "Opens tmux on the current directory (new pane)."
+  (interactive (list default-directory))
+  (shell-command (format "tmux neww"))
+  (shell-command (format "tmux send-keys 'cd %s' Enter" currdir))
+  (shell-command (format "i3-msg \"[class=%s] focus\"" i3-tmux-class)))
+
+
+;; -----------------------------------------------------------------------------
 ;; Completion (Company)
 ;; -----------------------------------------------------------------------------
 (use-package company
@@ -775,6 +787,7 @@
     ("D" #'my-show-definitions "Show definitions")
     ("e" #'my/eval-elisp-hydra/body "Evaluate Elisp hydra")
     ("f" #'my/files-hydra/body "Files hydra!")
+    ("g" #'my/open-tmux-i3-on-current-dir "Open tmux on current dir")
     ("h" #'my/highlight-hydra/body "Highligh hydra!")
     ("i" #'counsel-imenu "Imenu (find definitions)!")
     ("j" #'my/journal-hydra/body "Hydra for org-journal")
