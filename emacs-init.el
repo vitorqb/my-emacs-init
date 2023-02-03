@@ -393,11 +393,12 @@
 ;; I3 + Tmux integration
 ;; -----------------------------------------------------------------------------
 (defvar i3-tmux-class "URxvt")
+(defvar i3-tmux-session "0")
 (defun my/open-tmux-i3-on-current-dir (currdir)
   "Opens tmux on the current directory (new pane)."
   (interactive (list default-directory))
-  (shell-command (format "tmux neww"))
-  (shell-command (format "tmux send-keys 'cd %s' Enter" currdir))
+  (shell-command (format "tmux neww -t%s:" i3-tmux-session))
+  (shell-command (format "tmux send-keys -t%s 'cd %s' Enter" i3-tmux-session currdir))
   (shell-command (format "i3-msg \"[class=%s] focus\"" i3-tmux-class)))
 
 
