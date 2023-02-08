@@ -398,7 +398,7 @@
   "Opens tmux on the current directory (new pane)."
   (interactive (list default-directory))
   (shell-command (format "tmux neww -t%s:" i3-tmux-session))
-  (shell-command (format "tmux send-keys -t%s 'cd %s' Enter" i3-tmux-session currdir))
+  (shell-command (format "tmux send-keys -t%s: 'cd %s' Enter" i3-tmux-session currdir))
   (shell-command (format "i3-msg \"[class=%s] focus\"" i3-tmux-class)))
 
 
