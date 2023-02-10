@@ -411,6 +411,10 @@
     (shell-command "i3-msg [urgent=latest] focus"))
   "Callback to be run when we send something to the browser")
 
+(defvar my/gh/tmux-window
+  "emacs-tmux-gh"
+  "Name of tmux window to use for interactive prompts")
+
 (defun my/gh/open-repo-on-browser ()
   "Opens tmux on the current directory (new pane)."
   (interactive)
@@ -423,10 +427,17 @@
   (shell-command "gh pr view --web")
   (funcall my/gh/on-browser-open-request))
 
+(defun my/gh/new-pr ()
+  "Opens tmxu with prompts for a new PR"
+  (interactive)
+  (shell-command (format "tmux neww -t%s: -n%s 'gh pr create'" i3-tmux-session my/gh/tmux-window))
+  (shell-command (format "i3-msg \"[class=%s] focus\"" i3-tmux-class)))
+
 (defun my/setup-hydra/gh-hydra ()
   (defhydra my/gh-hydra (:color blue)
     ("r" #'my/gh/open-repo-on-browser "Open repo on browser" :column "Github CLI!")
-    ("p" #'my/gh/open-pr-on-browser "Open PR on browser")))
+    ("p" #'my/gh/open-pr-on-browser "Open PR on browser")
+    ("P" #'my/gh/new-pr "Creates a new PR")))
 
 
 ;; -----------------------------------------------------------------------------
