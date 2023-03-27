@@ -433,9 +433,18 @@
   (shell-command (format "tmux neww -t%s: -n%s 'gh pr create'" i3-tmux-session my/gh/tmux-window))
   (shell-command (format "i3-msg \"[class=%s] focus\"" i3-tmux-class)))
 
+(defun my/gh/browse (file-path)
+  "Browses to the current file."
+  (interactive (list buffer-file-name))
+  (let ((default-directory (or (file-name-directory file-path) default-directory))
+        (file-name (file-name-nondirectory file-path )))
+    (shell-command (format "gh browse %s" file-name))
+    (funcall my/gh/on-browser-open-request)))
+
 (defun my/setup-hydra/gh-hydra ()
   (defhydra my/gh-hydra (:color blue)
-    ("r" #'my/gh/open-repo-on-browser "Open repo on browser" :column "Github CLI!")
+    ("b" #'my/gh/browse "Browses to file in github" :column "Github CLI!")
+    ("r" #'my/gh/open-repo-on-browser "Open repo on browser")
     ("p" #'my/gh/open-pr-on-browser "Open PR on browser")
     ("P" #'my/gh/new-pr "Creates a new PR")))
 
@@ -1018,6 +1027,8 @@
 (my/defmodule go)
 (my/defmodule haskell)
 (my/defmodule javascript)
+(my/defmodule typescript)
+(my/defmodule typescript-eglot)
 (my/defmodule jenkinsfile)
 (my/defmodule just)
 (my/defmodule kotlin)
@@ -1028,7 +1039,6 @@
 (my/defmodule rust)
 (my/defmodule scala)
 (my/defmodule terraform)
-(my/defmodule typescript)
 (my/defmodule vue)
 
 ;; -----------------------------------------------------------------------------
