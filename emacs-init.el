@@ -371,6 +371,18 @@
     ("r" #'my/highligh-region "Selected region.")
     ("p" #'highlight-phrase "Phrase.")))
 
+(defun my/setup-hydra/hideshow-hdyra ()
+  (defhydra my/hideshow-hydra (:color blue)
+    ("h" #'hs-hide-block "Hide" :column "HideShow!")
+    ("H" #'hs-hide-all "Hide All")
+    ("s" #'hs-show-block "Show")
+    ("S" #'hs-show-all "Show All")
+    ("t" #'hs-toggle-hiding "Toggle")))
+
+(add-hook 'emacs-lisp-mode-hook 'hs-minor-mode)
+(add-hook 'go-mode-hook 'hs-minor-mode)
+(add-hook 'python-mode-hook 'hs-minor-mode)
+
 ;; Adds some shortcuts to fuzzy cmd match
 (mfcs-add-command :description "Buffer Rename Buffer" :command #'rename-buffer)
 (mfcs-add-command
@@ -808,20 +820,21 @@
 ;; -----------------------------------------------------------------------------
 (defun my/hydras-setup ()
   " My custom setup for hydras "
-  (my/setup-hydra/typing-hydra)
+  (my/setup-hydra/buffer-hydra)
+  (my/setup-hydra/dired-hydra)
   (my/setup-hydra/eval-elisp-hydra)
   (my/setup-hydra/files-hydra)
-  (my/setup-hydra/shell-hydra)
-  (my/setup-hydra/projectile-hydra)
   (my/setup-hydra/flymake-hydra)
-  (my/setup-hydra/journal-hydra)
-  (my/setup-hydra/register-hydra)
-  (my/setup-hydra/org-hydra)
-  (my/setup-hydra/buffer-hydra)
-  (my/setup-hydra/highlight-hydra)
-  (my/setup-hydra/dired-hydra)
   (my/setup-hydra/gh-hydra)
-
+  (my/setup-hydra/hideshow-hdyra)
+  (my/setup-hydra/highlight-hydra)
+  (my/setup-hydra/journal-hydra)
+  (my/setup-hydra/org-hydra)
+  (my/setup-hydra/projectile-hydra)
+  (my/setup-hydra/register-hydra)
+  (my/setup-hydra/shell-hydra)
+  (my/setup-hydra/typing-hydra)
+  
   ;; An hydra for ag!
   (defhydra my/ag-hydra (:color blue)
     ("a" #'ag "Simply ag" :column "Ag!")
@@ -838,7 +851,8 @@
     ("f" #'my/files-hydra/body "Files hydra!")
     ("g" #'my/open-tmux-i3-on-current-dir "Open tmux on current dir")
     ("G" #'my/gh-hydra/body "Opens GithubCLI hydra")
-    ("h" #'my/highlight-hydra/body "Highligh hydra!")
+    ("h" #'my/hideshow-hydra/body "HideShow Hydra")
+    ("H" #'my/highlight-hydra/body "Highligh hydra!")
     ("i" #'counsel-imenu "Imenu (find definitions)!")
     ("j" #'my/journal-hydra/body "Hydra for org-journal")
     ("l" (lambda () (interactive) (funcall my/language-hydra/body)) "Language specific hydra")
