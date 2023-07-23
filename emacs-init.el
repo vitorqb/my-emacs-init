@@ -155,9 +155,11 @@
 
 ;; Choose theme
 (defun my/load-dark-theme ()
-  (use-package solarized-theme
+  (use-package zenburn-theme
     :ensure t
-    :no-require t))
+    :no-require t
+    :config (progn
+              (load-theme 'zenburn t))))
 
 (defun my/load-light-theme ()
   (use-package leuven-theme
