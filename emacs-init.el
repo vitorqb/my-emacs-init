@@ -51,6 +51,23 @@
         (setq my-current-profile  selected-profile-sym)))))
 
 ;; -----------------------------------------------------------------------------
+;; straight.el
+;; -----------------------------------------------------------------------------
+;; Code from https://github.com/radian-software/straight.el#getting-started
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 6))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+;; -----------------------------------------------------------------------------
 ;; Packages and load settings
 ;; -----------------------------------------------------------------------------
 ;; Don't customize anything
@@ -1036,6 +1053,7 @@
 (my/defmodule asdf)
 (my/defmodule clojure)
 (my/defmodule csharp)
+(my/defmodule copilot)
 (my/defmodule eglot)
 (my/defmodule elixir)
 (my/defmodule elm)

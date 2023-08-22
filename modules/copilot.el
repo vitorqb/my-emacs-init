@@ -1,0 +1,10 @@
+(use-package copilot
+  :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
+  :config (add-hook 'prog-mode-hook 'copilot-mode)
+  :bind (("C-, a" . copilot-accept-completion)
+         ("C-, l" . copilot-accept-completion-by-line)
+         ("C-, p" . copilot-accept-completion-by-paragraph)
+         ("C-, w" . copilot-accept-completion-by-word)
+         ("C-, N" . copilot-next-completion)
+         ("C-, P" . copilot-previous-completion))
+  :ensure t)
