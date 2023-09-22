@@ -821,6 +821,10 @@
     ("f" #'projectile-find-file "Find's a file")
     ("h" #'projectile-dired "Dired at to project root")
     ("H" #'projectile-dired-other-window "Dired at to project root (other window)")
+    ("o" (lambda () (interactive)
+           (-let [projectile-switch-project-action #'projectile-dired]
+             (projectile-switch-project)))
+     "Open project")
     ("k" #'projectile-kill-buffers "Kill buffers for project")
     ("r" #'my/projectile/insert-relative-file "Insert relative file")
     ("t" #'projectile-toggle-between-implementation-and-test
