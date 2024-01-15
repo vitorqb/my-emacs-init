@@ -601,7 +601,7 @@
            (let ((current-prefix-arg '(4)))
              (call-interactively #'my-org-journal-find-last-file)))
      "Open most recent file new window")
-    ("p" #'org-journal-open-previous-entry "Previous entry")
+    ("p" #'org-journal-previous-entry "Previous entry")
     ("s" #'org-journal-search "Search")
     ("r" #'my/org-journal-search-regexp "Regexp Search")))
 
