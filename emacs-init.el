@@ -422,7 +422,7 @@
 ;; -----------------------------------------------------------------------------
 ;; I3 + Tmux integration
 ;; -----------------------------------------------------------------------------
-(defvar i3-tmux-class "URxvt")
+(defvar i3-tmux-class "Alacritty")
 (defvar i3-tmux-session "0")
 (defun my/open-tmux-i3-on-current-dir (currdir)
   "Opens tmux on the current directory (new pane)."
