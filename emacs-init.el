@@ -562,6 +562,18 @@
       (-let [default-directory (my/journal-files-dir)]
         (execute-extended-command arg "counsel-find-file")))
 
+    (defun my/journal-open-daily-files-dir ()
+      "Opens the directory for files for the current day"
+      (interactive)
+      (-let ((files-dir (my/journal-files-dir))
+             (datestr (format-time-string "%Y%m%d")))
+        (when (not (file-directory-p files-dir))
+          (make-directory files-dir))
+        (-let [default-directory files-dir]
+          (when (not (file-directory-p datestr))
+            (make-directory datestr))
+          (find-file datestr))))
+
     (mfcs-add-command
      :description "Org Find File Journal Find File (Docs Files)"
      :command (myutils/li (call-interactively #'my/journal-find-file)))
@@ -594,6 +606,7 @@
     ("v" (lambda () (interactive) (let ((current-prefix-arg '(4)))
                                     (call-interactively #'org-journal-new-entry)))
      "Visit last entry")
+    ("f" #'my/journal-open-daily-files-dir "Open 'files' directory")
     ("n" #'org-journal-open-next-entry "Open next entry")
     ("o" #'my-org-journal-find-last-file "Open most recent file")
     ("O" (lambda () (interactive)
