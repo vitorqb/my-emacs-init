@@ -463,6 +463,20 @@
   (shell-command (format "tmux neww -t%s: -n%s 'gh pr create'" i3-tmux-session my/gh/tmux-window))
   (shell-command (format "i3-msg \"[class=%s] focus\"" i3-tmux-class)))
 
+(defun my/gh/print-pr-body ()
+  "Prints the current PR body on the current buffer."
+  (interactive)
+  (insert (shell-command-to-string "gh pr view --json=body --jq='.body'")))
+
+(defun my/gh/edit-pr-body ()
+  "Allows editing current PR body."
+  (interactive)
+  (let ((buff (generate-new-buffer "*gh-pr-body*"))
+        (default-directory default-directory))
+    (switch-to-buffer buff)
+    (my/gh/print-pr-body)
+    (markdown-mode)))
+
 (defun my/gh/browse (file-path)
   "Browses to the current file."
   (interactive (list buffer-file-name))
@@ -540,6 +554,10 @@
   :load-path (lambda () (get-dep-library-load-path "orgext")))
 
 ;; Journal configuration
+(defvar my/org-journal/tmux-window
+  "emacs-tmux-journal"
+  "Name of tmux window to use for interactive prompts")
+
 (use-package org-journal
   :ensure
   :config
@@ -573,6 +591,27 @@
           (when (not (file-directory-p datestr))
             (make-directory datestr))
           (find-file datestr))))
+
+    (defun my/org-journal-new-entry-from-file (f)
+      "Adds a new entry to the journal with the given text"
+      (when (file-exists-p f)
+        (let ((text (with-temp-buffer
+                      (insert-file-contents f)
+                      (buffer-string))))
+          (when (not (string= text ""))
+            (save-mark-and-excursion
+              (org-journal-new-entry nil)
+              (insert text))))))
+
+    (defun my/org-journal-new-capture ()
+      "Uses tmux and i3 to capture a new entry for the journal"
+      (let* ((now (format-time-string "%Y%m%d%H%M%S"))
+             (tmpfile (format "/tmp/org-journal-capture-%s" now)))
+        (message (format "tmux neww -t%s: -n%s 'bash -c \'read -e && echo $REPLY >%s\''"
+                               i3-tmux-session
+                               my/org-journal/tmux-window
+                               tmpfile))
+        (shell-command (format "i3-msg \"[class=%s] focus\"" i3-tmux-class))))
 
     (mfcs-add-command
      :description "Org Find File Journal Find File (Docs Files)"
