@@ -14,18 +14,10 @@
           " to put files for the org-journal"))
 (defvar my/emacs-init-deps-path "~/.emacs.d/emacs_init_deps/"
   "Path to a directory which contains all emacs-init dependencies.")
-(defvar my/custom-welcome-script nil
-  "If set, inhibit emacs default init and executes this script instead.")
 (defvar my/user-temp-directory "~/mytmp"
   "A directory used to save temporary files.")
 (defvar my/default-browser-cmd "firefox %s"
   "The default command to open a browser. The '%s' will be substituted by the url to be openned.")
-(defvar my/tfs-work-item-url-prefix nil
-  "The url to visit a tfs work item. The id will be appended at the end.")
-(defvar my/tfs-pr-url-prefix nil
-  "The url to visit a tfs PR. The id will be appended at the end.")
-(defvar my/tfs-commit-hash-prefix nil
-  "The url to visit a tfs commit. The id will be appended at the end.")
 (defvar my/path-to-modules-dir (concat (file-name-directory load-file-name) "modules")
   "The directory where the emacs-init `modules` can be found.")
 (defcustom my/theme 'dark
@@ -195,8 +187,6 @@
 (show-paren-mode 1)
 
 ;; Display date and time, line and col numbers
-(setq display-time-day-and-date t)
-(display-time-mode 1)
 (if (version< emacs-version "26.1")
     (global-linum-mode 1)
   (global-display-line-numbers-mode))
@@ -244,35 +234,17 @@
   :config (progn
             (cl-pushnew '(:mfcs-call . 20) ivy-height-alist)))
 
-;; ------------------------------------------------------------
-;; Runc - Runc Command
-;; ------------------------------------------------------------
-(use-package runc
-  ;; http://github.com/vitorqb/runc
-  :load-path (lambda () (get-dep-library-load-path "runc")))
-
 ;; -----------------------------------------------------------------------------
 ;; Compilation and processes
 ;; -----------------------------------------------------------------------------
-(global-set-key (kbd "<f5>") 'recompile)
-
 ;; Don't use linum-mode in compilation buffers
 (dolist (hook '(compilation-mode-hook comint-mode-hook))
   (add-hook hook #'my/disable-linum))
-
-(use-package compile-transient
-  ;; https://github.com/vitorqb/compile-transient
-  :load-path (lambda () (get-dep-library-load-path "compile-transient")))
 
 ;; Adds a (by default ridicularly high) limit for the max number of rows in a
 ;; compilation buffer
 (add-hook 'compilation-filter-hook 'comint-truncate-buffer)
 (setq comint-buffer-maximum-size 100000)
-
-;; -----------------------------------------------------------------------------
-;; Shell
-;; -----------------------------------------------------------------------------
-(add-hook 'shell-mode-hook (lambda () (setq-local comint-prompt-read-only t)))
 
 ;; -----------------------------------------------------------------------------
 ;; Yas and Snippets
@@ -294,9 +266,7 @@
 (global-set-key (kbd "C-c u") 'myutils/remove-whitespace-and-newline)
 (global-set-key (kbd "C-~") 'delete-trailing-whitespace)
 (global-set-key (kbd "<f11>") (myutils/li (insert (projectile-project-root))))
-(global-set-key (kbd "<f10>") (myutils/li (kill-buffer (current-buffer))))
 (global-set-key (kbd "<S-f10>") #'menu-bar-open)
-(global-set-key (kbd "C-c C-/") 'other-window)
 
 ;; Copied from emacs wiki
 (defun copy-line (arg)
@@ -328,7 +298,6 @@
      :column "Typing")
     ("d" #'myutils/insert-formated-date "Insert the date.")
     ("e" #'myutils/remove-with-elipsis "Remove with elipsis." :color pink)
-    ("f" #'myutils/fill-to-end "Fill to end with '-'.")
     ("l" #'copy-line "Copies current line down.")
     ("w" #'delete-trailing-whitespace "Delete trailing whitespaces.")))
 
@@ -362,7 +331,6 @@
 ;; -----------------------------------------------------------------------------
 (custom-set-variables '(hi-lock-auto-select-face t))
 (global-set-key (kbd "C-c d") #'myutils/duplicate-buffer)
-(global-set-key (kbd "C-\\") (myutils/li (switch-to-buffer (other-buffer))))
 
 (defun my/highligh-region (beg end)
   "Highlights text equal to the text between beg and end"
@@ -535,11 +503,9 @@
 (setq org-confirm-babel-evaluate nil)
 (org-babel-do-load-languages
  'org-babel-load-languages
- '((emacs-lisp . t) (python . t) (ditaa . t) (plantuml . t)
-   (shell . t) (dot . t) (latex . t) (gnuplot . t) (maxima . t)))
+ '((emacs-lisp . t) (python . t) (shell . t)))
 (setq org-src-preserve-indentation t)
 (setq org-babel-python-command "python")
-(setq org-plantuml-jar-path (expand-file-name "/usr/local/bin/plantuml.jar"))
 
 ;; Set the default header for source code blocks :result to verbatim, so org don't
 ;; try to create weird tables.
@@ -554,10 +520,6 @@
   :load-path (lambda () (get-dep-library-load-path "orgext")))
 
 ;; Journal configuration
-(defvar my/org-journal/tmux-window
-  "emacs-tmux-journal"
-  "Name of tmux window to use for interactive prompts")
-
 (use-package org-journal
   :ensure
   :config
@@ -592,30 +554,20 @@
             (make-directory datestr))
           (find-file datestr))))
 
-    (mfcs-add-command
-     :description "Org Find File Journal Find File (Docs Files)"
-     :command (myutils/li (call-interactively #'my/journal-find-file)))
-
-    (setq org-todo-keywords
-          '((sequence "TODO(t)" "|" "DONE(d)" "WONTFIX(n)")
-            (sequence "BLOCKED()" "WAITING(w)")))))
-
-(defun my-org-journal-find-last-file (arg)
-  "Find-file on the last file for the journal.
+    (defun my/org-journal-find-last-file (arg)
+      "Find-file on the last file for the journal.
    Sorts by string comparison, so depends on the journals being sortable
    this way (like 2018-01-01, 2018-01-02, ..."
-  (interactive "P")
-  (-> (org-journal--list-files)
-      (sort #'string<)
-      (last)
-      (car)
-      (->> (funcall (if arg #'find-file-other-window #'find-file)))))
+      (interactive "P")
+      (-> (org-journal--list-files)
+          (sort #'string<)
+          (last)
+          (car)
+          (->> (funcall (if arg #'find-file-other-window #'find-file)))))
 
-(defun my/org-journal-search-regexp ()
-  "Search org-journal using regex."
-  (interactive)
-  (-let [org-journal-search-forward-fn #'search-forward-regexp]
-    (call-interactively #'org-journal-search)))
+    (mfcs-add-command
+     :description "Org Find File Journal Find File (Docs Files)"
+     :command (myutils/li (call-interactively #'my/journal-find-file)))))
 
 ;; Org Hydra configuration
 (defun my/setup-hydra/journal-hydra ()
@@ -626,14 +578,13 @@
      "Visit last entry")
     ("f" #'my/journal-open-daily-files-dir "Open 'files' directory")
     ("n" #'org-journal-open-next-entry "Open next entry")
-    ("o" #'my-org-journal-find-last-file "Open most recent file")
+    ("o" #'my/org-journal-find-last-file "Open most recent file")
     ("O" (lambda () (interactive)
            (let ((current-prefix-arg '(4)))
-             (call-interactively #'my-org-journal-find-last-file)))
+             (call-interactively #'my/org-journal-find-last-file)))
      "Open most recent file new window")
     ("p" #'org-journal-previous-entry "Previous entry")
-    ("s" #'org-journal-search "Search")
-    ("r" #'my/org-journal-search-regexp "Regexp Search")))
+    ("s" #'org-journal-search "Search")))
 
 (defun my/setup-hydra/org-hydra ()
   (defhydra my/org-hydra (:color blue)
@@ -648,25 +599,6 @@
     ("t" (lambda () (interactive) (find-file org-default-notes-file)) "Goto `todo` file.")
     ("v" #'orgext-element-at-point-on-new-buffer "Element at point on new buffer (read-only)")))
 
-;; Adds org store link and toggle link to mfcs
-(mfcs-add-command
- :description "Org Store Link [Store Org]"
- :command #'org-store-link)
-(mfcs-add-command
- :description "Org Toggle Link Display [Display Links Toggle Org]"
- :command #'org-toggle-link-display)
-
-;; I3wm helpers
-(defun my-org-capture-from-emacsclient ()
-  "Calls `org-capture`, makes sure it's fullscreen, waits for the user to input something and,
-   when the user closes the buffer, closes the frame.
-   Thought to be used by a keyboard shortcut that opens an `emacsclient` for the suer to capture
-   a TODO."
-  (interactive)
-  (orgext-capture-with-task)
-  (delete-other-windows)
-  (add-hook 'kill-buffer-hook #'delete-frame 0 t))
-
 ;; Nicer image handling
 (setq org-image-actual-width nil)
 
@@ -680,9 +612,6 @@
   :config (progn
            (custom-set-variables
             '(magit-diff-refine-hunk 'all))))
-
-;; Let us use magit links in org mode
-(use-package orgit :ensure t)
 
 ;; -----------------------------------------------------------------------------
 ;; Dired and files manipulation
@@ -730,14 +659,12 @@
     ("f" #'find-dired "Find dired" :column "Dired!")))
 
 ;; -----------------------------------------------------------------------------
-;; (Light)Lispy
+;; Lispy
 ;; -----------------------------------------------------------------------------
-;; https://github.com/vitorqb/lightlispy
-(use-package lightlispy
-  :load-path (lambda () (get-dep-library-load-path "lightlispy"))
+;; https://github.com/abo-abo/lispy
+(use-package lispy :ensure
   :config (progn
-            (add-hook 'emacs-lisp-mode-hook 'lightlispy-mode)
-            (defalias 'lispy-mode #'lightlispy-mode)))
+            (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))))
 
 ;; -----------------------------------------------------------------------------
 ;; Ediff
@@ -748,15 +675,6 @@
 ;; tldr
 ;; -----------------------------------------------------------------------------
 (use-package tldr :ensure)
-
-;; -----------------------------------------------------------------------------
-;; Templating
-;; -----------------------------------------------------------------------------
-;; The mustache.el is a implementation of mustache for elisp.
-;; https://github.com/Wilfred/mustache.el
-;; https://github.com/mustache/mustache
-;; https://github.com/mustache/mustache/blob/master/examples/simple.mustache
-(use-package mustache :ensure)
 
 ;; -----------------------------------------------------------------------------
 ;; Web Development
@@ -859,14 +777,6 @@
     ("r" #'my/projectile/insert-relative-file "Insert relative file")
     ("t" #'projectile-toggle-between-implementation-and-test
      "Toggle between implementation and test")))
-
-;; Adds create test file to mfcs
-(mfcs-add-command
- :description "Projectile Create Test File For [File Test Create Projectile]"
- :command (lambda () (interactive) (-> (current-buffer)
-                                       (buffer-file-name)
-                                       (projectile-create-test-file-for)
-                                       (find-file))))
 
 ;; -----------------------------------------------------------------------------
 ;; My Hydra!
@@ -1116,14 +1026,6 @@
 (my/defmodule vue)
 
 ;; -----------------------------------------------------------------------------
-;; Loads custom welcome script
-;; ----------------------------------------------------------------------------
-(when (and my/custom-welcome-script (file-exists-p my/custom-welcome-script))
-  (setq inhibit-startup-screen t)		;Don't show me the ugly emacs start
-  (add-hook 'after-init-hook
-	    (lambda () (load my/custom-welcome-script))))
-
-;; -----------------------------------------------------------------------------
 ;; Computer specific hooks
 ;; -----------------------------------------------------------------------------
 ;; Tries to load computer-specific hooks
@@ -1137,5 +1039,6 @@
 ;; -----------------------------------------------------------------------------
 ;; Emacs Server
 ;; -----------------------------------------------------------------------------
+(require 'server)
 (unless (server-running-p)
   (server-start))
