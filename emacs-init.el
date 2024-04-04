@@ -610,8 +610,12 @@
   :ensure
   :bind ("C-c m" . magit-status)
   :config (progn
-           (custom-set-variables
-            '(magit-diff-refine-hunk 'all))))
+            (custom-set-variables '(magit-diff-refine-hunk 'all))
+            (defun my/magit/fetch-and-goto-main ()
+              (interactive)
+              (magit-run-git (cons "fetch" (cons "--all" "--prune")))
+              (magit-run-git (cons "checkout" "main"))
+              (magit-run-git "pull"))))
 
 ;; -----------------------------------------------------------------------------
 ;; Dired and files manipulation
