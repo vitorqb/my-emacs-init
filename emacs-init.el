@@ -331,6 +331,7 @@
 ;; -----------------------------------------------------------------------------
 (custom-set-variables '(hi-lock-auto-select-face t))
 (global-set-key (kbd "C-c d") #'myutils/duplicate-buffer)
+(global-set-key (kbd "C-x C-g") #'push-mark-and-avy-goto-char)
 
 (defun my/highligh-region (beg end)
   "Highlights text equal to the text between beg and end"
@@ -820,11 +821,11 @@
                  ("D" #'my-show-definitions "Show definitions")
                  ("e" #'my/eval-elisp-hydra/body "Evaluate Elisp hydra")
                  ,(when (functionp #'my/eglot-hydra/body)
-                   '("E" #'my/eglot-hydra/body "Eglot hydra"))
+                    '("E" #'my/eglot-hydra/body "Eglot hydra"))
                  ("f" #'my/files-hydra/body "Files hydra!")
                  ("g" #'my/open-tmux-i3-on-current-dir "Open tmux on current dir")
                  ("G" #'my/gh-hydra/body "Opens GithubCLI hydra")
-                 ("h" #'my/hideshow-hydra/body "HideShow Hydra")
+                 ("h" #'my/hideshow-hydra/body "HideShow Hydra" :column "")
                  ("H" #'my/highlight-hydra/body "Highligh hydra!")
                  ("i" #'counsel-imenu "Imenu (find definitions)!")
                  ("j" #'my/journal-hydra/body "Hydra for org-journal")
