@@ -669,7 +669,8 @@
 ;; https://github.com/abo-abo/lispy
 (use-package lispy :ensure
   :config (progn
-            (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))))
+            (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
+            (define-key lispy-mode-map (kbd "C-,") nil)))
 
 ;; -----------------------------------------------------------------------------
 ;; Ediff
