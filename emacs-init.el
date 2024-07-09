@@ -454,6 +454,11 @@
     (shell-command (format "gh browse %s" file-name))
     (funcall my/gh/on-browser-open-request)))
 
+(defun my/gh/atlantis-plan ()
+  (interactive)
+  (let ((cmd-out (shell-command-to-string "gh pr comment --body='atlantis plan'")))
+    (browse-url (string-trim cmd-out))))
+
 (defun my/setup-hydra/gh-hydra ()
   (defhydra my/gh-hydra (:color blue)
     ("b" #'my/gh/browse "Browses to file in github" :column "Github CLI!")
@@ -612,11 +617,16 @@
   :bind ("C-c m" . magit-status)
   :config (progn
             (custom-set-variables '(magit-diff-refine-hunk 'all))
+            (defun my/magit/fetch-and-goto (ref)
+              (magit-run-git (cons "fetch" (cons "--all" "--prune")))
+              (magit-run-git (cons "checkout" ref))
+              (magit-run-git "pull"))
             (defun my/magit/fetch-and-goto-main ()
               (interactive)
-              (magit-run-git (cons "fetch" (cons "--all" "--prune")))
-              (magit-run-git (cons "checkout" "main"))
-              (magit-run-git "pull"))))
+              (my/magit/fetch-and-goto "main"))
+            (defun my/magit/fetch-and-goto-master ()
+              (interactive)
+              (my/magit/fetch-and-goto "master"))))
 
 ;; -----------------------------------------------------------------------------
 ;; Dired and files manipulation
@@ -915,13 +925,14 @@
 
 ;; Allows you to jump to text on the screen!
 ;; Jumps to text
-(use-package avy :ensure)
-
-(defun push-mark-and-avy-goto-char ()
-  " Calls avy-goto-char, BUT push-mark before so we can go back "
-  (interactive)
-  (push-mark)
-  (call-interactively #'avy-goto-char))
+(use-package avy :ensure
+  :config (progn
+            (defun push-mark-and-avy-goto-char ()
+              " Calls avy-goto-char, BUT push-mark before so we can go back "
+              (interactive)
+              (push-mark)
+              (call-interactively #'avy-goto-char))
+            (global-set-key (kbd "C-x C-g") #'push-mark-and-avy-goto-char)))
 
 ;; Expand-region is the best package ever. We love it.
 (use-package expand-region
@@ -983,7 +994,6 @@
 ;; Browser
 ;; -----------------------------------------------------------------------------
 ;; Use the default browser for browsing, if we know it
-(setq browse-url-new-window-flag t)
 (pcase my/default-browser-cmd
 
   ("firefox"
