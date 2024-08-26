@@ -466,6 +466,10 @@
     ("p" #'my/gh/open-pr-on-browser "Open PR on browser")
     ("P" #'my/gh/new-pr "Creates a new PR")))
 
+(defun my/gh/default-branch ()
+  (-> (shell-command-to-string "gh repo view --json 'defaultBranchRef' --jq '.defaultBranchRef.name'")
+      (string-trim)))
+
 
 ;; -----------------------------------------------------------------------------
 ;; Completion (Company)
@@ -621,6 +625,9 @@
               (magit-run-git (cons "fetch" (cons "--all" "--prune")))
               (magit-run-git (cons "checkout" ref))
               (magit-run-git "pull"))
+            (defun my/magit/fetch-and-goto-default ()
+              (interactive)
+              (-> (my/gh/default-branch) (my/magit/fetch-and-goto )))
             (defun my/magit/fetch-and-goto-main ()
               (interactive)
               (my/magit/fetch-and-goto "main"))
