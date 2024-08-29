@@ -826,7 +826,11 @@
   ;; An hydra for ag!
   (defhydra my/ag-hydra (:color blue)
     ("a" #'ag "Simply ag" :column "Ag!")
-    ("r" #'ag-regexp "Ag with regexp"))
+    ("A" #'ag-regexp "Ag with regexp")
+    ("p" #'projectile-ag "Ag in project")
+    ("P" (lambda () (interactive)
+           (setq current-prefix-arg '(4))
+           (call-interactively #'projectile-ag))))
 
   (eval
    `(defhydra myhydra (:color blue)
