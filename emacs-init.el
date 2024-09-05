@@ -290,6 +290,16 @@
   (beginning-of-line (or (and arg (1+ arg)) 2))
   (if (and arg (not (= 1 arg))) (message "%d lines copied" arg)))
 
+(defun my/copy-line-from (lineNum)
+  "Copies a line to the current line"
+  (interactive (list (read-number (format "Line: "))))
+  (save-excursion
+   (goto-line lineNum)
+   (kill-ring-save
+    (line-beginning-position)
+    (line-end-position)))
+  (yank))
+
 (defun my/setup-hydra/typing-hydra ()
   "Prepares an hydra for typing shortcuts."
   (defhydra my/typing-hydra (:color blue)
@@ -298,7 +308,7 @@
      :column "Typing")
     ("d" #'myutils/insert-formated-date "Insert the date.")
     ("e" #'myutils/remove-with-elipsis "Remove with elipsis." :color pink)
-    ("l" #'copy-line "Copies current line down.")
+    ("l" #'my/copy-line-from "Copies from another line.")
     ("w" #'delete-trailing-whitespace "Delete trailing whitespaces.")))
 
 ;; -----------------------------------------------------------------------------
@@ -459,12 +469,22 @@
   (let ((cmd-out (shell-command-to-string "gh pr comment --body='atlantis plan'")))
     (browse-url (string-trim cmd-out))))
 
+(defun my/gh/browse-commit (commit)
+  (interactive (list (thing-at-point 'symbol)))
+  (--> (shell-command-to-string "gh repo view --json url -q \".url\"")
+       (s-trim it)
+       (format "%s/commit/%s" it commit)
+       (browse-url it))
+  (sit-for 1)
+  (funcall my/gh/on-browser-open-request))
+
 (defun my/setup-hydra/gh-hydra ()
   (defhydra my/gh-hydra (:color blue)
     ("b" #'my/gh/browse "Browses to file in github" :column "Github CLI!")
     ("r" #'my/gh/open-repo-on-browser "Open repo on browser")
     ("p" #'my/gh/open-pr-on-browser "Open PR on browser")
-    ("P" #'my/gh/new-pr "Creates a new PR")))
+    ("P" #'my/gh/new-pr "Creates a new PR")
+    ("c" #'my/gh/browse-commit "See the commit on github web")))
 
 (defun my/gh/default-branch ()
   (-> (shell-command-to-string "gh repo view --json 'defaultBranchRef' --jq '.defaultBranchRef.name'")
