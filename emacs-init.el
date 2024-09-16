@@ -186,16 +186,12 @@
 (setq show-paren-delay 0)
 (show-paren-mode 1)
 
-;; Display date and time, line and col numbers
-(if (version< emacs-version "26.1")
-    (global-linum-mode 1)
-  (global-display-line-numbers-mode))
+;;Display line and col numbers
+(global-display-line-numbers-mode)
 
 (defun my/disable-linum ()
-  "Disables linum or line-numbers, depending on emacs version"
-  (if (version< emacs-version "26.1")
-      (linum-mode -1)
-    (display-line-numbers-mode -1)))
+  "Disables linum"
+  (display-line-numbers-mode -1))
 
 (column-number-mode)
 
@@ -261,34 +257,9 @@
 ;; -----------------------------------------------------------------------------
 ;; Typing shortcuts functions
 ;; -----------------------------------------------------------------------------
-(global-set-key (kbd "C-c f") 'myutils/fill-to-end)
 (global-set-key (kbd "<f12>") 'myutils/insert-formated-date)
-(global-set-key (kbd "C-c u") 'myutils/remove-whitespace-and-newline)
-(global-set-key (kbd "C-~") 'delete-trailing-whitespace)
 (global-set-key (kbd "<f11>") (myutils/li (insert (projectile-project-root))))
 (global-set-key (kbd "<S-f10>") #'menu-bar-open)
-
-;; Copied from emacs wiki
-(defun copy-line (arg)
-  "Copy lines (as many as prefix argument) in the kill ring.
-      Ease of use features:
-      - Move to start of next line.
-      - Appends the copy on sequential calls.
-      - Use newline as last char even on the last line of the buffer.
-      - If region is active, copy its lines."
-  (interactive "p")
-  (let ((beg (line-beginning-position))
-        (end (line-end-position arg)))
-    (when mark-active
-      (if (> (point) (mark))
-          (setq beg (save-excursion (goto-char (mark)) (line-beginning-position)))
-        (setq end (save-excursion (goto-char (mark)) (line-end-position)))))
-    (if (eq last-command 'copy-line)
-        (kill-append (buffer-substring beg end) (< end beg))
-      (kill-ring-save beg end)))
-  (kill-append "\n" nil)
-  (beginning-of-line (or (and arg (1+ arg)) 2))
-  (if (and arg (not (= 1 arg))) (message "%d lines copied" arg)))
 
 (defun my/copy-line-from (lineNum)
   "Copies a line to the current line"
@@ -365,7 +336,6 @@
 
 (defun my/setup-hydra/buffer-hydra ()
   (defhydra my/buffer-hydra (:color blue)
-    ("a" #'my/ansi-colorize-buffer "Colorize buffer with ansi colors" :column "Buffers!")
     ("c" #'myutils/copy-buffer-contents "Copy buffer contents.")
     ("g" #'push-mark-and-avy-goto-char "Avy go to char (tree)")
     ("r" #'rename-buffer "Rename buffer")
@@ -398,6 +368,8 @@
 (mfcs-add-command
  :description "Highlight Phrase Word Phrase Highlight"
  :command #'highlight-phrase)
+(mfcs-add-command
+ :description "ANSI Colorize Buffer")
 
 ;; -----------------------------------------------------------------------------
 ;; Registers manipulation
@@ -707,12 +679,6 @@
     ("Z" (lambda () (interactive) (fzf/start "~"))
      "Fuzzy find at home")))
 
-(defun my/setup-hydra/dired-hydra ()
-  "Defines an hydra for dired-related commands"
-
-  (defhydra my/dired-hydra (:color blue)
-    ("f" #'find-dired "Find dired" :column "Dired!")))
-
 ;; -----------------------------------------------------------------------------
 ;; Lispy
 ;; -----------------------------------------------------------------------------
@@ -726,11 +692,6 @@
 ;; Ediff
 ;; -----------------------------------------------------------------------------
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
-
-;; -----------------------------------------------------------------------------
-;; tldr
-;; -----------------------------------------------------------------------------
-(use-package tldr :ensure)
 
 ;; -----------------------------------------------------------------------------
 ;; Web Development
@@ -781,17 +742,6 @@
     ("r" #'eval-region "Eval region")))
 
 ;; -----------------------------------------------------------------------------
-;; Shell, sh, bash. Scripting.
-;; -----------------------------------------------------------------------------
-(defun my/setup-hydra/shell-hydra ()
-  "Shell, sh, bash etc!"
-  
-  (defhydra my/shell-hydra (:color blue)
-    ("s" #'shell "A new shell for you" :column "Shell!")
-    ("c" #'myutils/call-shell-command
-     "Calls a shell command, shows the result, and asks you if kill the buffer")))
-
-;; -----------------------------------------------------------------------------
 ;; Projectile
 ;; -----------------------------------------------------------------------------
 (use-package projectile
@@ -840,7 +790,6 @@
 (defun my/hydras-setup ()
   " My custom setup for hydras "
   (my/setup-hydra/buffer-hydra)
-  (my/setup-hydra/dired-hydra)
   (my/setup-hydra/eval-elisp-hydra)
   (my/setup-hydra/files-hydra)
   (my/setup-hydra/flymake-hydra)
@@ -851,7 +800,6 @@
   (my/setup-hydra/org-hydra)
   (my/setup-hydra/projectile-hydra)
   (my/setup-hydra/register-hydra)
-  (my/setup-hydra/shell-hydra)
   (my/setup-hydra/typing-hydra)
   (when (functionp #'my/setup-hydra/eglot-hydra)
     (my/setup-hydra/eglot-hydra))
@@ -919,14 +867,6 @@
   :after ivy
   :bind (("C-s" . swiper)
          ("C-r" . swiper)))
-
-;; -----------------------------------------------------------------------------
-;; Connection/networks/internet utils
-;; -----------------------------------------------------------------------------
-;; Usefull to test REST APIs during development
-(use-package restclient
-  :ensure
-  :config (setq-default restclient-inhibit-cookies t))
 
 ;; -----------------------------------------------------------------------------
 ;; Text movements/search/grep/selection/cleanup utils
