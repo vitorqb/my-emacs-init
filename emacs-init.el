@@ -260,6 +260,7 @@
 (global-set-key (kbd "<f12>") 'myutils/insert-formated-date)
 (global-set-key (kbd "<f11>") (myutils/li (insert (projectile-project-root))))
 (global-set-key (kbd "<S-f10>") #'menu-bar-open)
+(global-set-key (kbd "C-c u") 'myutils/remove-whitespace-and-newline)
 
 (defun my/copy-line-from (lineNum)
   "Copies a line to the current line"
