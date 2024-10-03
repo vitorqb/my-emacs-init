@@ -641,6 +641,10 @@
               (interactive)
               (my/magit/fetch-and-goto "master"))))
 
+(use-package magit-delta
+  :ensure
+  :hook (magit-mode . magit-delta-mode))
+
 ;; -----------------------------------------------------------------------------
 ;; Dired and files manipulation
 ;; -----------------------------------------------------------------------------
