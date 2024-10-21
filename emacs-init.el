@@ -163,11 +163,11 @@
 
 ;; Choose theme
 (defun my/load-dark-theme ()
-  (use-package zenburn-theme
+  (use-package modus-themes
     :ensure t
     :no-require t
     :config (progn
-              (load-theme 'zenburn t))))
+              (load-theme 'modus-vivendi-tinted t))))
 
 (defun my/load-light-theme ()
   (use-package leuven-theme
