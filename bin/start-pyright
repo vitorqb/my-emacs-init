@@ -1,0 +1,28 @@
+#!/bin/bash
+set -Eeuo pipefail
+
+# Starts pyright taking into account:
+# 1. Any `.venv` existing on current directory
+# 2. Any `.envrc` existing on current directory
+
+function load_venv() {
+    for venv_candidate in "venv" ".venv"
+    do
+        activate_script=./${venv_candidate}/bin/activate
+        if [ -r $activate_script ]
+        then
+            echo "Loading $activate_script" >&2
+            source $activate_script
+        fi
+    done
+}
+
+function load_envrc() {
+    echo "Exporting direnv variables" >&2
+    eval "$("/usr/bin/direnv" export bash)"
+}
+
+
+load_venv
+load_envrc
+pyright-langserver --stdio

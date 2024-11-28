@@ -10,19 +10,11 @@
 ;; Snippets S2
 (add-hook 'python-mode-hook #'yas-minor-mode-on)
 
-;; Helper functions
-(defun my/python/find-dominating-venv (dir)
-  (-reduce-from (lambda (acc x)
-                  (or acc (if-let ((parent (locate-dominating-file default-directory x))
-                                   (venv (expand-file-name x parent)))
-                              venv)))
-                nil
-                '("venv" ".venv")))
+;; Variable with start to start pyright
+(defvar my/python-eglot/pyright-server (expand-file-name "~/emacs-init/bin/start-pyright"))
 
 ;; Help for activating virtual environment
 (defun my/python-eglot/start-pyright-langserver (arg)
-  (if-let ((venv (my/python/find-dominating-venv default-directory)))
-      `("bash" "-c" ,(concat "source " venv "/bin/activate && pyright-langserver --stdio"))
-    '("pyright-langserver" "--stdio")))
+  (list my/python-eglot/pyright-server))
 
 (add-to-list 'eglot-server-programs `(python-mode . ,#'my/python-eglot/start-pyright-langserver))
