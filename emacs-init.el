@@ -805,20 +805,14 @@
   (when (functionp #'my/setup-hydra/eglot-hydra)
     (my/setup-hydra/eglot-hydra))
   
-  ;; An hydra for ag!
-  (defhydra my/ag-hydra (:color blue)
-    ("a" #'ag "Simply ag" :column "Ag!")
-    ("A" #'ag-regexp "Ag with regexp")
-    ("p" #'projectile-ag "Ag in project")
-    ("P" (lambda () (interactive)
-           (setq current-prefix-arg '(4))
-           (call-interactively #'projectile-ag))))
-
   (eval
    `(defhydra myhydra (:color blue)
       ,@(remove nil
                `(("0" #'my/register-hydra/body "Register Hydra" :column "Main Hydra")
-                 ("a" #'my/ag-hydra/body "Ag Hydra")
+                 ,(when (functionp #'my/ag-hydra/body)
+                    '("a" #'my/ag-hydra/body "Ag Hydra"))
+                 ,(when (functionp #'my/deadgrep-hydra/body)
+                    '("a" #'my/deadgrep-hydra/body "Deadgrep Hydra"))
                  ("b" #'my/buffer-hydra/body "Buffer hydra")
                  ("c" #'mfcs-call "Calls fuzzy command selector")
                  ("d" #'my/dired-hydra/body "Dired hydra")
@@ -892,17 +886,6 @@
   (interactive)
   (occur (symbol-name (symbol-at-point))))
 
-;; Very cool search package!
-(use-package ag
-  :load-path (lambda () (get-dep-library-load-path "ag"))
-  :ensure
-  :config
-  (progn
-    (setq ag-highlight-search t)
-    ;; Automatically goes to error when selected
-    (add-hook 'ag-search-finished-hook 'next-error-follow-minor-mode)
-    (global-set-key (kbd "C-c a") 'ag)))
-
 ;; Let's add next-error-follow-minnor-mode to mfcs
 (mfcs-add-command
  :description "Next Error Follow Minnor Mode Follow Next Error"
@@ -930,13 +913,6 @@
                       (lambda ()
                         (make-variable-buffer-local 'er/try-expand-list)
                         (cl-pushnew #'orgext-mark-block er/try-expand-list)))))
-
-;; Edit ag and grep results
-(use-package wgrep
-  :ensure)
-(use-package wgrep-ag
-  :ensure
-  :after wgrep)
 
 ;; Override xref-find-definition to xref-find-definition-other-window
 (global-set-key (kbd "M-.") #'xref-find-definitions-other-window)
@@ -1001,10 +977,12 @@
 ;; Language specific modules
 ;; -----------------------------------------------------------------------------
 (my/defmodule R)
+(my/defmodule ag)
 (my/defmodule asdf)
 (my/defmodule clojure)
-(my/defmodule csharp)
 (my/defmodule copilot)
+(my/defmodule csharp)
+(my/defmodule deadgrep)
 (my/defmodule eglot)
 (my/defmodule elixir)
 (my/defmodule elm)
@@ -1012,8 +990,6 @@
 (my/defmodule go)
 (my/defmodule haskell)
 (my/defmodule javascript)
-(my/defmodule typescript)
-(my/defmodule typescript-eglot)
 (my/defmodule jenkinsfile)
 (my/defmodule just)
 (my/defmodule kotlin)
@@ -1024,7 +1000,14 @@
 (my/defmodule rust)
 (my/defmodule scala)
 (my/defmodule terraform)
+(my/defmodule typescript)
+(my/defmodule typescript-eglot)
 (my/defmodule vue)
+
+;; -----------------------------------------------------------------------------
+;; Modules loaded by default
+;; -----------------------------------------------------------------------------
+(emacs-init-load-module-deadgrep)
 
 ;; -----------------------------------------------------------------------------
 ;; Computer specific hooks
