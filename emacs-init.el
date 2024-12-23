@@ -98,6 +98,9 @@
   (ivy-display-style 'fancy)
   (ivy-use-virtual-buffers t)
   :config (ivy-mode))
+
+(use-package ivy-hydra :ensure)
+
 (use-package mylisputils
   ;; https://github.com/vitorqb/mylisputils/
   :load-path (lambda () (get-dep-library-load-path "mylisputils")))
