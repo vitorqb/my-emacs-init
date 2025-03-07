@@ -265,14 +265,17 @@
 (global-set-key (kbd "<S-f10>") #'menu-bar-open)
 (global-set-key (kbd "C-c u") 'myutils/remove-whitespace-and-newline)
 
+;; We use `fill-paragraph a lot, and we want to have 90 characters
+(setq fill-column 90)
+
 (defun my/copy-line-from (lineNum)
   "Copies a line to the current line"
   (interactive (list (read-number (format "Line: "))))
   (save-excursion
-   (goto-line lineNum)
-   (kill-ring-save
-    (line-beginning-position)
-    (line-end-position)))
+    (goto-line lineNum)
+    (kill-ring-save
+     (line-beginning-position)
+     (line-end-position)))
   (yank))
 
 (defun my/setup-hydra/typing-hydra ()
