@@ -166,11 +166,23 @@
 
 ;; Choose theme
 (defun my/load-dark-theme ()
-  (use-package modus-themes
+  (use-package doom-themes
     :ensure t
-    :no-require t
-    :config (progn
-              (load-theme 'modus-vivendi-tinted t))))
+    :config
+    ;; Global settings (defaults)
+    (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+          doom-themes-enable-italic t) ; if nil, italics is universally disabled
+    (load-theme 'doom-one t)
+
+    ;; Enable flashing mode-line on errors
+    (doom-themes-visual-bell-config)
+    ;; Enable custom neotree theme (nerd-icons must be installed!)
+    (doom-themes-neotree-config)
+    ;; or for treemacs users
+    (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
+    (doom-themes-treemacs-config)
+    ;; Corrects (and improves) org-mode's native fontification.
+    (doom-themes-org-config)))
 
 (defun my/load-light-theme ()
   (use-package leuven-theme
@@ -709,13 +721,14 @@
     (dolist (regxp (list "\\.html?\\'" "\\.css?\\'"))
       (add-to-list 'auto-mode-alist (cons regxp 'web-mode)))))
 
-(use-package scss-mode :ensure
-  :init
-  (progn
-    (add-hook 'scss-mode-hook 'flymake-mode-on)
-    (setq scss-compile-at-save nil)
-    (custom-set-variables '(css-indent-offset 2))
-    (add-to-list 'auto-mode-alist (cons "\\.scss?\\'" 'scss-mode))))
+;; Removed for now since failing to instantiate
+;; (use-package scss-mode :ensure
+;;   :init
+;;   (progn
+;;     (add-hook 'scss-mode-hook 'flymake-mode-on)
+;;     (setq scss-compile-at-save nil)
+;;     (custom-set-variables '(css-indent-offset 2))
+;;     (add-to-list 'auto-mode-alist (cons "\\.scss?\\'" 'scss-mode))))
 
 ;; -----------------------------------------------------------------------------
 ;; Ansi colors
