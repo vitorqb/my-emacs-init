@@ -993,6 +993,17 @@
 (setq js-indent-level 2)
 
 ;; -----------------------------------------------------------------------------
+;; Using emacsclient as EDITOR
+;; -----------------------------------------------------------------------------
+(add-hook 'server-visit-hook
+          (lambda ()
+            (local-set-key [(control c) (control c)]
+                           (lambda ()
+                             (interactive)
+                             (save-buffer)
+                             (server-edit)))))
+
+;; -----------------------------------------------------------------------------
 ;; Language specific modules
 ;; -----------------------------------------------------------------------------
 (my/defmodule R)
