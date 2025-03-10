@@ -8,12 +8,12 @@
 (use-package wgrep-deadgrep :ensure :after (wgrep deadgrep))
 
 ;; Runs deadgrep on project root
-(defun my/deadgrep-project-root ()
+(defun my/deadgrep-current-dir ()
   (interactive)
-  (let ((default-directory (projectile-project-root)))
-    (call-interactively #'deadgrep)))
+  (let ((deadgrep-project-root-function (lambda () default-directory)))
+    (call-interactively #'deadgrep )))
 
 ;; Custom hydra
 (defhydra my/deadgrep-hydra (:color blue)
-  ("a" #'deadgrep "Simple search" :column "Deadgrep!")
+  ("a" #'my/deadgrep-current-dir "Simple search on default dir" :column "Deadgrep!")
   ("p" #'my/deadgrep-project-root "Search on project root"))
