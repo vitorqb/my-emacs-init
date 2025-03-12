@@ -163,11 +163,6 @@
 
 ;;Display line and col numbers
 (global-display-line-numbers-mode)
-
-(defun my/disable-linum ()
-  "Disables linum"
-  (display-line-numbers-mode -1))
-
 (column-number-mode)
 
 ;; Don't use tabs
@@ -179,21 +174,8 @@
 ;; Always use y-or-n rather than yes-or-no
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-;; -----------------------------------------------------------------------------
-;; Which Key
-;; -----------------------------------------------------------------------------
-(use-package which-key
-  :ensure
-  :hook (after-init . which-key-mode))
-
-;; -----------------------------------------------------------------------------
-;; Show Definitions
-;; -----------------------------------------------------------------------------
-;; https://github.com/vitorqb/my-show-definitions
-(use-package my-show-definitions
-  :config (progn
-            ;; Also deletes my-show-definition buffers when cleaning buffers.
-            (add-to-list 'myutils/clean-buffers-names-regexs "\\*MyShowDefinitions\\*")))
+;; Nice mode
+(which-key-mode 1)
 
 ;; -----------------------------------------------------------------------------
 ;; Fuzzy command selector
@@ -205,10 +187,6 @@
 ;; -----------------------------------------------------------------------------
 ;; Compilation and processes
 ;; -----------------------------------------------------------------------------
-;; Don't use linum-mode in compilation buffers
-(dolist (hook '(compilation-mode-hook comint-mode-hook))
-  (add-hook hook #'my/disable-linum))
-
 ;; Adds a (by default ridicularly high) limit for the max number of rows in a
 ;; compilation buffer
 (add-hook 'compilation-filter-hook 'comint-truncate-buffer)
@@ -791,7 +769,6 @@
                  ("b" #'my/buffer-hydra/body "Buffer hydra")
                  ("c" #'mfcs-call "Calls fuzzy command selector")
                  ("d" #'my/dired-hydra/body "Dired hydra")
-                 ("D" #'my-show-definitions "Show definitions")
                  ("e" #'my/eval-elisp-hydra/body "Evaluate Elisp hydra")
                  ,(when (functionp #'my/eglot-hydra/body)
                     '("E" #'my/eglot-hydra/body "Eglot hydra"))

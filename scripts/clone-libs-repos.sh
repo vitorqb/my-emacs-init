@@ -128,7 +128,6 @@ do
     process_row "$row"
 done <<EOF
 mylisputils           https://github.com/vitorqb/mylisputils.git           0.8.1
-my-show-definitions   https://github.com/vitorqb/my-show-definitions.git   0.0.2
 my-fuzzy-cmd-selector https://github.com/vitorqb/my-fuzzy-cmd-selector.git 0.0.3
 orgext                https://github.com/vitorqb/orgext.git                0.3.0
 lightlispy            https://github.com/vitorqb/lightlispy.git            ffd4b38
