@@ -76,8 +76,8 @@
 
 ;; -----------------------------------------------------------------------------
 ;; Global requirements
+;;   the rest of the config depends on these 
 ;; -----------------------------------------------------------------------------
-;; The rest of init file assume those packages are installed
 (use-package counsel :ensure)
 (use-package ivy
   :ensure
@@ -88,7 +88,6 @@
   (ivy-display-style 'fancy)
   (ivy-use-virtual-buffers t)
   :config (ivy-mode))
-
 (use-package ivy-hydra :ensure)
 
 ;; https://github.com/vitorqb/mylisputils/
@@ -103,20 +102,22 @@
 ;; We like recursion
 (setq max-lisp-eval-depth (* 10 max-lisp-eval-depth))
 
+;; ------------------------------------------------------------
+;; Counsell/Ivy customization
+;; ------------------------------------------------------------
 ;; Allow searching the bash history
 (defun counsel-yank-bash-history ()
   "Yank the bash history"
   (interactive)
-  (shell-command "history -r") ; reload history
+  (shell-command "history -r")          ; reload history
   (let* ((history (s-lines (with-temp-buffer
                              (insert-file-contents (file-truename "~/.bash_history"))
                              (buffer-string))))
          (collection (nreverse history)))
     (when (and collection (> (length collection) 0))
       (when-let ((val (ivy-read (format "Bash history:") collection)))
-          (kill-new val)
-          (message "%s => kill-ring" val)))))
-
+        (kill-new val)
+        (message "%s => kill-ring" val)))))
 
 ;; -----------------------------------------------------------------------------
 ;; Emacs Init Modules
