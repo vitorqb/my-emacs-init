@@ -297,23 +297,7 @@
 
 ;; Adds some shortcuts to fuzzy cmd match
 (mfcs-add-command :description "Buffer Rename Buffer" :command #'rename-buffer)
-(mfcs-add-command
- :description "Highlight Phrase Word Phrase Highlight"
- :command #'highlight-phrase)
-(mfcs-add-command
- :description "ANSI Colorize Buffer")
-
-;; -----------------------------------------------------------------------------
-;; Registers manipulation
-;; -----------------------------------------------------------------------------
-(defun my/setup-hydra/register-hydra ()
-  (defhydra my/register-hydra (:color blue)
-    ("p" #'point-to-register "Save point in register" :column "Registers!")
-    ("P" (lambda () (interactive) (point-to-register 1)) "Save point in register 1")
-    ("j" #'jump-to-register  "Jump to point register")
-    ("J" (lambda () (interactive) (jump-to-register 1))  "Jump to point register 1")
-    ("r" #'copy-to-register  "Copy region to register")
-    ("i" #'insert-register   "Inserts copied region form register")))
+(mfcs-add-command :description "ANSI Colorize Buffer")
 
 ;; -----------------------------------------------------------------------------
 ;; I3 + Tmux integration
@@ -326,7 +310,6 @@
   (shell-command (format "tmux neww -t%s:" i3-tmux-session))
   (shell-command (format "tmux send-keys -t%s: 'cd %s' Enter" i3-tmux-session currdir))
   (shell-command (format "i3-msg \"[class=%s] focus\"" i3-tmux-class)))
-
 
 ;; -----------------------------------------------------------------------------
 ;; Github CLI integration
@@ -407,7 +390,6 @@
   (-> (shell-command-to-string "gh repo view --json 'defaultBranchRef' --jq '.defaultBranchRef.name'")
       (string-trim)))
 
-
 ;; -----------------------------------------------------------------------------
 ;; Completion (Company)
 ;; -----------------------------------------------------------------------------
@@ -473,8 +455,9 @@
     ;; Use nice datetime
     (custom-set-variables
      '(org-journal-date-format "%A, %Y%m%d"))
-    
-    (bind-key* "C-c C-j" #'org-journal-new-entry)
+
+    ;; We don't liek visual-line-mode
+    (add-hook 'org-journal-mode-hook (lambda () (visual-line-mode -1)))
 
     (defun my/journal-files-dir ()
       "Returns the path to the journal directory responsible for holding files"
@@ -509,11 +492,7 @@
           (sort #'string<)
           (last)
           (car)
-          (->> (funcall (if arg #'find-file-other-window #'find-file)))))
-
-    (mfcs-add-command
-     :description "Org Find File Journal Find File (Docs Files)"
-     :command (myutils/li (call-interactively #'my/journal-find-file)))))
+          (->> (funcall (if arg #'find-file-other-window #'find-file)))))))
 
 ;; Org Hydra configuration
 (defun my/setup-hydra/journal-hydra ()
@@ -523,7 +502,7 @@
                                     (call-interactively #'org-journal-new-entry)))
      "Visit last entry")
     ("f" #'my/journal-open-daily-files-dir "Open 'files' directory")
-    ("n" #'org-journal-open-next-entry "Open next entry")
+    ("n" #'org-journal-next-entry "Open next entry")
     ("o" #'my/org-journal-find-last-file "Open most recent file")
     ("O" (lambda () (interactive)
            (let ((current-prefix-arg '(4)))
@@ -731,7 +710,6 @@
   (my/setup-hydra/journal-hydra)
   (my/setup-hydra/org-hydra)
   (my/setup-hydra/projectile-hydra)
-  (my/setup-hydra/register-hydra)
   (my/setup-hydra/typing-hydra)
   (when (functionp #'my/setup-hydra/eglot-hydra)
     (my/setup-hydra/eglot-hydra))
@@ -739,8 +717,7 @@
   (eval
    `(defhydra myhydra (:color blue)
       ,@(remove nil
-               `(("0" #'my/register-hydra/body "Register Hydra" :column "Main Hydra")
-                 ,(when (functionp #'my/ag-hydra/body)
+                `(,(when (functionp #'my/ag-hydra/body)
                     '("a" #'my/ag-hydra/body "Ag Hydra"))
                  ,(when (functionp #'my/deadgrep-hydra/body)
                     '("a" #'my/deadgrep-hydra/body "Deadgrep Hydra"))
