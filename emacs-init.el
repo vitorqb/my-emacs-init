@@ -23,21 +23,8 @@
 
 ;; Loads the config. This is your oportunity to customize any of the variables.
 (let ((config-file-name (expand-file-name "~/.config/emacs_init/config.el")))
-  (if (file-exists-p config-file-name)
-      (progn (message (concat "Loading config from " config-file-name))
-             (load config-file-name))
-    (message "WARNING: Could not locate emacs-init config file!")))
-
-;; Loads the current profile from ~/.emacs_init_profile
-(let ((current-profile-file (expand-file-name "~/.emacs_init_profile")))
-  (when (file-exists-p current-profile-file)
-    (message (concat "Reading profile from " current-profile-file))
-    (with-temp-buffer
-      (insert-file-contents current-profile-file)
-      (let* ((selected-profile-str (replace-regexp-in-string "\n" "" (buffer-string)))
-             (selected-profile-sym (make-symbol selected-profile-str)))
-        (message (concat "Selected profile: " selected-profile-str))
-        (setq my-current-profile  selected-profile-sym)))))
+  (when (file-exists-p config-file-name)
+    (load config-file-name)))
 
 ;; -----------------------------------------------------------------------------
 ;; straight.el
