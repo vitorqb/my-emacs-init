@@ -20,9 +20,6 @@
   "The default command to open a browser. The '%s' will be substituted by the url to be openned.")
 (defvar my/path-to-modules-dir (concat (file-name-directory load-file-name) "modules")
   "The directory where the emacs-init `modules` can be found.")
-(defcustom my/theme 'dark
-  "Which theme to use (either dark or light)"
-  :type '(symbol))
 
 ;; Loads the config. This is your oportunity to customize any of the variables.
 (let ((config-file-name (expand-file-name "~/.config/emacs_init/config.el")))
@@ -112,7 +109,7 @@
             (message "Created %s" my/user-temp-directory)))
 
 ;; We like recursion
-(setq max-lisp-eval-depth (* 100 max-lisp-eval-depth))
+(setq max-lisp-eval-depth (* 10 max-lisp-eval-depth))
 
 ;; Allow searching the bash history
 (defun counsel-yank-bash-history ()
@@ -165,33 +162,7 @@
   (setq default-frame-alist `((font . ,(format "%s %s" my-font-name my-font-size)))))
 
 ;; Choose theme
-(defun my/load-dark-theme ()
-  (use-package doom-themes
-    :ensure t
-    :config
-    ;; Global settings (defaults)
-    (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-          doom-themes-enable-italic t) ; if nil, italics is universally disabled
-    (load-theme 'doom-tomorrow-night t)
-
-    ;; Enable flashing mode-line on errors
-    (doom-themes-visual-bell-config)
-    
-    ;; Corrects (and improves) org-mode's native fontification.
-    (doom-themes-org-config)))
-
-(defun my/load-light-theme ()
-  (use-package leuven-theme
-    :ensure t
-    :no-require t
-    :config (progn
-              (load-theme 'leuven t))))
-
-(cond
- ((equal my/theme 'dark)  (my/load-dark-theme))
- ((equal my/theme 'light) (my/load-light-theme))
- (:else
-  (error "Invalid value for my/theme!")))
+(load-theme 'modus-vivendi-tinted t nil)
 
 ;; Highlight parenthesis
 (setq show-paren-delay 0)
