@@ -43,6 +43,12 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+;; ------------------------------------------------------------
+;; Some common requirements
+;; ------------------------------------------------------------
+(use-package dash :ensure)
+(use-package s :ensure)
+
 ;; -----------------------------------------------------------------------------
 ;; Packages and load settings
 ;; -----------------------------------------------------------------------------
@@ -61,17 +67,17 @@
 (require 'use-package)
 (require 'bind-key)
 
-(defun get-dep-library-load-path (x)
-  "Returns the load-path for a dependency library."
-  (concat my/emacs-init-deps-path "/" x))
+;; Add our custom library to the load-path. Add anything inside
+;; my/emacs-init-deps-path that does not start with "."
+(seq-doseq (file (directory-files my/emacs-init-deps-path 't))
+  (when (and (not (->> file (file-name-nondirectory) (string-prefix-p ".")))
+             (file-directory-p file))
+    (add-to-list 'load-path file)))
 
 ;; -----------------------------------------------------------------------------
 ;; Global requirements
 ;; -----------------------------------------------------------------------------
 ;; The rest of init file assume those packages are installed
-(use-package dash :ensure)
-(use-package dash-functional :ensure)
-(use-package s :ensure)
 (use-package counsel :ensure)
 (use-package ivy
   :ensure
@@ -85,9 +91,8 @@
 
 (use-package ivy-hydra :ensure)
 
-(use-package mylisputils
-  ;; https://github.com/vitorqb/mylisputils/
-  :load-path (lambda () (get-dep-library-load-path "mylisputils")))
+;; https://github.com/vitorqb/mylisputils/
+(use-package mylisputils)
 
 ;; Ensure the tempdir is created
 (and my/user-temp-directory
@@ -183,9 +188,8 @@
 ;; -----------------------------------------------------------------------------
 ;; Show Definitions
 ;; -----------------------------------------------------------------------------
+;; https://github.com/vitorqb/my-show-definitions
 (use-package my-show-definitions
-  ;; https://github.com/vitorqb/my-show-definitions
-  :load-path (lambda () (get-dep-library-load-path "my-show-definitions"))
   :config (progn
             ;; Also deletes my-show-definition buffers when cleaning buffers.
             (add-to-list 'myutils/clean-buffers-names-regexs "\\*MyShowDefinitions\\*")))
@@ -193,11 +197,9 @@
 ;; -----------------------------------------------------------------------------
 ;; Fuzzy command selector
 ;; -----------------------------------------------------------------------------
+;; https://github.com/vitorqb/my-fuzzy-cmd-selector
 (use-package my-fuzzy-cmd-selector
-  ;; https://github.com/vitorqb/my-fuzzy-cmd-selector
-  :load-path (lambda () (get-dep-library-load-path "my-fuzzy-cmd-selector"))
-  :config (progn
-            (cl-pushnew '(:mfcs-call . 20) ivy-height-alist)))
+  :config (cl-pushnew '(:mfcs-call . 20) ivy-height-alist))
 
 ;; -----------------------------------------------------------------------------
 ;; Compilation and processes
@@ -503,9 +505,8 @@
            (cons '(:results . "replace verbatim"))))
 
 ;; Some extensions
-(use-package orgext
-  ;; https://github.com/vitorqb/orgext
-  :load-path (lambda () (get-dep-library-load-path "orgext")))
+;; https://github.com/vitorqb/orgext
+(use-package orgext)
 
 ;; Journal configuration
 (use-package org-journal
