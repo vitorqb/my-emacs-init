@@ -185,14 +185,6 @@
   :config (cl-pushnew '(:mfcs-call . 20) ivy-height-alist))
 
 ;; -----------------------------------------------------------------------------
-;; Compilation and processes
-;; -----------------------------------------------------------------------------
-;; Adds a (by default ridicularly high) limit for the max number of rows in a
-;; compilation buffer
-(add-hook 'compilation-filter-hook 'comint-truncate-buffer)
-(setq comint-buffer-maximum-size 100000)
-
-;; -----------------------------------------------------------------------------
 ;; Yas and Snippets
 ;; -----------------------------------------------------------------------------
 (defun personal-snippets-dir ()
@@ -208,7 +200,6 @@
 ;; Typing shortcuts functions
 ;; -----------------------------------------------------------------------------
 (global-set-key (kbd "<f12>") 'myutils/insert-formated-date)
-(global-set-key (kbd "<f11>") (myutils/li (insert (projectile-project-root))))
 (global-set-key (kbd "<S-f10>") #'menu-bar-open)
 (global-set-key (kbd "C-c u") 'myutils/remove-whitespace-and-newline)
 
@@ -267,19 +258,6 @@
 (custom-set-variables '(hi-lock-auto-select-face t))
 (global-set-key (kbd "C-c d") #'myutils/duplicate-buffer)
 (global-set-key (kbd "C-x C-g") #'push-mark-and-avy-goto-char)
-
-;; based on http://emacsredux.com/blog/2013/04/03/delete-file-and-buffer/
-(defun delete-file-and-buffer ()
-  "Kill the current buffer and deletes the file it is visiting."
-  (interactive)
-  (let ((filename (buffer-file-name)))
-    (if filename
-        (if (y-or-n-p (concat "Do you really want to delete file " filename " ?"))
-            (progn
-              (delete-file filename)
-              (message "Deleted file %s." filename)
-              (kill-buffer)))
-      (message "Not a file visiting buffer!"))))
 
 (defun my/highligh-region (beg end)
   "Highlights text equal to the text between beg and end"
