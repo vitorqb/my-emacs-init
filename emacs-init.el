@@ -721,10 +721,6 @@
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 (add-hook 'comint-mode-hook 'ansi-color-for-comint-mode-on)
 (add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
-(add-hook 'compilation-filter-hook
-          (lambda ()
-            (unless (equal major-mode #'ag-mode)
-              (my/ansi-colorize-buffer))))
 
 ;; -----------------------------------------------------------------------------
 ;; Elisp and evaluation
