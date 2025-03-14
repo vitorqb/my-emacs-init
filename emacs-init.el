@@ -103,8 +103,6 @@
   (ivy-use-virtual-buffers t)
   :config (ivy-mode))
 (use-package ivy-hydra :ensure)
-
-;; https://github.com/vitorqb/mylisputils/
 (use-package mylisputils)
 
 ;; Ensure the tempdir is created
@@ -194,7 +192,6 @@
 ;; -----------------------------------------------------------------------------
 ;; Fuzzy command selector
 ;; -----------------------------------------------------------------------------
-;; https://github.com/vitorqb/my-fuzzy-cmd-selector
 (use-package my-fuzzy-cmd-selector
   :config (cl-pushnew '(:mfcs-call . 20) ivy-height-alist))
 

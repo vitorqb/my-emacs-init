@@ -1,0 +1,29 @@
+* My Fuzzy Command Selector
+
+  A tiny library I use myself that allows you to define a list of
+  usefull commands you use often and select one by fuzzy matching on
+  the description.
+
+  For example, I have this to when I work with javascript:
+
+#+begin_src emacs-lisp
+(mfcs-add-command
+ :description "Npm Javascript JS Run Test"
+ :command (lambda ()
+            (interactive)
+            (-let ((compilation-buffer-name-function (-const "*NpmTest*"))
+                   (compile-command (format "*cd %s && npm run test*")
+                                    (projectile-project-root)))
+              (call-interactively #'compile))))
+
+(bind-key (kdb "C-c c") #'mfcs-call)
+#+end_src
+
+  Therefore on the rare cases I need to run tests at javascript I can
+  easily press =C-c c= and the ivy selection pops up, where you can
+  start typing =npm test= and run the function from this selection.
+
+  [[./images/ss1.png]]
+
+  This allows me not to have to decide and memorize a keybind for
+  every single common command I can possibily use.
