@@ -42,10 +42,6 @@
     (async-shell-command (concat "pip install --upgrade pip jedi flake8"
                                  " autopep8 rope yapf black")))
 
-(defun my/which-python ()
-  (interactive)
-  (myutils/call-shell-command "bash -x -c 'which python'"))
-
 (defun my/setup-hydra/python-hydra ()
   (defhydra my/python-hydra (:color blue)
     "An hydra for python!\n"

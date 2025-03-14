@@ -12,13 +12,18 @@
 (defvar my/journal-files-dir-base "files"
   (concat "A folder (relative to `org-journal-dir` unless it starts with '/') where"
           " to put files for the org-journal"))
+
+;; !!!! TODO Remove me when we migrate all custom deps to `packages` folder
 (defvar my/emacs-init-deps-path "~/.emacs.d/emacs_init_deps/"
   "Path to a directory which contains all emacs-init dependencies.")
+
 (defvar my/user-temp-directory "~/mytmp"
   "A directory used to save temporary files.")
 (defvar my/default-browser-cmd "firefox %s"
   "The default command to open a browser. The '%s' will be substituted by the url to be openned.")
 (defvar my/path-to-modules-dir (concat (file-name-directory load-file-name) "modules")
+  "The directory where the emacs-init `modules` can be found.")
+(defvar my/path-to-packages-dir (concat (file-name-directory load-file-name) "packages")
   "The directory where the emacs-init `modules` can be found.")
 (defcustom my/terminal-multiplex 'zellij
   "Which terminal multiplex to use (tmux/zellij)"
@@ -74,6 +79,11 @@
 ;; Add our custom library to the load-path. Add anything inside
 ;; my/emacs-init-deps-path that does not start with "."
 (seq-doseq (file (directory-files my/emacs-init-deps-path 't))
+  (when (and (not (->> file (file-name-nondirectory) (string-prefix-p ".")))
+             (file-directory-p file))
+    (add-to-list 'load-path file)))
+
+(seq-doseq (file (directory-files my/path-to-packages-dir 't))
   (when (and (not (->> file (file-name-nondirectory) (string-prefix-p ".")))
              (file-directory-p file))
     (add-to-list 'load-path file)))
@@ -859,12 +869,12 @@
 (put 'upcase-region 'disabled nil)
 
 ;; Set's the pgup and pgdown to move only 6 lines per hit
-(global-set-key (kbd "<M-next>")  (myutils/li (scroll-other-window 6)))
-(global-set-key (kbd "<M-prior>") (myutils/li (scroll-other-window -6)))
-(global-set-key (kbd "<prior>")   (myutils/li (scroll-down 6)))
-(global-set-key (kbd "C-v")       (myutils/li (scroll-up 6)))
-(global-set-key (kbd "<next>")    (myutils/li (scroll-up 6)))
-(global-set-key (kbd "M-v")       (myutils/li (scroll-down 6)))
+(global-set-key (kbd "<M-next>")  (lambda () (interactive) (scroll-other-window 6)))
+(global-set-key (kbd "<M-prior>") (lambda () (interactive) (scroll-other-window -6)))
+(global-set-key (kbd "<prior>")   (lambda () (interactive) (scroll-down 6)))
+(global-set-key (kbd "C-v")       (lambda () (interactive) (scroll-up 6)))
+(global-set-key (kbd "<next>")    (lambda () (interactive) (scroll-up 6)))
+(global-set-key (kbd "M-v")       (lambda () (interactive) (scroll-down 6)))
 
 ;; We got too used with undo on C-M-q.
 ;; bind-key, shipped with use-package, does that for us
