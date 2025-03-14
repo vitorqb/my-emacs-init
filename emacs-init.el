@@ -20,6 +20,10 @@
   "The default command to open a browser. The '%s' will be substituted by the url to be openned.")
 (defvar my/path-to-modules-dir (concat (file-name-directory load-file-name) "modules")
   "The directory where the emacs-init `modules` can be found.")
+(defcustom my/terminal-multiplex 'zellij
+  "Which terminal multiplex to use (tmux/zellij)"
+  :type '(symbol)
+  :options '(zellij tmux))
 
 ;; Loads the config. This is your oportunity to customize any of the variables.
 (let ((config-file-name (expand-file-name "~/.config/emacs_init/config.el")))
@@ -299,17 +303,105 @@
 (mfcs-add-command :description "Buffer Rename Buffer" :command #'rename-buffer)
 (mfcs-add-command :description "ANSI Colorize Buffer")
 
+;; ------------------------------------------------------------
+;; Window manager manipulation
+;; ------------------------------------------------------------
+(defvar my/window-manager/focus-window nil
+  "Function that receives a class name and focus the window of that class")
+
+;; ------------------------------------------------------------
+;; i3
+;; ------------------------------------------------------------
+(defun my/i3/focus-window (class)
+  (shell-command (format "i3-msg \"[class=%s] focus\"" class)))
+
+(setq my/window-manager/focus-window #'my/i3/focus-window)
+
+;; ------------------------------------------------------------
+;; Terminal Multiplex Manipulation
+;; ------------------------------------------------------------
+(defvar my/shell/new-pane nil
+  "Function to be used to creating a new pane on a terminal multiplex. Receives the CWD the shell should start on.")
+
+(defvar my/shell/do-run nil
+  "Function to be used to run a command on a shell and then exit after the command is done. Receives the command to run.")
+
+(defvar my/shell/window-class "Alacritty"
+  "The class of the i3 window that contains the shell/terminal")
+
+(defun my/shell/focus-window ()
+  (my/i3/focus-window my/shell/window-class))
+
+(defun my/shell/run (cmd)
+  "Runs a command on a shell and exists after."
+  (interactive "sEnter command to run: ")
+  (funcall my/shell/do-run cmd)
+  (my/shell/focus-window))
+
+(defun my/shell/open-on-current-dir (currdir)
+  (interactive (list (expand-file-name default-directory)))
+  (funcall my/shell/new-pane currdir)
+  (my/shell/focus-window))
+
+;; ------------------------------------------------------------
+;; Zellij
+;; ------------------------------------------------------------
+(defun my/zellij/current-session ()
+  "Return the current session to use for zellij. If no session is running, errors."
+  (let ((session (s-chomp (shell-command-to-string "zellij ls -n | grep -v EXITED | head -n 1 | awk '{print $1}'"))))
+    (when (or (not session) (string-equal session ""))
+      (error "Can not find current session"))
+    session))
+
+(defun my/zellij/new-pane (&optional cwd)
+  "Creates a new zellij pane with cwd. Implements my/shell/new-pane."
+  (--> (format "zellij -s=%s action new-pane -c" (my/zellij/current-session))
+       (if cwd (format "%s --cwd=%s" it cwd) it)
+       (format "%s -- bash" it)
+       (message it)
+       (shell-command it)))
+
+(defun my/zellij/do-run (cmd)
+  "Runs a command on zellij, and exits after."
+  (if-let ((session (my/zellij/current-session)))
+      (shell-command (format "zellij -s=%s run -f -- %s" session cmd))
+    (error "No zellij session")))
+
+(when (equal 'zellij my/terminal-multiplex)
+  (setq my/shell/new-pane #'my/zellij/new-pane)
+  (setq my/shell/do-run #'my/zellij/do-run))
+
 ;; -----------------------------------------------------------------------------
-;; I3 + Tmux integration
+;; Tmux integration
 ;; -----------------------------------------------------------------------------
-(defvar i3-tmux-class "Alacritty")
-(defvar i3-tmux-session "0")
-(defun my/open-tmux-i3-on-current-dir (currdir)
-  "Opens tmux on the current directory (new pane)."
-  (interactive (list default-directory))
-  (shell-command (format "tmux neww -t%s:" i3-tmux-session))
-  (shell-command (format "tmux send-keys -t%s: 'cd %s' Enter" i3-tmux-session currdir))
-  (shell-command (format "i3-msg \"[class=%s] focus\"" i3-tmux-class)))
+(defvar my/tmux/interactive-window
+  "emacs-tmux-interactive"
+  "Tmux window to use for interactive commands.")
+
+(defun my/tmux/current-session ()
+  "Returns the current session to use for tmux. Returns nil if not found."
+  (if-let ((session (-> "tmux ls -F'#{session_name}' | sort | head -n 1"
+                          (shell-command-to-string)
+                          (s-chomp))))
+      (unless (or (s-blank? session) (s-contains? "no server running" session))
+        session)))
+
+(defun my/tmux/new-pane (&optional cwd)
+  (if-let ((session (my/tmux/current-session)))
+      (progn
+        (shell-command (format "tmux neww -t%s:" session))
+        (when (not (s-blank? cwd))
+          (shell-command (format "tmux send-keys -t%s: 'cd %s' Enter" session currdir))))
+    (error "No current session for tmux")))
+
+(defun my/tmux/do-run (cmd)
+  (if-let ((session (my/tmux/current-session)))
+      (shell-command (format "tmux neww -t%s: -n%s '%s'" session my/tmux/interactive-window cmd))
+    (error "No current session for tmux")))
+
+(when (equal 'tmux my/terminal-multiplex)
+  (setq my/shell/new-pane #'my/tmux/new-pane)
+  (setq my/shell/do-run #'my/tmux/do-run))
 
 ;; -----------------------------------------------------------------------------
 ;; Github CLI integration
@@ -320,18 +412,12 @@
     (shell-command "i3-msg [urgent=latest] focus"))
   "Callback to be run when we send something to the browser")
 
-(defvar my/gh/tmux-window
-  "emacs-tmux-gh"
-  "Name of tmux window to use for interactive prompts")
-
 (defun my/gh/open-repo-on-browser ()
-  "Opens tmux on the current directory (new pane)."
   (interactive)
   (shell-command "gh repo view --web")
   (funcall my/gh/on-browser-open-request))
 
 (defun my/gh/open-pr-on-browser ()
-  "Opens tmux on the current directory (new pane)."
   (interactive)
   (shell-command "gh pr view --web")
   (funcall my/gh/on-browser-open-request))
@@ -339,8 +425,7 @@
 (defun my/gh/new-pr ()
   "Opens tmxu with prompts for a new PR"
   (interactive)
-  (shell-command (format "tmux neww -t%s: -n%s 'gh pr create'" i3-tmux-session my/gh/tmux-window))
-  (shell-command (format "i3-msg \"[class=%s] focus\"" i3-tmux-class)))
+  (my/shell/run "gh pr create"))
 
 (defun my/gh/print-pr-body ()
   "Prints the current PR body on the current buffer."
@@ -718,17 +803,17 @@
    `(defhydra myhydra (:color blue)
       ,@(remove nil
                 `(,(when (functionp #'my/ag-hydra/body)
-                    '("a" #'my/ag-hydra/body "Ag Hydra"))
+                    '("a" #'my/ag-hydra/body "Ag Hydra" :column "Main"))
                  ,(when (functionp #'my/deadgrep-hydra/body)
-                    '("a" #'my/deadgrep-hydra/body "Deadgrep Hydra"))
-                 ("b" #'my/buffer-hydra/body "Buffer hydra")
+                    '("a" #'my/deadgrep-hydra/body "Deadgrep Hydra" :column "Main"))
+                 ("b" #'my/buffer-hydra/body "Buffer hydra" :column "Main")
                  ("c" #'mfcs-call "Calls fuzzy command selector")
                  ("d" #'my/dired-hydra/body "Dired hydra")
                  ("e" #'my/eval-elisp-hydra/body "Evaluate Elisp hydra")
                  ,(when (functionp #'my/eglot-hydra/body)
                     '("E" #'my/eglot-hydra/body "Eglot hydra"))
                  ("f" #'my/files-hydra/body "Files hydra!")
-                 ("g" #'my/open-tmux-i3-on-current-dir "Open tmux on current dir")
+                 ("g" #'my/shell/open-on-current-dir "Open shell on current dir")
                  ("G" #'my/gh-hydra/body "Opens GithubCLI hydra")
                  ("h" #'my/hideshow-hydra/body "HideShow Hydra" :column "")
                  ("H" #'my/highlight-hydra/body "Highligh hydra!")
