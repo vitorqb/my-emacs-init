@@ -78,38 +78,10 @@ necessarily quality code, but hopefully it will help someone someday.
 
    With no argument it clones to =~/.emacs.d/emacs_init_deps/=.
 
-** Profiles
+** Hooks
 
-   Profiles allows you to execute hooks specific for your current project.
-   I use it to have customized setups and autoloads when I'm at work or when
-   I'm at home. It works like this:
-
-   1) Read a profile from =~/.emacs_init_profile=.
-
-   2) Tries to load
-      ~${USER_HOME}/.config/emacs_init/profile-hooks/${PROFILE_NAME}.el~
-      if exists.
-
-   Profiles must be a symbol beggining with ~:~, like ~:home~ or ~:work~.
-
-** Dependencies
-
-   I keep some very tiny personal libraries in separate github repositories. Those
-   are required dependencies for my init file, and they are not published in melpa
-   nor any other place.
-
-   The script [[scripts/clone-libs-repos.sh]] takes care of downloading and then updating
-   those dependencies.
-
-#+begin_src shell
-# On a fresh install, run:
-./scripts/clone-libs-repos.sh
-
-# On a update, run:
-./scripts/clone-libs-repos.sh --update-existing
-#+end_src
-
-   To bring these dependencies 
+   You con put extra initiatilization logic on =~/.config/emacs_init/hook.el=. This
+   file will be loaded at the very end of `emacs-init.el`.
 
 ** Modules
 
@@ -122,7 +94,7 @@ necessarily quality code, but hopefully it will help someone someday.
 
    : M-x emacs-init-load-module-python
 
-   You can use [[*Profiles][Profiles]] to automatically load modules you always use:
+   You can use [[#hooks][Hooks]] to automatically load modules you always use:
 
 #+begin_src elisp
 ;; file: ~/.config/emacs_init/profile-hooks/work.el

@@ -6,9 +6,6 @@
 ;; customize any variable it needs to customize.
 (defvar my-font-size 14 "The default font size used.")
 (defvar my-font-name nil "The name for the font")
-(defvar my-current-profile nil
-  (concat "A profile that can be used to customize your computer-specific settings."
-          " For example: :work or :home."))
 (defvar my/journal-files-dir-base "files"
   (concat "A folder (relative to `org-journal-dir` unless it starts with '/') where"
           " to put files for the org-journal"))
@@ -1009,12 +1006,9 @@
 ;; Computer specific hooks
 ;; -----------------------------------------------------------------------------
 ;; Tries to load computer-specific hooks
-(when my-current-profile
-  (-some--> (expand-file-name "~/.config/emacs_init/profile-hooks/")
-    (and (file-directory-p it) it)
-    (concat it (-> my-current-profile symbol-name (substring 1)) ".el")
-    (and (file-exists-p it) it)
-    (load it)))
+(let* ((hook-file (expand-file-name "~/.config/emacs_init/hook.el")))
+  (when (file-exists-p hook-file)
+    (load-file hook-file)))
 
 ;; -----------------------------------------------------------------------------
 ;; Emacs Server
