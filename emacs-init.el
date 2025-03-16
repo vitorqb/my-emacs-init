@@ -12,11 +12,6 @@
 (defvar my/journal-files-dir-base "files"
   (concat "A folder (relative to `org-journal-dir` unless it starts with '/') where"
           " to put files for the org-journal"))
-
-;; !!!! TODO Remove me when we migrate all custom deps to `packages` folder
-(defvar my/emacs-init-deps-path "~/.emacs.d/emacs_init_deps/"
-  "Path to a directory which contains all emacs-init dependencies.")
-
 (defvar my/user-temp-directory "~/mytmp"
   "A directory used to save temporary files.")
 (defvar my/default-browser-cmd "firefox %s"
@@ -77,12 +72,7 @@
 (require 'bind-key)
 
 ;; Add our custom library to the load-path. Add anything inside
-;; my/emacs-init-deps-path that does not start with "."
-(seq-doseq (file (directory-files my/emacs-init-deps-path 't))
-  (when (and (not (->> file (file-name-nondirectory) (string-prefix-p ".")))
-             (file-directory-p file))
-    (add-to-list 'load-path file)))
-
+;; my/path-to-packages-dir that does not start with "."
 (seq-doseq (file (directory-files my/path-to-packages-dir 't))
   (when (and (not (->> file (file-name-nondirectory) (string-prefix-p ".")))
              (file-directory-p file))
