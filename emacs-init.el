@@ -44,12 +44,6 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-;; ------------------------------------------------------------
-;; Some common requirements
-;; ------------------------------------------------------------
-(use-package dash :ensure)
-(use-package s :ensure)
-
 ;; -----------------------------------------------------------------------------
 ;; Packages and load settings
 ;; -----------------------------------------------------------------------------
@@ -67,6 +61,8 @@
       (package-install 'use-package)))
 (require 'use-package)
 (require 'bind-key)
+(use-package dash :ensure)
+(use-package s :ensure)
 
 ;; Add our custom library to the load-path. Add anything inside
 ;; my/path-to-packages-dir that does not start with "."
