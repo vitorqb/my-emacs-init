@@ -322,10 +322,10 @@
 (defun my/shell/focus-window ()
   (my/i3/focus-window my/shell/window-class))
 
-(defun my/shell/run (cmd)
+(defun my/shell/run (cmd &optional close-after?)
   "Runs a command on a shell and exists after."
-  (interactive "sEnter command to run: ")
-  (funcall my/shell/do-run cmd)
+  (interactive "sEnter command to run: \nP")
+  (funcall my/shell/do-run cmd close-after?)
   (my/shell/focus-window))
 
 (defun my/shell/open-on-current-dir (currdir)
@@ -336,6 +336,9 @@
 ;; ------------------------------------------------------------
 ;; Zellij
 ;; ------------------------------------------------------------
+(defvar my/zellij/temp-session "emacs-temp-session"
+  "Temporary zellij session used to ")
+
 (defun my/zellij/current-session ()
   "Return the current session to use for zellij. If no session is running, errors."
   (let ((session (s-chomp (shell-command-to-string "zellij ls -n | grep -v EXITED | head -n 1 | awk '{print $1}'"))))
@@ -351,10 +354,13 @@
        (message it)
        (shell-command it)))
 
-(defun my/zellij/do-run (cmd)
+(defun my/zellij/do-run (cmd &optional close-after?)
   "Runs a command on zellij, and exits after."
   (if-let ((session (my/zellij/current-session)))
-      (shell-command (format "zellij -s=%s run -f -- %s" session cmd))
+      (--> (format "zellij -s=%s run -f" session)
+           (if close-after? (format "%s --close-on-exit" it) it)
+           (format "%s -- %s" it cmd)
+           (shell-command it))
     (error "No zellij session")))
 
 (when (equal 'zellij my/terminal-multiplex)
@@ -384,8 +390,9 @@
           (shell-command (format "tmux send-keys -t%s: 'cd %s' Enter" session currdir))))
     (error "No current session for tmux")))
 
-(defun my/tmux/do-run (cmd)
-  (if-let ((session (my/tmux/current-session)))
+(defun my/tmux/do-run (cmd &optional close-after?)
+  (if-let ((session (my/tmux/current-session))
+           (cmd     (if close-after? (format "%s; echo \"Press a key to exit\"; read -n1" cmd) cmd)))
       (shell-command (format "tmux neww -t%s: -n%s '%s'" session my/tmux/interactive-window cmd))
     (error "No current session for tmux")))
 
@@ -416,6 +423,13 @@
   "Opens tmxu with prompts for a new PR"
   (interactive)
   (my/shell/run "gh pr create"))
+
+(defun my/gh/checkout-pr (&optional number)
+  "Uses shell to checkout a PR for the curent repository"
+  (interactive)
+  (--> "gh pr checkout"
+       (if number (s-concat it number) it)
+       (my/shell/run it)))
 
 (defun my/gh/print-pr-body ()
   "Prints the current PR body on the current buffer."
