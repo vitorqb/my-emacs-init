@@ -1,0 +1,11 @@
+(source gnu)
+(source melpa)
+
+(package-file "my-gh.el")
+
+(depends-on "dash")
+(depends-on "s")
+(depends-on "magit")
+
+(development
+  (depends-on "hydra"))
