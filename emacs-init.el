@@ -310,94 +310,17 @@
 ;; ------------------------------------------------------------
 ;; Terminal Multiplex Manipulation
 ;; ------------------------------------------------------------
-(defvar my/shell/new-pane nil
-  "Function to be used to creating a new pane on a terminal multiplex. Receives the CWD the shell should start on.")
-
-(defvar my/shell/do-run nil
-  "Function to be used to run a command on a shell and then exit after the command is done. Receives the command to run.")
-
-(defvar my/shell/window-class "Alacritty"
-  "The class of the i3 window that contains the shell/terminal")
-
-(defun my/shell/focus-window ()
-  (my/i3/focus-window my/shell/window-class))
-
-(defun my/shell/run (cmd)
-  "Runs a command on a shell and exists after."
-  (interactive "sEnter command to run: ")
-  (funcall my/shell/do-run cmd)
-  (my/shell/focus-window))
-
-(defun my/shell/open-on-current-dir (currdir)
-  (interactive (list (expand-file-name default-directory)))
-  (funcall my/shell/new-pane currdir)
-  (my/shell/focus-window))
-
-;; ------------------------------------------------------------
-;; Zellij
-;; ------------------------------------------------------------
-(defun my/zellij/current-session ()
-  "Return the current session to use for zellij. If no session is running, errors."
-  (let ((session (s-chomp (shell-command-to-string "zellij ls -n | grep -v EXITED | head -n 1 | awk '{print $1}'"))))
-    (when (or (not session) (string-equal session ""))
-      (error "Can not find current session"))
-    session))
-
-(defun my/zellij/new-pane (&optional cwd)
-  "Creates a new zellij pane with cwd. Implements my/shell/new-pane."
-  (--> (format "zellij -s=%s action new-pane -c" (my/zellij/current-session))
-       (if cwd (format "%s --cwd=%s" it cwd) it)
-       (format "%s -- bash" it)
-       (message it)
-       (shell-command it)))
-
-(defun my/zellij/do-run (cmd)
-  "Runs a command on zellij, and exits after."
-  (if-let ((session (my/zellij/current-session)))
-      (shell-command (format "zellij -s=%s run -f -- %s" session cmd))
-    (error "No zellij session")))
-
-(when (equal 'zellij my/terminal-multiplex)
-  (setq my/shell/new-pane #'my/zellij/new-pane)
-  (setq my/shell/do-run #'my/zellij/do-run))
-
-;; -----------------------------------------------------------------------------
-;; Tmux integration
-;; -----------------------------------------------------------------------------
-(defvar my/tmux/interactive-window
-  "emacs-tmux-interactive"
-  "Tmux window to use for interactive commands.")
-
-(defun my/tmux/current-session ()
-  "Returns the current session to use for tmux. Returns nil if not found."
-  (if-let ((session (-> "tmux ls -F'#{session_name}' | sort | head -n 1"
-                          (shell-command-to-string)
-                          (s-chomp))))
-      (unless (or (s-blank? session) (s-contains? "no server running" session))
-        session)))
-
-(defun my/tmux/new-pane (&optional cwd)
-  (if-let ((session (my/tmux/current-session)))
-      (progn
-        (shell-command (format "tmux neww -t%s:" session))
-        (when (not (s-blank? cwd))
-          (shell-command (format "tmux send-keys -t%s: 'cd %s' Enter" session currdir))))
-    (error "No current session for tmux")))
-
-(defun my/tmux/do-run (cmd)
-  (if-let ((session (my/tmux/current-session)))
-      (shell-command (format "tmux neww -t%s: -n%s '%s'" session my/tmux/interactive-window cmd))
-    (error "No current session for tmux")))
-
-(when (equal 'tmux my/terminal-multiplex)
-  (setq my/shell/new-pane #'my/tmux/new-pane)
-  (setq my/shell/do-run #'my/tmux/do-run))
+(require 'my-term)
+(setq my/term/focus-window (lambda () (my/i3/focus-window "Alacritty")))
+(pcase my/terminal-multiplex
+  ('zellij (my/term/use-zellij))
+  ('tmux   (my/term/use-tmux))
+  (_       (warn "Unknown terminal multiplex - check value for my/terminal-multiplex")))
 
 ;; -----------------------------------------------------------------------------
 ;; Github CLI integration
 ;; -----------------------------------------------------------------------------
 (require 'my-gh)
-(setq my/gh/shell-run #'my/shell/run)
 
 ;; -----------------------------------------------------------------------------
 ;; Completion (Company)
@@ -733,7 +656,7 @@
                  ,(when (functionp #'my/eglot-hydra/body)
                     '("E" #'my/eglot-hydra/body "Eglot hydra"))
                  ("f" #'my/files-hydra/body "Files hydra!")
-                 ("g" #'my/shell/open-on-current-dir "Open shell on current dir")
+                 ("g" #'my/term/open-on-current-dir "Open shell on current dir")
                  ("G" #'my/gh-hydra/body "Opens GithubCLI hydra")
                  ("h" #'my/hideshow-hydra/body "HideShow Hydra" :column "")
                  ("H" #'my/highlight-hydra/body "Highligh hydra!")
@@ -743,7 +666,6 @@
                  ("r" #'my/projectile-hydra/body "Projectile hydra ")
                  ("m" #'my/flymake-hydra/body "Flymake hydra")
                  ("o" #'my/org-hydra/body "Org hydra")
-                 ("s" #'my/shell-hydra/body "A shell, sh, bash hydra!.")
                  ("k" #'compile-transient "Kompile dude")
                  ("t" #'my/typing-hydra/body "Typing hydra!"))))))
 

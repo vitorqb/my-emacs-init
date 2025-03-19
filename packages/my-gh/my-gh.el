@@ -13,15 +13,13 @@
 
 ;;; code
 (provide 'my-gh)
+(require 'my-term)
 
 (defvar my/gh/on-browser-open-request
   (lambda ()
     (interactive)
     (shell-command "i3-msg [urgent=latest] focus"))
   "Callback to be run when we send something to the browser")
-
-(defvar my/gh/shell-run nil
-  "1-arg function to run a shell command. User interactvion may be needed.")
 
 (defun my/gh/open-repo-on-browser ()
   (interactive)
@@ -36,7 +34,7 @@
 (defun my/gh/new-pr ()
   "Opens tmxu with prompts for a new PR"
   (interactive)
-  (funcall my/gh/shell-run "gh pr create"))
+  (my/term/run "gh pr create"))
 
 (defun my/gh/print-pr-body ()
   "Prints the current PR body on the current buffer."
