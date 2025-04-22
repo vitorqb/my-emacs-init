@@ -150,6 +150,7 @@
   (setq default-frame-alist `((font . ,(format "%s %s" my-font-name my-font-size)))))
 
 ;; Choose theme
+(use-package modus-themes :ensure)
 (load-theme 'modus-vivendi-tinted t nil)
 
 ;; Highlight parenthesis
@@ -170,6 +171,9 @@
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; Nice mode
+;; NOTE: the `unless` logic is to support emacs <29 and =30
+(unless (require 'which-key nil 'noerror)
+  (use-package which-key :ensure))
 (which-key-mode 1)
 
 ;; -----------------------------------------------------------------------------
@@ -861,6 +865,7 @@
 ;; Modules loaded by default
 ;; -----------------------------------------------------------------------------
 (emacs-init-load-module-deadgrep)
+(emacs-init-load-module-eglot)
 
 ;; -----------------------------------------------------------------------------
 ;; Computer specific hooks
