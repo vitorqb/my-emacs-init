@@ -17,3 +17,5 @@
 (defhydra my/deadgrep-hydra (:color blue)
   ("a" #'my/deadgrep-current-dir "Simple search on default dir" :column "Deadgrep!")
   ("p" #'my/deadgrep-project-root "Search on project root"))
+
+(my/hydras-setup)

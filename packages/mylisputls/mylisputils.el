@@ -16,7 +16,6 @@
 ;;; code
 (require 'dash)
 (require 's)
-(require 'flycheck)
 
 ;; Customizable variables
 (defvar myutils/clean-buffers-names-regexs
@@ -182,30 +181,6 @@
     (-filter #'identity)
     (-filter #'file-directory-p)
     (car)))
-
-;;------------------------------------------------------------------------------
-;; Js Utils
-;; -----------------------------------------------------------------------------
-(defun myutils/set-eslint-from-node-modules ()
-  "Looks for a `node_modules` if the directory hierarchy and, if finds,
-set's flycheck-javascript-eslint-executable to use the eslint from the
-node_modules instalation."
-  (interactive)
-  (-some--> (or (buffer-file-name) default-directory)
-            (locate-dominating-file it "node_modules")
-            (myutils/concat-file it "node_modules/.bin/eslint")
-            (and (file-executable-p it) it)
-            (setq flycheck-javascript-eslint-executable it)
-            (message (format "Set flycheck-javascript-eslint-executable to %s" it))))
-
-(defun myutils/active-flycheck-for-typescript ()
-  "Prepares typescript-mode to use eslint from local node_modules"
-  (interactive)
-  (setq-default flycheck-disabled-checkers
-                (append flycheck-disabled-checkers '(javascript-jshint)))
-  (flycheck-add-mode 'javascript-eslint 'typescript-mode)
-  (add-hook 'typescript-mode #'myutils/set-eslint-from-node-modules)
-  (add-hook 'typescript-mode 'flycheck-mode-on-safe))
 
 (provide 'mylisputils)
 ;;; mylisputils.el ends here

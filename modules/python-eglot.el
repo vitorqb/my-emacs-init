@@ -11,7 +11,7 @@
 (add-hook 'python-mode-hook #'yas-minor-mode-on)
 
 ;; Variable with start to start pyright
-(defvar my/python-eglot/pyright-server (expand-file-name "~/emacs-init/bin/start-pyright"))
+(defvar my/python-eglot/pyright-server (expand-file-name "~/tools/pyright/run.sh"))
 
 ;; Help for activating virtual environment
 (defun my/python-eglot/start-pyright-langserver (arg)

@@ -1,5 +1,8 @@
 (emacs-init-load-module-eglot)
-(use-package elixir-mode :ensure)
+(use-package elixir-mode :ensure
+  ;; Set eglot-connect-timeout to 120 (default is 30) because the elixir lsp
+  ;; takes a long time to start (it builds itself)
+  :hook ((elixir-mode . (lambda () (setq eglot-connect-timeout 120)))))
 
 (defvar emacs-init-elixir/lsp-program
   (expand-file-name "~/tools/elixir-ls/language_server.sh"))

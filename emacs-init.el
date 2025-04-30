@@ -820,6 +820,14 @@
 (setq js-indent-level 2)
 
 ;; -----------------------------------------------------------------------------
+;; DirEnv
+;; -----------------------------------------------------------------------------
+;; - use ‘direnv-update-environment’ to manually update the Emacs
+;;  environment so that inferior shells, linters, compilers, and test
+;;  runners start with the intended environmental variables.
+(use-package direnv :ensure)
+
+;; -----------------------------------------------------------------------------
 ;; Using emacsclient as EDITOR
 ;; -----------------------------------------------------------------------------
 (add-hook 'server-visit-hook
