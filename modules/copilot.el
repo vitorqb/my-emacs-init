@@ -1,5 +1,6 @@
+
 (use-package copilot
-  :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
+  :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
   :hook (prog-mode . copilot-mode)
   :bind (("C-, a" . copilot-accept-completion)
          ("C-, l" . copilot-accept-completion-by-line)
