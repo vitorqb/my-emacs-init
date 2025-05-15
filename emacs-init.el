@@ -869,6 +869,7 @@
 (my/defmodule kotlin)
 (my/defmodule latex-and-auctex)
 (my/defmodule ohmycards)
+(my/defmodule protobuf)
 (my/defmodule python)
 (my/defmodule python-eglot)
 (my/defmodule rust)
