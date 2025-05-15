@@ -16,7 +16,9 @@
 (defvar my/path-to-modules-dir (concat (file-name-directory load-file-name) "modules")
   "The directory where the emacs-init `modules` can be found.")
 (defvar my/path-to-packages-dir (concat (file-name-directory load-file-name) "packages")
-  "The directory where the emacs-init `modules` can be found.")
+  "The directory where the emacs-init `packages` can be found.")
+(defvar my/path-to-vendor-dir (concat (file-name-directory load-file-name) "vendor")
+  "The directory where the emacs-init `packages` can be found.")
 (defcustom my/terminal-multiplex 'zellij
   "Which terminal multiplex to use (tmux/zellij)"
   :type '(symbol)
@@ -67,6 +69,13 @@
 ;; Add our custom library to the load-path. Add anything inside
 ;; my/path-to-packages-dir that does not start with "."
 (seq-doseq (file (directory-files my/path-to-packages-dir 't))
+  (when (and (not (->> file (file-name-nondirectory) (string-prefix-p ".")))
+             (file-directory-p file))
+    (add-to-list 'load-path file)))
+
+;; Add vendor libraries to the load-path. Add anything inside
+;; my/path-to-vendor-dir that does not start with "."
+(seq-doseq (file (directory-files my/path-to-vendor-dir 't))
   (when (and (not (->> file (file-name-nondirectory) (string-prefix-p ".")))
              (file-directory-p file))
     (add-to-list 'load-path file)))
