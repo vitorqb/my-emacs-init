@@ -1,4 +1,4 @@
-
+;; Requires https://github.com/orgs/github/packages/npm/package/copilot-language-server
 (use-package copilot
   :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
   :hook (prog-mode . copilot-mode)

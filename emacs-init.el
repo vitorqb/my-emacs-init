@@ -509,7 +509,6 @@
 (setq dired-listing-switches "-alh")    ;Readable file sizes
 (add-hook 'dired-load-hook '(lambda () (require 'dired-x))) ;Use dired-x
 (add-hook 'dired-mode-hook '(lambda () (dired-hide-details-mode t)))
-(setq dired-omit-mode t)
 
 (defun my/find-file-home ()
   (interactive)
@@ -869,6 +868,7 @@
 (my/defmodule kotlin)
 (my/defmodule latex-and-auctex)
 (my/defmodule ohmycards)
+(my/defmodule php)
 (my/defmodule protobuf)
 (my/defmodule python)
 (my/defmodule python-eglot)
