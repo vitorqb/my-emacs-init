@@ -258,11 +258,30 @@
 ;; -----------------------------------------------------------------------------
 ;; Flymake
 ;; -----------------------------------------------------------------------------
+(defun my/flymake/toggle-diagnostics-buffer-and-window (diagnostic-type)
+  "This function closes all windows and kill all flymake diagnostic buffers. If no buffer was killed, it then calls either flymake-show-project-diagnostics if diagnostic-type is 'project or flymake-show-buffer-diagnostics if diagnostic-type is 'buffer"
+  (interactive
+   (list (intern (completing-read "Project type: " '("buffer" "project")))))
+  ;; Find all diagnostic windows
+  (let ((diag-windows (->> (buffer-list)
+                           (-map #'buffer-name)
+                           (-filter (-partial #'s-prefix? "*Flymake diagnostics for "))
+                           (-mapcat #'get-buffer-window-list))))
+    ;; If >1 windows kill them all
+    (if (length> diag-windows 0)
+        (-each diag-windows #'delete-window)
+      ;; Else display buffer
+      (pcase diagnostic-type
+        ('buffer (flymake-show-buffer-diagnostics))
+        ('project (flymake-show-project-diagnostics))
+        (_ (error "Unkown project type"))))))
+
 (defun my/setup-hydra/flymake-hydra ()
   (defhydra my/flymake-hydra (:color blue)
     ("n" #'flymake-goto-next-error "Next error" :column "Flymake!")
     ("p" #'flymake-goto-prev-error "Prev error")
-    ("d" #'flymake-show-diagnostics-buffer "Diagnostic buffer")))
+    ("d" (lambda () (interactive) (my/flymake/toggle-diagnostics-buffer-and-window 'buffer)) "Diagnostic (buffer)")
+    ("D" (lambda () (interactive) (my/flymake/toggle-diagnostics-buffer-and-window 'buffer)) "Diagnostic (project)")))
 
 ;; We use compilation a lot and we don't want flymake to be prevented from running
 (setq-default flymake-compilation-prevents-syntax-check nil)
