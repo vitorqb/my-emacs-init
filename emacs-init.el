@@ -353,6 +353,9 @@
             (setq company-dabbrev-downcase 0
 	          company-idle-delay 0.2
 	          company-dabbrev-code-modes t)))
+(use-package company-box
+  :ensure
+  :hook (company-mode . company-box-mode))
 (use-package company-web :ensure)
 
 ;; -----------------------------------------------------------------------------
