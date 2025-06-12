@@ -883,6 +883,7 @@
 (my/defmodule elm)
 (my/defmodule fsharp)
 (my/defmodule go)
+(my/defmodule gptel)
 (my/defmodule haskell)
 (my/defmodule javascript)
 (my/defmodule jenkinsfile)
