@@ -281,7 +281,7 @@
     ("n" #'flymake-goto-next-error "Next error" :column "Flymake!")
     ("p" #'flymake-goto-prev-error "Prev error")
     ("d" (lambda () (interactive) (my/flymake/toggle-diagnostics-buffer-and-window 'buffer)) "Diagnostic (buffer)")
-    ("D" (lambda () (interactive) (my/flymake/toggle-diagnostics-buffer-and-window 'buffer)) "Diagnostic (project)")))
+    ("D" (lambda () (interactive) (my/flymake/toggle-diagnostics-buffer-and-window 'project)) "Diagnostic (project)")))
 
 ;; We use compilation a lot and we don't want flymake to be prevented from running
 (setq-default flymake-compilation-prevents-syntax-check nil)
