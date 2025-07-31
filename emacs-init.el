@@ -387,8 +387,9 @@
 ;; -----------------------------------------------------------------------------
 (require 'org)
 
-;; We don't like visual-line-mode
+;; We don't like visual-line-mode nor truncate lines
 (add-hook 'org-mode-hook (lambda () (visual-line-mode -1)))
+(add-hook 'org-mode-hook (lambda () (toggle-truncate-lines -1)))
 
 ;; We use "C-," for something else
 (define-key org-mode-map (kbd "C-,") nil)
@@ -433,6 +434,7 @@
 
     ;; We don't liek visual-line-mode
     (add-hook 'org-journal-mode-hook (lambda () (visual-line-mode -1)))
+    (add-hook 'org-journal-mode-hook (lambda () (toggle-truncate-lines -1)))
 
     (defun my/journal-files-dir ()
       "Returns the path to the journal directory responsible for holding files"
