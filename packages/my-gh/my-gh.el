@@ -52,26 +52,31 @@
                (fboundp 'markdown-mode))
       (markdown-mode))))
 
-(defun my/gh/browse (file-path)
-  "Browses to the current file."
-  (interactive (list buffer-file-name))
-  (let ((default-directory (or (file-name-directory file-path) default-directory))
-        (file-name (file-name-nondirectory file-path )))
-    (shell-command (format "gh browse %s" file-name))
-    (funcall my/gh/on-browser-open-request)))
+(defun my/gh//browse-cmd (file-path &optional line-number)
+  "Returns the `gh` command to be used for browsing to a file/line number"
+  (let* ((default-directory (or (file-name-directory file-path) default-directory))
+         (file-name (file-name-nondirectory file-path))
+         (file-ref (if line-number (format "%s:%s" file-name line-number) file-name)))
+    (format "gh browse %s" file-ref)))
+
+(defun my/gh/browse (file-path &optional line-number)
+  "Browses to the current file/line."
+  (interactive (list buffer-file-name (line-number-at-pos)))
+  (shell-command (my/gh//browse-cmd file-path line-number))
+  (funcall my/gh/on-browser-open-request))
 
 (defun my/gh/atlantis-plan ()
   (interactive)
   (let ((cmd-out (shell-command-to-string "gh pr comment --body='atlantis plan'")))
     (browse-url (string-trim cmd-out))))
 
+(defun my/gh//browse-commit-cmd (commit-hash)
+  "Returns the `gh` command to be used for browsing to a commit"
+  (format "gh browse %s" commit-hash))
+
 (defun my/gh/browse-commit (commit)
   (interactive (list (thing-at-point 'symbol)))
-  (--> (shell-command-to-string "gh repo view --json url -q \".url\"")
-       (s-trim it)
-       (format "%s/commit/%s" it commit)
-       (browse-url it))
-  (sit-for 1)
+  (->> commit (format "%s") my/gh//browse-commit-cmd shell-command)
   (funcall my/gh/on-browser-open-request))
 
 (when (require 'hydra nil 'noerror)
