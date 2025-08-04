@@ -7,7 +7,8 @@
   (should (equal (my/gh//browse-cmd "foo" 12)  "gh browse foo:12")))
 
 (ert-deftest my/gh//browse-commit-cmd ()
-  (should (equal (my/gh//browse-commit-cmd "7fa72cc") "gh browse 7fa72cc")))
+  (should (equal (my/gh//browse-commit-cmd "7fa72cc") "gh browse 7fa72cc"))
+  (should (equal (my/gh//browse-commit-cmd '7fa72cc) "gh browse 7fa72cc")))
 
 
 ;;; my-gh-test.el ends here
