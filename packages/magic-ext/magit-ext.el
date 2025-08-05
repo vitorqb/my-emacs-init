@@ -39,6 +39,6 @@
          (diff-file (magext--staged-changes-to-file dir))
          (commit-msg (magext--commit-msg diff-file)))
     (goto-char (point-min))
-    (insert commit-msg)))
-
+    (insert commit-msg)
+    (delete-file diff-file)))
 ;;; magit-ext.el ends here
