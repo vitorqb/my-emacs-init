@@ -14,12 +14,13 @@
 ;;; code
 (provide 'magit-ext)
 
-(setq magext--aichat-prompt "You are an experienced developer. Analyze carefully the git diff below. Create a concize and clear commit message based on the changes. Follow all best-practices for commit messages. Follow the \"Semantic Commits\" standard.")
+(defvar magext--aichat-prompt
+  "You are an experienced developer. Analyze carefully the given git diff. Create a short and clear commit message based on the changes. Follow all best-practices for commit messages. Follow the \"Semantic Commits\" standard. Output ONLY the commit message, nothing else."
+  "Prompt for AI chat to generate commit messages.")
 
 (defun magext--staged-changes-to-file (dir)
   "Saves the staged changes to a file. Returns the file."
-  (let ((tmpfile (make-temp-file "magext--staged-changes-to-file"))
-        (git-diff-cmd (format "git -C '%s' diff --staged" dir)))
+  (let ((tmpfile (make-temp-file "magext--staged-changes-to-file")))
     (call-process "git"                       ;Runs git
                   nil                         ;No INFILE
                   `(:file ,tmpfile)           ;Save to tempfile

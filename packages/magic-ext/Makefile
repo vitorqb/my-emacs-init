@@ -14,6 +14,7 @@ cask: $(CASK_DIR)
 compile: cask
 	cask emacs -batch $(LOAD_PATH) \
           --eval "(setq byte-compile-error-on-warn t)" \
+          --eval "(setq byte-compile-docstring-max-column 120)" \
 	  -f batch-byte-compile $$(cask files); \
 	  (ret=$$? ; cask clean-elc && exit $$ret)
 
