@@ -20,16 +20,12 @@
   "Saves the staged changes to a file. Returns the file."
   (let ((tmpfile (make-temp-file "magext--staged-changes-to-file"))
         (git-diff-cmd (format "git -C '%s' diff --staged" dir)))
-    (with-temp-buffer
-      (call-process-region
-       nil                  ; START=nil -> send entire buffer contents
-       nil                  ; END=nil   -> ignored
-       "git"                ; PROGRAM
-       nil                  ; DELETE=nil -> Don't delete after sending
-       `(:file ,tmpfile)    ; BUFFER -> Save result to tmpfile
-       nil                  ; DISPLAY -> Don't display
-       "-C" dir "diff" "--staged"       ;ARGS for PROGRAM
-       ))
+    (call-process "git"                       ;Runs git
+                  nil                         ;No INFILE
+                  `(:file ,tmpfile)           ;Save to tempfile
+                  nil                         ;Don't display result to user
+                  "-C" dir "diff" "--staged"  ;Git args
+                  )
     tmpfile))
 
 (defun magext--commit-msg (diff-file)
