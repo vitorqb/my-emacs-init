@@ -433,6 +433,7 @@
      '(org-journal-date-format "%A, %Y%m%d"))
 
     ;; We don't liek visual-line-mode
+    (remove-hook 'org-journal-mode-hook 'turn-on-visual-line-mode)
     (add-hook 'org-journal-mode-hook (lambda () (visual-line-mode -1)))
     (add-hook 'org-journal-mode-hook (lambda () (toggle-truncate-lines -1)))
 
