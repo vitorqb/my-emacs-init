@@ -1,6 +1,8 @@
 (use-package rust-mode :ensure)
 
 ;; Sets how to execute `rust-analyzer`
+;; NOTE: can't use `mise exec -- rust-analyzer` because it tries to execute
+;; ~/.cargo/bin/rust-analyzer instead
 (defvar my/rust-analyzer-exec
   `("mise" "exec" "--" ,(expand-file-name "~/tools/rust-analyzer/rust-analyzer")))
 
