@@ -16,6 +16,7 @@
 ;;; code
 (require 'dash)
 (require 's)
+(require 'projectile)
 
 ;; Customizable variables
 (defvar myutils/clean-buffers-names-regexs
@@ -97,14 +98,22 @@
          (-filter #'should-kill? it)
          (-each it #'kill-buffer))))
 
-(defun myutils/copy-file-path-to-clipboard ()
+(defun myutils/priv/file-path (relative-to-project-root?)
+  "Returns the file to the path we are visiting. If relative-to-project-root?
+   is set the path is relative to the projectile project root."
+  (let* ((path (cond
+                ((equal major-mode 'dired-mode) default-directory)
+                ((equal major-mode 'magit-status-mode) default-directory)
+                (t (buffer-file-name))))
+         (abspath (expand-file-name path)))
+    (if relative-to-project-root?
+        (file-relative-name abspath (projectile-project-root))
+      abspath)))
+
+(defun myutils/copy-file-path-to-clipboard (relative-to-project-root?)
   "Copy the current buffer file path to the clipboard."
-  (interactive)
-  (let* ((path (-> (cond
-                    ((equal major-mode 'dired-mode) default-directory)
-                    ((equal major-mode 'magit-status-mode) default-directory)
-                    (t (buffer-file-name)))
-                   (expand-file-name))))
+  (interactive "P")
+  (let* ((path (myutils/priv/file-path relative-to-project-root?)))
     (kill-new path)
     (message "Copied %s to the clipboard!" path)))
 

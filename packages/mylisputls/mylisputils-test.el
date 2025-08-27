@@ -100,6 +100,18 @@
       (should (string-equal (thing-at-point 'line t) expected-line))
       (next-line))))
 
+(ert-deftest test-myutils/priv/file-path ()
+  ;; Case 1 -> relative t project root /foo/bar
+  (let* ((projectile-project-root-functions (list (lambda (_) "/foo/bar")))
+         (default-directory "/foo/bar/baz/boz")
+         (major-mode 'dired-mode))
+    (should (string-equal "baz/boz" (myutils/priv/file-path 't))))
+  ;; Case 2 -> absolute
+  (let* ((projectile-project-root-functions (list (lambda (_) "/foo/bar")))
+         (default-directory "/foo/bar/baz/boz")
+         (major-mode 'dired-mode))
+    (should (string-equal "/foo/bar/baz/boz" (myutils/priv/file-path nil)))))
+
 (ert-deftest myutils/python-activate-venv/with-venv-dir ()
   (let ((pyvenv-activate-arg))
     (cl-letf (((symbol-function 'myutils/python-get-default-venv-path)

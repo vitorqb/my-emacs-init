@@ -12,4 +12,5 @@
  (depends-on "s")
  (depends-on "flycheck")
  (depends-on "pyvenv")
- (depends-on "ivy"))
+ (depends-on "ivy")
+ (depends-on "projectile"))
