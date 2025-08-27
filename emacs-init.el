@@ -276,15 +276,23 @@
         ('project (flymake-show-project-diagnostics))
         (_ (error "Unkown project type"))))))
 
+(defun my/flymake/toggle-show-diagnostics-at-end-of-line ()
+  (interactive)
+  (if flymake-show-diagnostics-at-end-of-line
+      (setq flymake-show-diagnostics-at-end-of-line nil)
+    (setq flymake-show-diagnostics-at-end-of-line 'short)))
+
 (defun my/setup-hydra/flymake-hydra ()
   (defhydra my/flymake-hydra (:color blue)
     ("n" #'flymake-goto-next-error "Next error" :column "Flymake!")
     ("p" #'flymake-goto-prev-error "Prev error")
+    ("l" #'my/flymake/toggle-show-diagnostics-at-end-of-line "Toggle show diagnostics end of line")
     ("d" (lambda () (interactive) (my/flymake/toggle-diagnostics-buffer-and-window 'buffer)) "Diagnostic (buffer)")
     ("D" (lambda () (interactive) (my/flymake/toggle-diagnostics-buffer-and-window 'project)) "Diagnostic (project)")))
 
 ;; We use compilation a lot and we don't want flymake to be prevented from running
 (setq-default flymake-compilation-prevents-syntax-check nil)
+(setq-default flymake-show-diagnostics-at-end-of-line 'short)
 
 ;; -----------------------------------------------------------------------------
 ;; Buffer and buffer contents manipulation
