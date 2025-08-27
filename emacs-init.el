@@ -84,7 +84,11 @@
 ;; Global requirements
 ;;   the rest of the config depends on these 
 ;; -----------------------------------------------------------------------------
-(use-package counsel :ensure)
+(use-package counsel
+  :ensure
+  :bind (:map ivy-occur-grep-mode-map
+              ("n" . next-error)
+              ("p" . previous-error)))
 (use-package ivy
   :ensure
   :bind (("C-c C-r" . ivy-resume)
@@ -701,29 +705,31 @@
   (eval
    `(defhydra myhydra (:color blue)
       ,@(remove nil
-                `(,(when (functionp #'my/ag-hydra/body)
-                    '("a" #'my/ag-hydra/body "Ag Hydra" :column "Main"))
-                 ,(when (functionp #'my/deadgrep-hydra/body)
-                    '("a" #'my/deadgrep-hydra/body "Deadgrep Hydra" :column "Main"))
-                 ("b" #'my/buffer-hydra/body "Buffer hydra" :column "Main")
-                 ("c" #'mfcs-call "Calls fuzzy command selector")
-                 ("d" #'my/dired-hydra/body "Dired hydra")
-                 ("e" #'my/eval-elisp-hydra/body "Evaluate Elisp hydra")
-                 ,(when (functionp #'my/eglot-hydra/body)
-                    '("E" #'my/eglot-hydra/body "Eglot hydra"))
-                 ("f" #'my/files-hydra/body "Files hydra!")
-                 ("g" #'my/term/open-on-current-dir "Open shell on current dir")
-                 ("G" #'my/gh-hydra/body "Opens GithubCLI hydra")
-                 ("h" #'my/hideshow-hydra/body "HideShow Hydra" :column "")
-                 ("H" #'my/highlight-hydra/body "Highligh hydra!")
-                 ("i" #'counsel-imenu "Imenu (find definitions)!")
-                 ("j" #'my/journal-hydra/body "Hydra for org-journal")
-                 ("l" (lambda () (interactive) (funcall my/language-hydra/body)) "Language specific hydra")
-                 ("r" #'my/projectile-hydra/body "Projectile hydra ")
-                 ("m" #'my/flymake-hydra/body "Flymake hydra")
-                 ("o" #'my/org-hydra/body "Org hydra")
-                 ("k" #'compile-transient "Kompile dude")
-                 ("t" #'my/typing-hydra/body "Typing hydra!"))))))
+                `(
+                  ("A" #'counsel-rg "Conusel RG" :column "Main")
+                  ,(when (functionp #'my/ag-hydra/body)
+                     '("a" #'my/ag-hydra/body "Ag Hydra" :column "Main"))
+                  ,(when (functionp #'my/deadgrep-hydra/body)
+                     '("a" #'my/deadgrep-hydra/body "Deadgrep Hydra" :column "Main"))
+                  ("b" #'my/buffer-hydra/body "Buffer hydra" :column "Main")
+                  ("c" #'mfcs-call "Calls fuzzy command selector")
+                  ("d" #'my/dired-hydra/body "Dired hydra")
+                  ("e" #'my/eval-elisp-hydra/body "Evaluate Elisp hydra")
+                  ,(when (functionp #'my/eglot-hydra/body)
+                     '("E" #'my/eglot-hydra/body "Eglot hydra"))
+                  ("f" #'my/files-hydra/body "Files hydra!")
+                  ("g" #'my/term/open-on-current-dir "Open shell on current dir")
+                  ("G" #'my/gh-hydra/body "Opens GithubCLI hydra")
+                  ("h" #'my/hideshow-hydra/body "HideShow Hydra" :column "")
+                  ("H" #'my/highlight-hydra/body "Highligh hydra!")
+                  ("i" #'counsel-imenu "Imenu (find definitions)!")
+                  ("j" #'my/journal-hydra/body "Hydra for org-journal")
+                  ("l" (lambda () (interactive) (funcall my/language-hydra/body)) "Language specific hydra")
+                  ("r" #'my/projectile-hydra/body "Projectile hydra ")
+                  ("m" #'my/flymake-hydra/body "Flymake hydra")
+                  ("o" #'my/org-hydra/body "Org hydra")
+                  ("k" #'compile-transient "Kompile dude")
+                  ("t" #'my/typing-hydra/body "Typing hydra!"))))))
 
 (use-package hydra :ensure
   :config (my/hydras-setup)
