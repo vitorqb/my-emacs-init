@@ -22,3 +22,6 @@
                                  eglot-extend-to-xref t
                                  eglot-connect-timeout 120
                                  jsonrpc-default-request-timeout 120)))
+
+;; Use tree-sitter based rust mode if available
+(add-to-list 'major-mode-remap-alist '(rust-mode . rust-ts-mode))
