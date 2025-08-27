@@ -646,13 +646,14 @@
     (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
     (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
     (projectile-mode +1)
-
-    ;; This one is on me
-    (bind-key* "C-c C-f" 'projectile-find-file)
-    (bind-key* "C-c C-d" 'projectile-find-dir)
-
+    
     ;; And use ivy (S2) for completion
     (setq projectile-completion-system 'ivy)))
+
+(use-package counsel-projectile
+  :ensure t
+  :bind* (("C-c C-f" . 'counsel-projectile-find-file)
+          ("C-c C-d" . 'counsel-projectile-dir)))
 
 ;; Adds a fn to insert relative files
 (defun my/projectile/insert-relative-file ()
