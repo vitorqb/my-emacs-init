@@ -117,12 +117,12 @@
     (kill-new path)
     (message "Copied %s to the clipboard!" path)))
 
-(defun myutils/copy-file-path-from-other-window-to-clipboard ()
+(defun myutils/copy-file-path-from-other-window-to-clipboard (relative-to-project-root?)
   "Calls `other-window`, `copy-file-path-to-clipboard`, and comes back"
-  (interactive)
+  (interactive "P")
   (save-window-excursion
     (call-interactively #'other-window)
-    (myutils/copy-file-path-to-clipboard)))
+    (myutils/copy-file-path-to-clipboard relative-to-project-root?)))
 
 (defun myutils/duplicate-buffer ()
   "Displays a copy of the current buffer in a new buffer and switch to it"
