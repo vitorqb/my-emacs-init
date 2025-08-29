@@ -67,6 +67,37 @@ interaction. It receives the command to run.")
   (setq my/term/new-pane #'my/term/zellij/new-pane)
   (setq my/term/do-run   #'my/term/zellij/do-run))
 
+(defun my/term/on-zellij-scrollback-editing ()
+  "Function to be called when we go to a zellij scrollback editing
+using emacsclient. It will trim empty spaces and lines and move the
+user to the end of the scroll."
+  ;; Go to the bottom
+  (goto-char (point-max))
+  ;; Delete all trailing empty lines
+  (catch 'done
+    (while t
+      (let* ((line (-> (buffer-substring-no-properties (line-beginning-position)
+                                                       (line-end-position))
+                       (s-trim))))
+        ;; if line is not empty string or buffer is too small
+        (when (or (not (s-blank? line)) (< (point-max) 1))
+          (throw 'done t))
+        (delete-line)
+        (backward-char 1))))
+  ;; Go to end of buffer
+  (goto-char (point-min))
+  (goto-char (point-max)))
+
+(defun my/term/maybe-prepare-zellij-scrollback-editing ()
+  "To be used on server-mode-hook. Tries to guess we are editing a zellij buffer."
+  ;; IMPORTANT - This depends on the frame containing zellij-scrollback in the name!
+  (when (and (->> (frame-parameter nil 'name) (s-contains? "zellij-scrollback"))
+             (->> (buffer-file-name) (s-ends-with? ".dump")))
+    (my/term/on-zellij-scrollback-editing)))
+
+(add-hook 'server-visit-hook #'my/term/maybe-prepare-zellij-scrollback-editing)
+
+
 ;; -----------------------------------------------------------------------------
 ;; Tmux
 ;; -----------------------------------------------------------------------------
