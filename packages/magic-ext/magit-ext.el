@@ -25,11 +25,11 @@
 (defun magext--staged-changes-to-file (dir)
   "Saves the staged changes to a file. Returns the file."
   (let ((tmpfile (make-temp-file "magext--staged-changes-to-file")))
-    (call-process "git"                       ;Runs git
-                  nil                         ;No INFILE
-                  `(:file ,tmpfile)           ;Save to tempfile
-                  nil                         ;Don't display result to user
-                  "-C" dir "diff" "--staged"  ;Git args
+    (call-process "git"                              ;Runs git
+                  nil                                ;No INFILE
+                  `(:file ,tmpfile)                  ;Save to tempfile
+                  nil                                ;Don't display result to user
+                  "-C" dir "diff" "-U10" "--staged"  ;Git args
                   )
     tmpfile))
 
