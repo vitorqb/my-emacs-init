@@ -11,3 +11,6 @@
   `("mise" "exec" "--" ,(expand-file-name "~/tools/elixir-ls/language_server.sh")))
 
 (add-to-list 'eglot-server-programs `(elixir-mode . ,emacs-init-elixir/lsp-program))
+
+;; Use tree-sitter based rust mode if available
+(add-to-list 'major-mode-remap-alist '(elixir-mode . elixir-ts-mode))
