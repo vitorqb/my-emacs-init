@@ -603,15 +603,6 @@
     (dolist (regxp (list "\\.html?\\'" "\\.css?\\'"))
       (add-to-list 'auto-mode-alist (cons regxp 'web-mode)))))
 
-;; Removed for now since failing to instantiate
-;; (use-package scss-mode :ensure
-;;   :init
-;;   (progn
-;;     (add-hook 'scss-mode-hook 'flymake-mode-on)
-;;     (setq scss-compile-at-save nil)
-;;     (custom-set-variables '(css-indent-offset 2))
-;;     (add-to-list 'auto-mode-alist (cons "\\.scss?\\'" 'scss-mode))))
-
 ;; -----------------------------------------------------------------------------
 ;; Ansi colors
 ;; -----------------------------------------------------------------------------
@@ -622,6 +613,14 @@
   (interactive)
   (let ((buffer-read-only nil))
     (ansi-color-apply-on-region (point-min) (point-max))))
+
+(defun my/colorize-compilation-buffer ()
+  "Apply ANSI color codes in the compilation buffer."
+  (let ((inhibit-read-only t))
+    (ansi-color-apply-on-region compilation-filter-start (point))))
+
+;; Ansi on compilation buffer
+(add-hook 'compilation-filter-hook #'my/colorize-compilation-buffer)
 
 ;; Ansi on shell and comint
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
@@ -638,6 +637,18 @@
     ("b" #'eval-buffer "Eval buffer" :column "Evaluate Elisp!")
     ("f" #'eval-defun "Eval defun")
     ("r" #'eval-region "Eval region")))
+
+;; -----------------------------------------------------------------------------
+;; Compilation
+;; -----------------------------------------------------------------------------
+;; On compilation, enable auto-scroll
+(setq compilation-scroll-output t)
+
+;; A compilation hydra
+(defun my/setup-hydra/compile ()
+  "An hydra to call compile and similars"
+  (defhydra my/compile-hydra (:color blue)
+    ("k" #'compile "Compile" :column "Compile")))
 
 ;; -----------------------------------------------------------------------------
 ;; Projectile
@@ -701,7 +712,8 @@
   (my/setup-hydra/typing-hydra)
   (when (functionp #'my/setup-hydra/eglot-hydra)
     (my/setup-hydra/eglot-hydra))
-  
+  (my/setup-hydra/compile)
+
   (eval
    `(defhydra myhydra (:color blue)
       ,@(remove nil
@@ -724,11 +736,11 @@
                   ("H" #'my/highlight-hydra/body "Highligh hydra!")
                   ("i" #'counsel-imenu "Imenu (find definitions)!")
                   ("j" #'my/journal-hydra/body "Hydra for org-journal")
+                  ("k" #'my/compile-hydra/body "Compile hydra")
                   ("l" (lambda () (interactive) (funcall my/language-hydra/body)) "Language specific hydra")
                   ("r" #'my/projectile-hydra/body "Projectile hydra ")
                   ("m" #'my/flymake-hydra/body "Flymake hydra")
                   ("o" #'my/org-hydra/body "Org hydra")
-                  ("k" #'compile-transient "Kompile dude")
                   ("t" #'my/typing-hydra/body "Typing hydra!"))))))
 
 (use-package hydra :ensure
