@@ -644,11 +644,26 @@
 ;; On compilation, enable auto-scroll
 (setq compilation-scroll-output t)
 
+(defun my/compile-project-root ()
+  "Calls `compile` interactively on project root"
+  (interactive)
+  (let ((default-directory (projectile-project-root)))
+    (call-interactively #'compile)))
+
+(defun my/recompile ()
+  "Focus on compilation buffer and calls `recompile`"
+  (interactive)
+  (switch-to-buffer-other-window "*compilation*")
+  (call-interactively #'recompile))
+
 ;; A compilation hydra
 (defun my/setup-hydra/compile ()
   "An hydra to call compile and similars"
   (defhydra my/compile-hydra (:color blue)
-    ("k" #'compile "Compile" :column "Compile")))
+    ("k" #'my/compile-project-root "Compile (project root)" :column "Compile")
+    ("K" #'my/compile-project-root "Compile (default-directory)")
+    ("g" #'my/recompile "recompile")
+    ("s" (lambda () (interactive) (switch-to-buffer-other-window "*compilation*")) "Switch to compilation buffer")))
 
 ;; -----------------------------------------------------------------------------
 ;; Projectile
