@@ -55,26 +55,25 @@
                (fboundp 'markdown-mode))
       (markdown-mode))))
 
-(defun my/gh//browse-cmd (file-path &optional line-number no-browser)
-  "Returns the `gh` command to be used for browsing to a file/line number"
+(defun my/gh//browse-file-url (file-path &optional line-number)
+  "Returns the url to browse a file"
   (let* ((default-directory (or (file-name-directory file-path) default-directory))
          (file-name (file-name-nondirectory file-path))
-         (file-ref (if line-number (format "%s:%s" file-name line-number) file-name)))
-    (if no-browser
-        (format "gh browse --no-browser %s" file-ref)
-      (format "gh browse %s" file-ref))))
+         (file-ref (if line-number (format "%s:%s" file-name line-number) file-name))
+         (gh-cmd (format "gh browse --no-browser %s" file-ref)))
+    (shell-command-to-string gh-cmd)))
 
 (defun my/gh/browse (file-path &optional line-number)
   "Browses to the current file/line."
   (interactive (list buffer-file-name (line-number-at-pos)))
-  (shell-command (my/gh//browse-cmd file-path line-number))
-  (funcall my/gh/on-browser-open-request))
+  (let ((url (my/gh//browse-file-url file-path line-number)))
+    (browse-url url)
+    (funcall my/gh/on-browser-open-request)))
 
 (defun my/gh/browse-url-to-clipboard (file-path &optional line-number)
   "Copies the browse URL to clipboard"
   (interactive (list buffer-file-name (line-number-at-pos)))
-  (->> (my/gh//browse-cmd file-path line-number 't)
-       (shell-command-to-string)
+  (->> (my/gh//browse-file-url file-path line-number)
        (s-trim)
        (funcall my/gh/copy-to-clipboard)))
 

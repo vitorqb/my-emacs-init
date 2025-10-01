@@ -2,11 +2,6 @@
 (require 'hydra)
 (require 'my-gh)
 
-(ert-deftest my/gh//browse-cmd ()
-  (should (equal (my/gh//browse-cmd "foo" nil) "gh browse foo"))
-  (should (equal (my/gh//browse-cmd "foo" 12)  "gh browse foo:12"))
-  (should (equal (my/gh//browse-cmd "foo" 12 't)  "gh browse --no-browser foo:12")))
-
 (ert-deftest my/gh//browse-commit-cmd ()
   (should (equal (my/gh//browse-commit-cmd "7fa72cc") "gh browse 7fa72cc"))
   (should (equal (my/gh//browse-commit-cmd '7fa72cc) "gh browse 7fa72cc"))
@@ -22,6 +17,16 @@
       (my/gh/browse-url-to-clipboard "foo" 1)
       (should (equal fake-clipboard "http:://foo.com#1")))))
 
-
+(ert-deftest my/gh/browse-file-url ()
+  (cl-letf (((symbol-function 'shell-command-to-string)
+             (lambda (x)
+               (should (equal x "gh browse --no-browser foo:1"))
+               "http:://foo.com#1")))
+    (should (equal (my/gh//browse-file-url "foo" 1) "http:://foo.com#1")))
+  (cl-letf (((symbol-function 'shell-command-to-string)
+             (lambda (x)
+               (should (equal x "gh browse --no-browser foo"))
+               "http:://foo.com")))
+    (should (equal (my/gh//browse-file-url "foo") "http:://foo.com"))))
 ;;; my-gh-test.el ends here
 
