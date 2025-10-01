@@ -587,7 +587,7 @@
 (use-package lispy :ensure
   :config (progn
             (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
-            (define-key lispy-mode-map (kbd "C-,") nil)))
+            (keymap-unset lispy-mode-map-lispy "C-," 'remove)))
 
 ;; -----------------------------------------------------------------------------
 ;; Ediff
