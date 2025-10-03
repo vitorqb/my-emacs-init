@@ -19,7 +19,7 @@
   "System Prompt for AI chat to generate commit messages.")
 
 (defvar magext--user-prompt
-  "Analyze carefully the given git diff. Create a short and clear commit message based on the changes, following best practices. Avoid phrases like \"Improving maintainability\" or \"emphasizing maintainability and best practices\". Focus on describing the changes and their concrete goals. Use the `git log` as inspiration."
+  "Analyze carefully the given git diff. Create a short and clear commit message based on the changes, following best practices. Avoid phrases like \"Improving maintainability\" or \"emphasizing maintainability and best practices\". Focus on describing the changes and their concrete goals. Use the provided `git log` as inspiration. OUTPUT ONLY THE COMMIT MESSAGE AND NOTHING ELSE."
   "User Prompt for AI chat to generate commit messages.")
 
 (defvar magext-aichat-model
