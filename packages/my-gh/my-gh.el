@@ -55,6 +55,39 @@
                (fboundp 'markdown-mode))
       (markdown-mode))))
 
+(defun my/gh//get-pr-list ()
+  "Returns a list of objects representing PRs"
+  (message "Querying for list of PRs...")
+  (-> (shell-command-to-string "gh pr list --json='author,id,title,url,state,createdAt,isDraft,number,headRefName'")
+      (json-parse-string)))
+
+(defun my/gh//prompt-user-to-select-pr (prlist)
+  "Asks the user to select a PR from a list using `completing-read`"
+  (let* ((candidates (-map (lambda (pr) (format "%s | %s | %s | %s"
+                                                (gethash "number" pr)
+                                                (gethash "state" pr)
+                                                (->> pr
+                                                     (gethash "author")
+                                                     (gethash "login"))
+                                                (gethash "title" pr)))
+                           prlist))
+         (selected-str (completing-read "Select a PR: " candidates nil 't))
+         (selected-number (->> selected-str (s-split "|") seq-first s-trim string-to-number)))
+    (message "Selected PR %s" selected-number)
+    (-first (lambda (x) (= selected-number (gethash "number" x))) (append prlist nil))))
+
+(defun my/gh//checkout-pr-by-number (number)
+  (let ((cmd (format "gh pr checkout %s" number)))
+    (message "Running %s" cmd)
+    (shell-command cmd)))
+
+(defun my/gh/checkout-pr ()
+  (interactive)
+  (->> (my/gh//get-pr-list)
+       (my/gh//prompt-user-to-select-pr)
+       (gethash "number")
+       (my/gh//checkout-pr-by-number)))
+
 (defun my/gh//browse-file-url (file-path &optional line-number)
   "Returns the url to browse a file"
   (let* ((default-directory (or (file-name-directory file-path) default-directory))

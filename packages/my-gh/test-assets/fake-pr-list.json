@@ -1,0 +1,156 @@
+[
+  {
+    "author": {
+      "id": "U_fakEXmpl123",
+      "is_bot": false,
+      "login": "janedoe",
+      "name": "Jane Doe"
+    },
+    "createdAt": "2025-10-02T09:20:45Z",
+    "headRefName": "FEATURE-101/add-new-authentication-method",
+    "id": "PR_fakeId1234567890a",
+    "isDraft": false,
+    "number": 5001,
+    "state": "OPEN",
+    "title": "[FEATURE-101]: Add new authentication method",
+    "url": "https://github.com/example/repo/pull/5001"
+  },
+  {
+    "author": {
+      "is_bot": true,
+      "login": "app/dependabot"
+    },
+    "createdAt": "2025-09-30T11:15:00Z",
+    "headRefName": "dependabot/npm_and_yarn/lodash-4.17.21",
+    "id": "PR_fakeId0987654321b",
+    "isDraft": false,
+    "number": 5000,
+    "state": "OPEN",
+    "title": "build(deps): bump lodash from 4.17.20 to 4.17.21",
+    "url": "https://github.com/example/repo/pull/5000"
+  },
+  {
+    "author": {
+      "id": "U_fakEXmpl456",
+      "is_bot": false,
+      "login": "johnsmith",
+      "name": "John Smith"
+    },
+    "createdAt": "2025-09-29T16:45:30Z",
+    "headRefName": "BUGFIX-250/fix-login-redirect",
+    "id": "PR_fakeId1122334455c",
+    "isDraft": true,
+    "number": 4998,
+    "state": "OPEN",
+    "title": "[BUGFIX-250]: Fix login redirect issue",
+    "url": "https://github.com/example/repo/pull/4998"
+  },
+  {
+    "author": {
+      "id": "U_fakEXmpl789",
+      "is_bot": false,
+      "login": "amandajones",
+      "name": "Amanda Jones"
+    },
+    "createdAt": "2025-09-28T08:30:00Z",
+    "headRefName": "TASK-342/improve-ui-responsiveness",
+    "id": "PR_fakeId2233445566d",
+    "isDraft": false,
+    "number": 4995,
+    "state": "OPEN",
+    "title": "[TASK-342]: Improve UI responsiveness on mobile",
+    "url": "https://github.com/example/repo/pull/4995"
+  },
+  {
+    "author": {
+      "id": "U_fakEXmpl321",
+      "is_bot": false,
+      "login": "roboticbot",
+      "name": "Robotic Bot"
+    },
+    "createdAt": "2025-09-27T14:10:10Z",
+    "headRefName": "DOCS-77/update-api-documentation",
+    "id": "PR_fakeId3344556677e",
+    "isDraft": true,
+    "number": 4990,
+    "state": "OPEN",
+    "title": "[DOCS-77]: Update API documentation for v2 endpoints",
+    "url": "https://github.com/example/repo/pull/4990"
+  },
+  {
+    "author": {
+      "id": "U_fakEXmpl654",
+      "is_bot": false,
+      "login": "devbot",
+      "name": "Dev Bot"
+    },
+    "createdAt": "2025-09-26T12:00:00Z",
+    "headRefName": "REFACTOR-88/cleanup-unused-code",
+    "id": "PR_fakeId4455667788f",
+    "isDraft": false,
+    "number": 4987,
+    "state": "OPEN",
+    "title": "[REFACTOR-88]: Cleanup unused code in payment module",
+    "url": "https://github.com/example/repo/pull/4987"
+  },
+  {
+    "author": {
+      "is_bot": true,
+      "login": "app/dependabot"
+    },
+    "createdAt": "2025-09-25T07:49:45Z",
+    "headRefName": "dependabot/pip/django-3.2.15",
+    "id": "PR_fakeId5566778899g",
+    "isDraft": false,
+    "number": 4983,
+    "state": "OPEN",
+    "title": "build(deps): bump django from 3.2.14 to 3.2.15",
+    "url": "https://github.com/example/repo/pull/4983"
+  },
+  {
+    "author": {
+      "id": "U_fakEXmpl987",
+      "is_bot": false,
+      "login": "michelleb",
+      "name": "Michelle Brown"
+    },
+    "createdAt": "2025-09-24T21:55:22Z",
+    "headRefName": "FEATURE-400/add-user-preferences",
+    "id": "PR_fakeId6677889900h",
+    "isDraft": true,
+    "number": 4975,
+    "state": "OPEN",
+    "title": "[FEATURE-400]: Add user preferences support",
+    "url": "https://github.com/example/repo/pull/4975"
+  },
+  {
+    "author": {
+      "id": "U_fakEXmpl213",
+      "is_bot": false,
+      "login": "alexmartin",
+      "name": "Alex Martin"
+    },
+    "createdAt": "2025-09-23T19:05:12Z",
+    "headRefName": "HOTFIX-17/fix-crash-on-startup",
+    "id": "PR_fakeId7788990011i",
+    "isDraft": false,
+    "number": 4970,
+    "state": "OPEN",
+    "title": "[HOTFIX-17]: Fix crash on startup when config file missing",
+    "url": "https://github.com/example/repo/pull/4970"
+  },
+  {
+    "author": {
+      "is_bot": true,
+      "login": "app/dependabot"
+    },
+    "createdAt": "2025-09-22T10:33:00Z",
+    "headRefName": "dependabot/npm_and_yarn/react-17.0.2",
+    "id": "PR_fakeId8899001122j",
+    "isDraft": false,
+    "number": 4965,
+    "state": "OPEN",
+    "title": "build(deps): bump react from 17.0.1 to 17.0.2",
+    "url": "https://github.com/example/repo/pull/4965"
+  }
+]
