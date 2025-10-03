@@ -22,6 +22,10 @@
   "Analyze carefully the given git diff. Create a short and clear commit message based on the changes, following best practices. Avoid phrases like \"Improving maintainability\" or \"emphasizing maintainability and best practices\". Focus on describing the changes and their concrete goals. Use the `git log` as inspiration."
   "User Prompt for AI chat to generate commit messages.")
 
+(defvar magext-aichat-model
+  nil
+  "Aichat model to use")
+
 (defun magext--staged-changes-to-file (dir)
   "Saves the staged changes to a file. Returns the file."
   (let ((tmpfile (make-temp-file "magext--staged-changes-to-file")))
@@ -46,11 +50,13 @@
 
 (defun magext--commit-msg (diff-file git-history-file)
   "Generates a commit msg for a git diff output"
-  (shell-command-to-string (format "aichat --prompt '%s' -f '%s' -f '%s' '%s'"
-                                   magext--system-prompt
-                                   diff-file
-                                   git-history-file
-                                   magext--user-prompt)))
+  (let* ((cmd (format "aichat --prompt '%s'" magext--system-prompt))
+         (cmd (if magext-aichat-model
+                  (format "%s --model '%s'" cmd magext-aichat-model)
+                cmd))
+         (cmd (format "%s -f '%s' -f '%s' '%s'" cmd diff-file git-history-file magext--user-prompt)))
+    (message cmd)
+    (shell-command-to-string cmd)))
 
 (defun magext-prefill-commit-msg (dir)
   "Prefills the commit msg magit buffer with a generated one based on your git changes"

@@ -12,7 +12,28 @@
 ;; This file is not part of GNU Emacs.
 
 ;;; code
+(require 'magit-ext)
 
+(ert-deftest magext-test-magext--commit-msg ()
+  ;; aichat-model is nil
+  (let ((shell-cmd nil)
+        (magext-aichat-model nil))
+    (cl-letf (((symbol-function 'shell-command-to-string)
+               (lambda (x) (setq shell-cmd x))))
+      (magext--commit-msg "difffile" "histfile")
+      (should (s-contains? "aichat" shell-cmd))
+      (should (s-contains? magext--system-prompt shell-cmd))
+      (should (s-contains? "-f 'difffile'" shell-cmd))
+      (should (s-contains? "-f 'histfile'" shell-cmd))))
 
+  ;; aichat-model not nil
+  (let ((shell-cmd nil)
+        (magext-aichat-model "chatgpt"))
+    (cl-letf (((symbol-function 'shell-command-to-string)
+               (lambda (x) (setq shell-cmd x))))
+      (magext--commit-msg "difffile" "histfile")
+      (should (s-contains? "aichat" shell-cmd))
+      (should (s-contains? magext--system-prompt shell-cmd))
+      (should (s-contains? "--model 'chatgpt'" shell-cmd)))))
 
 ;;; magit-ext-test.el ends here
