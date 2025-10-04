@@ -30,27 +30,10 @@
     (load config-file-name)))
 
 ;; -----------------------------------------------------------------------------
-;; straight.el
-;; -----------------------------------------------------------------------------
-;; Code from https://github.com/radian-software/straight.el#getting-started
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 6))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-
-;; -----------------------------------------------------------------------------
 ;; Packages and load settings
 ;; -----------------------------------------------------------------------------
 ;; Don't customize anything
-(setq custom-file "/dev/null")
+(setq custom-file (make-temp-file "emacs-custom"))
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
@@ -63,8 +46,8 @@
       (package-install 'use-package)))
 (require 'use-package)
 (require 'bind-key)
-(use-package dash :ensure)
-(use-package s :ensure)
+(use-package dash)
+(use-package s)
 
 ;; Add our custom library to the load-path. Add anything inside
 ;; my/path-to-packages-dir that does not start with "."
@@ -84,13 +67,13 @@
 ;; Global requirements
 ;;   the rest of the config depends on these 
 ;; -----------------------------------------------------------------------------
+(setq use-package-always-ensure t)
+
 (use-package counsel
-  :ensure
   :bind (:map ivy-occur-grep-mode-map
               ("n" . next-error)
               ("p" . previous-error)))
 (use-package ivy
-  :ensure
   :bind (("C-c C-r" . ivy-resume)
          ("C-x B" . ivy-switch-buffer-other-window))
   :custom
@@ -98,8 +81,8 @@
   (ivy-display-style 'fancy)
   (ivy-use-virtual-buffers t)
   :config (ivy-mode))
-(use-package ivy-hydra :ensure)
-(use-package mylisputils)
+(use-package ivy-hydra)
+(use-package mylisputils :ensure nil)
 
 ;; Ensure the tempdir is created
 (and my/user-temp-directory
@@ -163,7 +146,7 @@
   (setq default-frame-alist `((font . ,(format "%s %s" my-font-name my-font-size)))))
 
 ;; Choose theme
-(use-package modus-themes :ensure)
+(use-package modus-themes)
 (load-theme 'modus-vivendi-tinted t nil)
 
 ;; Highlight parenthesis
@@ -186,13 +169,14 @@
 ;; Nice mode
 ;; NOTE: the `unless` logic is to support emacs <29 and =30
 (unless (require 'which-key nil 'noerror)
-  (use-package which-key :ensure))
+  (use-package which-key))
 (which-key-mode 1)
 
 ;; -----------------------------------------------------------------------------
 ;; Fuzzy command selector
 ;; -----------------------------------------------------------------------------
 (use-package my-fuzzy-cmd-selector
+  :ensure nil
   :config (cl-pushnew '(:mfcs-call . 20) ivy-height-alist))
 
 ;; -----------------------------------------------------------------------------
@@ -201,7 +185,7 @@
 (defun personal-snippets-dir ()
   (s-concat (getenv "VITOR_MYGIT_DIR") "/snippets/snippets"))
 
-(use-package yasnippet :ensure
+(use-package yasnippet
   :config
   (progn
     (custom-set-variables
@@ -249,8 +233,8 @@
 ;; -----------------------------------------------------------------------------
 ;; Flycheck
 ;; -----------------------------------------------------------------------------
-(use-package flycheck :ensure)
-(use-package flycheck-inline :ensure
+(use-package flycheck)
+(use-package flycheck-inline
   :config
   (progn
     (set-face-attribute
@@ -378,21 +362,19 @@
 ;; Completion (Company)
 ;; -----------------------------------------------------------------------------
 (use-package company
-  :ensure t
   :config (progn
 	    (add-hook 'after-init-hook 'global-company-mode)
             (setq company-dabbrev-downcase 0
 	          company-idle-delay 0.2
 	          company-dabbrev-code-modes t)))
 (use-package company-box
-  :ensure
   :hook (company-mode . company-box-mode))
-(use-package company-web :ensure)
+(use-package company-web)
 
 ;; -----------------------------------------------------------------------------
 ;; Markdown mode
 ;; -----------------------------------------------------------------------------
-(use-package markdown-mode :ensure)
+(use-package markdown-mode)
 
 ;; -----------------------------------------------------------------------------
 ;; Org Mode
@@ -433,11 +415,10 @@
 
 ;; Some extensions
 ;; https://github.com/vitorqb/orgext
-(use-package orgext)
+(use-package orgext :ensure nil)
 
 ;; Journal configuration
 (use-package org-journal
-  :ensure
   :config
   (progn
     ;; Use nice datetime
@@ -522,7 +503,6 @@
 ;; -----------------------------------------------------------------------------
 ;; Magit: Love is in the air S2
 (use-package magit
-  :ensure
   :bind ("C-c m" . magit-status)
   :config (progn
             (custom-set-variables '(magit-diff-refine-hunk 'all))
@@ -540,7 +520,7 @@
               (interactive)
               (my/magit/fetch-and-goto "master"))))
 
-(use-package magit-ext)
+(use-package magit-ext :ensure nil)
 
 ;; -----------------------------------------------------------------------------
 ;; Dired and files manipulation
@@ -584,7 +564,7 @@
 ;; Lispy
 ;; -----------------------------------------------------------------------------
 ;; https://github.com/abo-abo/lispy
-(use-package lispy :ensure
+(use-package lispy
   :config (progn
             (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
             (keymap-unset lispy-mode-map-lispy "C-," 'remove)))
@@ -597,7 +577,7 @@
 ;; -----------------------------------------------------------------------------
 ;; Web Development
 ;; -----------------------------------------------------------------------------
-(use-package web-mode :ensure
+(use-package web-mode
   :init
   (progn
     (dolist (regxp (list "\\.html?\\'" "\\.css?\\'"))
@@ -669,7 +649,6 @@
 ;; Projectile
 ;; -----------------------------------------------------------------------------
 (use-package projectile
-  :ensure t
   :config
   (progn
     ;; Default setup from git repo
@@ -681,7 +660,6 @@
     (setq projectile-completion-system 'ivy)))
 
 (use-package counsel-projectile
-  :ensure t
   :bind* (("C-c C-f" . 'counsel-projectile-find-file)
           ("C-c C-d" . 'counsel-projectile-dir)))
 
@@ -758,7 +736,7 @@
                   ("o" #'my/org-hydra/body "Org hydra")
                   ("t" #'my/typing-hydra/body "Typing hydra!"))))))
 
-(use-package hydra :ensure
+(use-package hydra
   :config (my/hydras-setup)
   :bind ("C-." . (lambda () (interactive) (myhydra/body))))
 
@@ -770,7 +748,6 @@
 ;; Notice we installed ivy up because it is a dep for other things.
 ;; However, we configure it here.
 (use-package counsel
-  :ensure
   :after ivy
   :config (counsel-mode)
   :bind (("C-x C-f" . counsel-find-file))
@@ -781,7 +758,6 @@
              '(("W" myutils/copy-relative-path "Copies relative path.")))))
 
 (use-package swiper
-  :ensure
   :after ivy
   :bind (("C-s" . swiper)
          ("C-r" . swiper)))
@@ -816,7 +792,7 @@
 
 ;; Allows you to jump to text on the screen!
 ;; Jumps to text
-(use-package avy :ensure
+(use-package avy
   :config (progn
             (defun push-mark-and-avy-goto-char ()
               " Calls avy-goto-char, BUT push-mark before so we can go back "
@@ -827,7 +803,6 @@
 
 ;; Expand-region is the best package ever. We love it.
 (use-package expand-region
-  :ensure
   :config (progn
             (global-set-key (kbd "C--") 'er/contract-region)
             (global-set-key (kbd "C-=") 'er/expand-region)
@@ -860,12 +835,12 @@
 ;; -----------------------------------------------------------------------------
 ;; Docker and related
 ;; -----------------------------------------------------------------------------
-(use-package dockerfile-mode :ensure)
+(use-package dockerfile-mode)
 
 ;; -----------------------------------------------------------------------------
 ;; Yaml
 ;; -----------------------------------------------------------------------------
-(use-package yaml-mode :ensure)
+(use-package yaml-mode)
 
 ;; -----------------------------------------------------------------------------
 ;; Flyspell
@@ -902,7 +877,7 @@
 ;; - use ‘direnv-update-environment’ to manually update the Emacs
 ;;  environment so that inferior shells, linters, compilers, and test
 ;;  runners start with the intended environmental variables.
-(use-package direnv :ensure)
+(use-package direnv)
 
 ;; -----------------------------------------------------------------------------
 ;; Using emacsclient as EDITOR
