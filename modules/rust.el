@@ -1,10 +1,13 @@
 (use-package rust-mode :ensure)
 
-;; Sets how to execute `rust-analyzer`
-;; NOTE: can't use `mise exec -- rust-analyzer` because it tries to execute
-;; ~/.cargo/bin/rust-analyzer instead
+;; Add this to `mise.toml`:
+;; ```
+;; [tools]
+;; "rust" = { version = "1.90.0", components = "rust-analyzer" }
+;; ```
+;; You might need to `rust install --force rust`
 (defvar my/rust-analyzer-exec
-  `("mise" "exec" "--" ,(expand-file-name "~/tools/rust-analyzer/rust-analyzer")))
+  `("mise" "exec" "--" "rust-analyzer"))
 
 ;; Extra rust-analyzer options
 (defvar my/rust-analyzer-init-opts
