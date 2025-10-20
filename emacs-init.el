@@ -641,7 +641,7 @@
   "An hydra to call compile and similars"
   (defhydra my/compile-hydra (:color blue)
     ("k" #'my/compile-project-root "Compile (project root)" :column "Compile")
-    ("K" #'my/compile-project-root "Compile (default-directory)")
+    ("K" #'compile "Compile (default-directory)")
     ("g" #'my/recompile "recompile")
     ("s" (lambda () (interactive) (switch-to-buffer-other-window "*compilation*")) "Switch to compilation buffer")))
 
