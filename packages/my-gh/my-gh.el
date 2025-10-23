@@ -93,7 +93,8 @@
   (let* ((default-directory (or (file-name-directory file-path) default-directory))
          (file-name (file-name-nondirectory file-path))
          (file-ref (if line-number (format "%s:%s" file-name line-number) file-name))
-         (gh-cmd (format "gh browse --no-browser %s" file-ref)))
+         ;; commit=last gives us a "permalink" to the last commit, rhather than the branch which may change
+         (gh-cmd (format "gh browse --commit=last --no-browser %s" file-ref)))
     (shell-command-to-string gh-cmd)))
 
 (defun my/gh/browse (file-path &optional line-number)
