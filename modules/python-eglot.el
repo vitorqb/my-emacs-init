@@ -9,7 +9,7 @@
 
 ;; How to run `pyright`
 (defvar my/python-eglot/pyright-server
-  '("mise" "exec" "--" "pyright-langserver" "--stdio"))
+  '("mise" "exec" "node@latest" "npm:pyright@latest" "--" "pyright-langserver" "--stdio"))
 
 ;; Tells eglot how to run pyrgith
 (add-to-list 'eglot-server-programs `(python-mode . ,my/python-eglot/pyright-server))
