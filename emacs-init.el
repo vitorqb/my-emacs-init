@@ -499,6 +499,19 @@
 (setq org-image-actual-width nil)
 
 ;; -----------------------------------------------------------------------------
+;; Bookmarks
+;; -----------------------------------------------------------------------------
+(defun my/setup-hydra/bookmarks-hydra ()
+  (defhydra my/bookmark-hydra (:color blue :hint nil)
+    ("s" bookmark-set "Set bookmark at point" :column "Base Commands")
+    ("j" bookmark-jump "Jump to bookmark")
+    ("l" list-bookmarks "List bookmarks")
+    ("S" bookmark-save "Save bookmarks")
+    ("w" bookmark-write "Write bookmarks to file")
+    ("o" bookmark-load "Load bookmarks from file")
+    ("q" nil "Quit")))
+
+;; -----------------------------------------------------------------------------
 ;; Git Magit
 ;; -----------------------------------------------------------------------------
 ;; Magit: Love is in the air S2
@@ -703,6 +716,7 @@
   (my/setup-hydra/org-hydra)
   (my/setup-hydra/projectile-hydra)
   (my/setup-hydra/typing-hydra)
+  (my/setup-hydra/bookmarks-hydra)
   (when (functionp #'my/setup-hydra/eglot-hydra)
     (my/setup-hydra/eglot-hydra))
   (my/setup-hydra/compile)
@@ -717,6 +731,7 @@
                   ,(when (functionp #'my/deadgrep-hydra/body)
                      '("a" #'my/deadgrep-hydra/body "Deadgrep Hydra" :column "Main"))
                   ("b" #'my/buffer-hydra/body "Buffer hydra" :column "Main")
+                  ("B" #'my/bookmark-hydra/body "Bookmarks!" :column "Main")
                   ("c" #'mfcs-call "Calls fuzzy command selector")
                   ("d" #'my/dired-hydra/body "Dired hydra")
                   ("e" #'my/eval-elisp-hydra/body "Evaluate Elisp hydra")
