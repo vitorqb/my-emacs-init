@@ -17,11 +17,16 @@
 ;; Copied from `grep.el`
 ;; Notice it also requires `fd`: https://github.com/sharkdp/fd
 (setq deadgrep-find-command
-      '("fd . --type f --exec rg --no-heading --color=auto -nH --null -e  \\{\\}" . 65))
+      '("fd -p --type=f . --exec-batch rg --no-heading --color=auto -nH --null -e  \\{\\}" . 74))
 (defun my/deadgrep/grep-find (command-args)
   (interactive
    (list (read-shell-command "Run find (like this): " deadgrep-find-command 'grep-find-history)))
   (grep command-args))
+
+;; Customize `grep` to use `rg`
+(setq grep-command "rg --color=auto --no-heading --line-number --null ")
+(setq grep-use-null-device nil)
+(grep-compute-defaults)
 
 ;; Custom hydra
 (defhydra my/deadgrep-hydra (:color blue)
