@@ -7,7 +7,9 @@
     ("a" #'eglot-code-actions "Eglot code actions" :column "Eglot")
     ("e" #'eglot "Start/restart")
     ("h" #'eglot-inlay-hints-mode "Inline Hints mode")
-    ("r" #'eglot-rename "Eglot rename")))
+    ("r" #'eglot-rename "Eglot rename")
+    ("s" #'eglot-shutdown "Eglot SHUTDOWN")
+    ("S" #'eglot-shutdown-all "Eglot SHUTDOWN ALL")))
 
 (use-package eglot :ensure
   :custom (eglot-report-progress 'messages "Send eglot progress messages to *Message*")
