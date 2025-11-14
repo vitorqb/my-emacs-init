@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+exec mise x 'node@latest' 'npm:@github/copilot-language-server@latest' -- copilot-language-server "$@"

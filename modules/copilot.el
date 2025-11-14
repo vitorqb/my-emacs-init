@@ -9,4 +9,7 @@
          ("C-, w" . copilot-accept-completion-by-word)
          ("C-, N" . copilot-next-completion)
          ("C-, P" . copilot-previous-completion))
+  :config
+  (setq copilot-server-executable
+        (file-name-concat my/path-to-stubs-dir "copilot-language-server"))
   :ensure t)

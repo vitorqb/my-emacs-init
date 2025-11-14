@@ -19,6 +19,8 @@
   "The directory where the emacs-init `packages` can be found.")
 (defvar my/path-to-vendor-dir (concat (file-name-directory load-file-name) "vendor")
   "The directory where the emacs-init `packages` can be found.")
+(defvar my/path-to-stubs-dir (concat (file-name-directory load-file-name) "stubs")
+  "The directory where the emacs-init `stubs` can be found.")
 (defcustom my/terminal-multiplex 'zellij
   "Which terminal multiplex to use (tmux/zellij)"
   :type '(symbol)
