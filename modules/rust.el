@@ -26,5 +26,10 @@
                                  eglot-connect-timeout 120
                                  jsonrpc-default-request-timeout 120)))
 
-;; Use tree-sitter based rust mode if available
+;; Use tree-sitter based rust mode if available.
+;; To install:
+;; M-x treesit-install-language-grammar
+;; > rust
+;; > https://github.com/tree-sitter/tree-sitter-rust
+;; RET RET RET
 (add-to-list 'major-mode-remap-alist '(rust-mode . rust-ts-mode))
