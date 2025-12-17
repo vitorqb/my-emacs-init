@@ -13,6 +13,18 @@
 
 ;;; code
 (require 'magit-ext)
+(require 'magit)
+
+(ert-deftest magext-test-magext--diff-to-file ()
+  (let ((diff-buff (let ((b (generate-new-buffer "magext-test-magext--diff-to-file")))
+                     (with-current-buffer b
+                       (insert "FOOBAR")
+                       b))))
+    (cl-letf (((symbol-function 'magit-get-mode-buffer) (lambda (x) diff-buff)))
+      (let ((tempfile (magext--diff-to-file "/tmp/dir")))
+           (with-temp-buffer
+             (insert-file-contents tempfile)
+             (should (s-equals? "FOOBAR" (buffer-string))))))))
 
 (ert-deftest magext-test-magext--commit-msg ()
   ;; aichat-model is nil

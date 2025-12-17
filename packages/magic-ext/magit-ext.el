@@ -13,6 +13,7 @@
 
 ;;; code
 (provide 'magit-ext)
+(require 'magit)
 
 (defvar magext--system-prompt
   "You are an experienced senior developer who cares deeply about writing maintainble and high-quality code following all best practices."
@@ -26,24 +27,24 @@
   nil
   "Aichat model to use")
 
-(defun magext--staged-changes-to-file (dir)
-  "Saves the staged changes to a file. Returns the file."
-  (let ((tmpfile (make-temp-file "magext--staged-changes-to-file")))
-    (call-process "git"                              ;Runs git
-                  nil                                ;No INFILE
-                  `(:file ,tmpfile)                  ;Save to tempfile
-                  nil                                ;Don't display result to user
-                  "-C" dir "diff" "-U10" "--staged"  ;Git args
-                  )
+(defun magext--diff-to-file (dir)
+  "Saves the current magit diff to a file. Returns the file."
+  (let* ((default-directory dir)
+         (tmpfile (make-temp-file "magext--diff-to-filedir"))
+         (diffbuf (or (magit-get-mode-buffer 'magit-diff-mode)
+                      (user-error "No buffer with magit diff was found!")))
+         (diff    (with-current-buffer diffbuf
+                    (buffer-substring-no-properties (point-min) (point-max)))))
+    (write-region diff nil tmpfile)
     tmpfile))
 
 (defun magext--git-history-to-file (dir)
   "Saves the last 10 commit messages to a file"
   (let ((tmpfile (make-temp-file "magext--last-10-commits-to-file")))
-    (call-process "git"                             ;Runs git
-                  nil                               ;No INFILE
-                  `(:file ,tmpfile)                 ;Save to tempfile
-                  nil                               ;Don't display result to user
+    (call-process "git"                 ;Runs git
+                  nil                   ;No INFILE
+                  `(:file ,tmpfile)     ;Save to tempfile
+                  nil                   ;Don't display result to user
                   "--no-pager" "-C" dir "log" "-10" ;Git args
                   )
     tmpfile))
@@ -62,10 +63,11 @@
   "Prefills the commit msg magit buffer with a generated one based on your git changes"
   (interactive (list default-directory))
   (let* ((default-directory dir)
-         (diff-file (magext--staged-changes-to-file dir))
+         (diff-file (magext--diff-to-file dir))
          (git-history-file (magext--git-history-to-file dir))
          (commit-msg (magext--commit-msg diff-file git-history-file)))
     (goto-char (point-min))
     (insert commit-msg)
-    (delete-file diff-file)))
+    ;; (delete-file diff-file)
+    ))
 ;;; magit-ext.el ends here
