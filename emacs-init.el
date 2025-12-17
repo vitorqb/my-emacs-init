@@ -46,6 +46,7 @@
     (progn
       (package-refresh-contents)
       (package-install 'use-package)))
+(setq use-package-always-ensure t)
 (require 'use-package)
 (require 'bind-key)
 (use-package dash)
@@ -69,8 +70,6 @@
 ;; Global requirements
 ;;   the rest of the config depends on these 
 ;; -----------------------------------------------------------------------------
-(setq use-package-always-ensure t)
-
 (use-package counsel
   :bind (:map ivy-occur-grep-mode-map
               ("n" . next-error)
@@ -94,6 +93,48 @@
 
 ;; We like recursion
 (setq max-lisp-eval-depth (* 10 max-lisp-eval-depth))
+
+;; -----------------------------------------------------------------------------
+;; Projectile
+;; -----------------------------------------------------------------------------
+(use-package projectile
+  :config
+  (progn
+    ;; Default setup from git repo
+    (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+    (projectile-mode +1)
+    
+    ;; And use ivy (S2) for completion
+    (setq projectile-completion-system 'ivy)))
+
+(use-package counsel-projectile
+  :bind* (("C-c C-f" . 'counsel-projectile-find-file)
+          ("C-c C-d" . 'counsel-projectile-dir)))
+
+;; Adds a fn to insert relative files
+(defun my/projectile/insert-relative-file ()
+  (interactive)
+  (let* ((project-root (projectile-ensure-project (projectile-project-root)))
+         (file (projectile-completing-read "File: " (projectile-project-files project-root))))
+    (insert (myutils/copy-relative-path (myutils/concat-file project-root file)))))
+
+(defun my/setup-hydra/projectile-hydra ()
+  "An hydra with projectile functionalities =D"
+
+  (defhydra my/projectile-hydra (:color blue)
+    ("d" #'projectile-find-dir "Find's a directory" :column "Projectile!")
+    ("f" #'projectile-find-file "Find's a file")
+    ("h" #'projectile-dired "Dired at to project root")
+    ("H" #'projectile-dired-other-window "Dired at to project root (other window)")
+    ("o" (lambda () (interactive)
+           (-let [projectile-switch-project-action #'projectile-dired]
+             (projectile-switch-project)))
+     "Open project")
+    ("k" #'projectile-kill-buffers "Kill buffers for project")
+    ("r" #'my/projectile/insert-relative-file "Insert relative file")
+    ("t" #'projectile-toggle-between-implementation-and-test
+     "Toggle between implementation and test")))
 
 ;; ------------------------------------------------------------
 ;; Counsell/Ivy customization
@@ -659,48 +700,6 @@
     ("K" #'compile "Compile (default-directory)")
     ("g" #'my/recompile "recompile")
     ("s" (lambda () (interactive) (switch-to-buffer-other-window "*compilation*")) "Switch to compilation buffer")))
-
-;; -----------------------------------------------------------------------------
-;; Projectile
-;; -----------------------------------------------------------------------------
-(use-package projectile
-  :config
-  (progn
-    ;; Default setup from git repo
-    (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
-    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-    (projectile-mode +1)
-    
-    ;; And use ivy (S2) for completion
-    (setq projectile-completion-system 'ivy)))
-
-(use-package counsel-projectile
-  :bind* (("C-c C-f" . 'counsel-projectile-find-file)
-          ("C-c C-d" . 'counsel-projectile-dir)))
-
-;; Adds a fn to insert relative files
-(defun my/projectile/insert-relative-file ()
-  (interactive)
-  (let* ((project-root (projectile-ensure-project (projectile-project-root)))
-         (file (projectile-completing-read "File: " (projectile-project-files project-root))))
-    (insert (myutils/copy-relative-path (myutils/concat-file project-root file)))))
-
-(defun my/setup-hydra/projectile-hydra ()
-  "An hydra with projectile functionalities =D"
-
-  (defhydra my/projectile-hydra (:color blue)
-    ("d" #'projectile-find-dir "Find's a directory" :column "Projectile!")
-    ("f" #'projectile-find-file "Find's a file")
-    ("h" #'projectile-dired "Dired at to project root")
-    ("H" #'projectile-dired-other-window "Dired at to project root (other window)")
-    ("o" (lambda () (interactive)
-           (-let [projectile-switch-project-action #'projectile-dired]
-             (projectile-switch-project)))
-     "Open project")
-    ("k" #'projectile-kill-buffers "Kill buffers for project")
-    ("r" #'my/projectile/insert-relative-file "Insert relative file")
-    ("t" #'projectile-toggle-between-implementation-and-test
-     "Toggle between implementation and test")))
 
 ;; -----------------------------------------------------------------------------
 ;; My Hydra!
