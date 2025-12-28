@@ -919,7 +919,6 @@
 ;; -----------------------------------------------------------------------------
 (my/defmodule R)
 (my/defmodule ag)
-(my/defmodule asdf)
 (my/defmodule aidermacs)
 (my/defmodule clojure)
 (my/defmodule copilot)
