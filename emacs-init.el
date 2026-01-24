@@ -708,6 +708,15 @@
     ("s" (lambda () (interactive) (switch-to-buffer-other-window "*compilation*")) "Switch to compilation buffer")))
 
 ;; -----------------------------------------------------------------------------
+;; Ai Tooling
+;; -----------------------------------------------------------------------------
+(require 'my-ai-tools)
+
+(defun my/setu-hydra/ai-tools-hydra ()
+  (defhydra my/ai-tools-hydra (:color blue)
+    ("p" #'my/ai-tools/prompt-from-context "Create AI prompt from context" :column "AI Hydra!")))
+
+;; -----------------------------------------------------------------------------
 ;; My Hydra!
 ;; -----------------------------------------------------------------------------
 (defun my/hydras-setup ()
@@ -724,6 +733,7 @@
   (my/setup-hydra/projectile-hydra)
   (my/setup-hydra/typing-hydra)
   (my/setup-hydra/bookmarks-hydra)
+  (my/setu-hydra/ai-tools-hydra)
   (when (functionp #'my/setup-hydra/eglot-hydra)
     (my/setup-hydra/eglot-hydra))
   (my/setup-hydra/compile)
@@ -732,6 +742,7 @@
    `(defhydra myhydra (:color blue)
       ,@(remove nil
                 `(
+                  ("1" #'my/ai-tools-hydra/body "AI Tools Hydra" :column "Main")
                   ("A" #'counsel-rg "Conusel RG" :column "Main")
                   ,(when (functionp #'my/ag-hydra/body)
                      '("a" #'my/ag-hydra/body "Ag Hydra" :column "Main"))
