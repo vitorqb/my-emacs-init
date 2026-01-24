@@ -97,6 +97,7 @@
 ;; -----------------------------------------------------------------------------
 ;; Projectile
 ;; -----------------------------------------------------------------------------
+(use-package my-mise :ensure nil)
 (use-package projectile
   :config
   (progn
@@ -134,7 +135,12 @@
     ("k" #'projectile-kill-buffers "Kill buffers for project")
     ("r" #'my/projectile/insert-relative-file "Insert relative file")
     ("t" #'projectile-toggle-between-implementation-and-test
-     "Toggle between implementation and test")))
+     "Toggle between implementation and test")
+    ("m" #'my/mise/run-task "Runs (m)ise task")
+    ("M" (lambda () (interactive)
+           (let ((current-prefix-arg '(4)))
+             (call-interactively #'my/mise/run-task)))
+     "Runs (M)ise task (modifying command before)")))
 
 ;; ------------------------------------------------------------
 ;; Counsell/Ivy customization
