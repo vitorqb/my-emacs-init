@@ -15,6 +15,7 @@
 (provide 'my-ai-tools)
 (require 'markdown-mode)
 (require 'cl-lib)
+(require 'projectile)
 
 (defvar my/ai-tools/prompt-builder-buffer-name "*ai-tools/prompt-builder*")
 
@@ -24,6 +25,7 @@
   region-p
   region-begin
   region-end
+  project-root
   char-position)
 
 (defun my/ai-tools/capture-context ()
@@ -33,6 +35,7 @@
    :region-p      (region-active-p)
    :region-begin  (and (region-active-p) (region-beginning))
    :region-end    (and (region-active-p) (region-end))
+   :project-root  (projectile-project-root)
    :char-position (point)))
 
 (defun my/ai-tools/context-to-string (context)
@@ -41,10 +44,13 @@
         (region-p      (my/ai-tools/context-region-p context))
         (region-begin  (my/ai-tools/context-region-begin context))
         (region-end    (my/ai-tools/context-region-end context))
-        (char-position (my/ai-tools/context-region-end context)))
+        (project-root  (my/ai-tools/context-project-root context))
+        (char-position (my/ai-tools/context-char-position context)))
     (with-temp-buffer
       (insert "## Context\n\n")
-      (insert (format "File: @%s\n\n" (buffer-file-name buffer)))
+      (insert (format "File: @%s\n\n" (if project-root
+                                          (file-relative-name (buffer-file-name buffer) project-root)
+                                        (buffer-file-name buffer))))
       (if region-p
           (insert (format "Selected Region (lines %s to %s):\n```\n%s\n```"
                           (with-current-buffer buffer

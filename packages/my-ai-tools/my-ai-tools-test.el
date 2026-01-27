@@ -43,7 +43,7 @@
     (with-current-buffer tmpbuff
       (insert "Foo\nBar"))
     (should (equal (my/ai-tools/context-to-string context)
-                   (format "## Context\n\nFile: @%s\n\nActive line: 5\n" tmpfile)))
+                   (format "## Context\n\nFile: @%s\n\nActive line: 1\n" tmpfile)))
     (delete-file tmpfile)
     (set-buffer-modified-p nil)
     (kill-buffer tmpbuff))
