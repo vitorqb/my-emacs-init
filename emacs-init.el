@@ -548,6 +548,16 @@
 (setq org-image-actual-width nil)
 
 ;; -----------------------------------------------------------------------------
+;; Notes
+;; -----------------------------------------------------------------------------
+(require 'my-notes)
+(defun my/setup-hydra/notes-hydra ()
+  "A hydra for notes functionalities."
+  (defhydra my/notes-hydra (:color blue)
+    ("o" #'my/notes/open-current-file "Open Current File" :column "Notes")
+    ("n" #'my/notes/new "New Note" :column "Notes")))
+
+;; -----------------------------------------------------------------------------
 ;; Bookmarks
 ;; -----------------------------------------------------------------------------
 (defun my/setup-hydra/bookmarks-hydra ()
@@ -737,6 +747,7 @@
   (when (functionp #'my/setup-hydra/eglot-hydra)
     (my/setup-hydra/eglot-hydra))
   (my/setup-hydra/compile)
+  (my/setup-hydra/notes-hydra)
 
   (eval
    `(defhydra myhydra (:color blue)
@@ -766,6 +777,7 @@
                   ("j" #'my/journal-hydra/body "Hydra for org-journal")
                   ("k" #'my/compile-hydra/body "Compile hydra")
                   ("l" (lambda () (interactive) (funcall my/language-hydra/body)) "Language specific hydra")
+                  ("n" #'my/notes-hydra/body "Notes!")
                   ("r" #'my/projectile-hydra/body "Projectile hydra ")
                   ("m" #'my/flymake-hydra/body "Flymake hydra")
                   ("o" #'my/org-hydra/body "Org hydra")
