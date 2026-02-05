@@ -59,7 +59,7 @@
                             (line-number-at-pos region-end))
                           (with-current-buffer buffer
                             (buffer-substring-no-properties region-begin region-end))))
-        (insert (format "Active line: %s\n" (line-number-at-pos char-position))))
+        (insert (format "Active line: %s\n" (with-current-buffer buffer (line-number-at-pos char-position)))))
       (buffer-string))))
 
 (defun my/ai-tools/prompt-from-context (context)
