@@ -338,6 +338,11 @@
 (global-set-key (kbd "C-c d") #'myutils/duplicate-buffer)
 (global-set-key (kbd "C-x C-g") #'push-mark-and-avy-goto-char)
 
+(defun my/temp-buffer ()
+  (interactive)
+  (-> (generate-new-buffer "*tmp*")
+      (switch-to-buffer-other-window)))
+
 (defun my/highligh-region (beg end)
   "Highlights text equal to the text between beg and end"
   (interactive "r")
@@ -354,7 +359,8 @@
     ("o" #'my/occur-symbol-at-point "Occur with current symbol.")
     ("p" #'myutils/copy-file-path-to-clipboard "Copy file path.")
     ("P" #'myutils/copy-file-path-from-other-window-to-clipboard "Copy file path (other window)")
-    ("t" #'toggle-truncate-lines "Toggle truncate lines")))
+    ("t" #'toggle-truncate-lines "Toggle truncate lines")
+    ("T" #'my/temp-buffer "Temporary Buffer")))
 
 (defun my/setup-hydra/highlight-hydra ()
   (defhydra my/highlight-hydra (:color blue)
