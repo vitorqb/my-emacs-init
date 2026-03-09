@@ -15,6 +15,7 @@
 (provide 'my-notes)
 (require 's)
 (require 'json)
+(require 'dash)
 
 (defcustom my/notes/current-file (expand-file-name "~/org/current.org")
   "Path for file `current.org`, the file containing what you are currently working on"
@@ -25,6 +26,13 @@
   "Directory for keeping notes"
   :type 'string
   :group 'my-notes)
+
+(cl-defstruct my/notes/request
+  "Request for a new note"
+  base-dir
+  readme-file                        ;(filename . content)
+  metadata-file                      ;(filename . content)
+  )
 
 (defun my/notes/open-current-file ()
   "Opens the `current.org` file. If prefix arg is given, opens in another window."
@@ -39,21 +47,34 @@
   "Creates a new note with `topic`"
   (interactive "MWrite a topic:")
   (my/notes/assert-notes-dir)
-  (let* ((note-dir (->> topic
-                        (s-dashed-words)
-                        (file-name-concat my/notes/notes-dir)))
-         (_ (make-directory note-dir))
-         (readme-file (file-name-concat note-dir "Readme.org"))
-         (metadata-file (file-name-concat note-dir "metadata.json")))
+  (let ((request (my/notes//request-for topic (current-time-string))))
+    (my/notes//create request)
+    (find-file (-> request my/notes/request-readme-file car)))
+  (goto-char (point-max)))
+
+(defun my/notes//request-for (topic created_at)
+  (-let*  ((note-dir (->> topic
+                          (s-dashed-words)
+                          (file-name-concat my/notes/notes-dir)))
+           (readme-filename (file-name-concat note-dir "Readme.org"))
+           (readme-content (format "* %s\n\n" topic))
+           (readme-file `(,readme-filename . ,readme-content))
+           (metadata-filename (file-name-concat note-dir "metadata.json"))
+           (metadata-content (json-encode `(("created_at" . ,created_at) ("topic" . ,topic))))
+           (metadata-file `(,metadata-filename . ,metadata-content)))
+    (make-my/notes/request :base-dir note-dir :readme-file readme-file :metadata-file metadata-file)))
+
+(defun my/notes//create (request)
+  (my/notes/assert-notes-dir)
+  (make-directory (my/notes/request-base-dir request))
+  (-let (((filename . content) (my/notes/request-readme-file request)))
     (with-temp-buffer
-      (insert (json-encode `(("created_at" . ,(current-time-string)) ("topic" . topic))))
-      (write-file metadata-file))
+      (insert content)
+      (write-file filename)))
+  (-let (((filename . content) (my/notes/request-metadata-file request)))
     (with-temp-buffer
-      (insert (format "* %s" topic))
-      (insert "\n\n")
-      (write-file readme-file))
-    (find-file readme-file)
-    (goto-char (point-max))))
+      (insert content)
+      (write-file filename))))
 
 (defun my/notes/assert-current-file ()
   "Ensures current-file is readable"
