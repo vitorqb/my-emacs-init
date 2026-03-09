@@ -17,6 +17,9 @@
 (require 'json)
 (require 'dash)
 
+(defvar my/notes/prompt-history nil
+  "Completing history for prompting for a note")
+
 (defcustom my/notes/current-file (expand-file-name "~/org/current.org")
   "Path for file `current.org`, the file containing what you are currently working on"
   :type 'string
@@ -52,6 +55,11 @@
     (find-file (-> request my/notes/request-readme-file car)))
   (goto-char (point-max)))
 
+(defun my/notes/find (note-file)
+  "Finds and opens a note Readme"
+  (interactive (list (my/notes//prompt)))
+  (find-file (file-name-concat my/notes/notes-dir note-file "Readme.org")))
+
 (defun my/notes//request-for (topic created_at)
   (-let*  ((note-dir (->> topic
                           (s-dashed-words)
@@ -75,6 +83,13 @@
     (with-temp-buffer
       (insert content)
       (write-file filename))))
+
+(defun my/notes//list ()
+  (->> (directory-files my/notes/notes-dir)
+       (-remove (lambda (x) (s-starts-with? "." x)))))
+
+(defun my/notes//prompt ()
+  (completing-read "Chose a note: " (my/notes//list) nil t nil 'my/notes/prompt-history))
 
 (defun my/notes/assert-current-file ()
   "Ensures current-file is readable"

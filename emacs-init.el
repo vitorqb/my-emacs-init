@@ -571,7 +571,8 @@
   "A hydra for notes functionalities."
   (defhydra my/notes-hydra (:color blue)
     ("o" #'my/notes/open-current-file "Open Current File" :column "Notes")
-    ("n" #'my/notes/new "New Note" :column "Notes")))
+    ("n" #'my/notes/new "New Note" :column "Notes")
+    ("f" #'my/notes/find "Find note" :column "Notes")))
 
 ;; -----------------------------------------------------------------------------
 ;; Bookmarks
