@@ -94,6 +94,9 @@
 ;; We like recursion
 (setq max-lisp-eval-depth (* 10 max-lisp-eval-depth))
 
+;; Disable most fancy progress from CLI tools
+(setenv "TERM" "dumb")
+
 ;; -----------------------------------------------------------------------------
 ;; Projectile
 ;; -----------------------------------------------------------------------------
