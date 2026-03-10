@@ -14,6 +14,7 @@
 ;;; code
 (provide 'my-gh)
 (require 'my-term)
+(require 'magit)
 
 (defvar my/gh/on-browser-open-request
   (lambda ()
@@ -77,10 +78,9 @@
     (-first (lambda (x) (= selected-number (gethash "number" x))) (append prlist nil))))
 
 (defun my/gh//checkout-pr-by-number (number)
-  (let ((cmd (format "git fetch origin pull/%s/merge:pr-%s-merge" number number)))
-    (message "Running %s" cmd)
-    (shell-command cmd))
-  (let ((cmd (format "git checkout pr-%s-merge" number)))
+  (dolist (cmd `(,(format "git fetch origin pull/%s/merge:pr-%s-merge" number number)
+                 ,(format "git pull origin pull/%s/merge:pr-%s-merge" number number)
+                 ,(format "git checkout pr-%s-merge" number)))
     (message "Running %s" cmd)
     (shell-command cmd))
   (magit-refresh))

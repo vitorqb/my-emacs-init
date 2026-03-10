@@ -102,5 +102,19 @@
                (lambda (_ candidates ___ ____) (car candidates))))
       (let ((result (my/gh//prompt-user-to-select-pr candidates)))
         (should (hashtable-equal? result (fake-pr)))))))
+
+(ert-deftest my/gh/test-checkout-pr-by-number ()
+  (let ((cmds (list))
+        (magit-refresh-called nil))
+    (cl-letf (((symbol-function 'shell-command)
+               (lambda (cmd) (push cmd cmds)))
+              ((symbol-function 'magit-refresh)
+               (lambda () (setq magit-refresh-called 't))))
+      (my/gh//checkout-pr-by-number 123)
+      (should (equal '("git fetch origin pull/123/merge:pr-123-merge"
+                       "git pull origin pull/123/merge:pr-123-merge"
+                       "git checkout pr-123-merge")
+                     (reverse cmds)))
+      (should magit-refresh-called))))
 ;;; my-gh-test.el ends here
 
