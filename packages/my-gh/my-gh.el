@@ -25,6 +25,22 @@
 (defvar my/gh/copy-to-clipboard
   (lambda (x) (kill-new x)))
 
+(defun my/gh//current-branch ()
+  (-> (shell-command-to-string "git branch --show-current")
+      (s-trim)))
+
+(defun my/gh//pr-number-from-branch (branch)
+  (if (and branch (string-match "pr-\\([0-9]+\\)-merge" branch))
+      (match-string 1 branch)))
+
+(defun my/gh//pr-number-from-gh ()
+  (-> (shell-command-to-string "gh pr view --json number --jq .number")
+      (s-trim)))
+
+(defun my/gh//current-pr-number ()
+  (or (-> (my/gh//current-branch) (my/gh//pr-number-from-branch))
+      (my/gh//pr-number-from-gh)))
+
 (defun my/gh/open-repo-on-browser ()
   (interactive)
   (shell-command "gh repo view --web")
@@ -32,7 +48,7 @@
 
 (defun my/gh/open-pr-on-browser ()
   (interactive)
-  (shell-command "gh pr view --web")
+  (shell-command (format "gh pr view %s --web" (my/gh//current-pr-number)))
   (funcall my/gh/on-browser-open-request))
 
 (defun my/gh/new-pr ()
@@ -79,8 +95,8 @@
 
 (defun my/gh//checkout-pr-by-number (number)
   (dolist (cmd `(,(format "git fetch origin pull/%s/merge:pr-%s-merge" number number)
-                 ,(format "git pull origin pull/%s/merge:pr-%s-merge" number number)
-                 ,(format "git checkout pr-%s-merge" number)))
+                 ,(format "git checkout pr-%s-merge" number)
+                 ,(format "git pull origin pull/%s/merge:pr-%s-merge" number number)))
     (message "Running %s" cmd)
     (shell-command cmd))
   (magit-refresh))

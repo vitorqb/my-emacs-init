@@ -52,6 +52,38 @@
   (should (equal (my/gh//browse-commit-cmd '7fa72cc) "gh browse 7fa72cc"))
   (should (equal (my/gh//browse-commit-cmd '7fa72cc 't) "gh browse --no-browser 7fa72cc")))
 
+(ert-deftest my/gh//current-branch ()
+  (cl-letf (((symbol-function 'shell-command-to-string)
+             (lambda (x)
+               (should (equal x "git branch --show-current"))
+               " pr-9999-merge \n")))
+    (should (equal "pr-9999-merge" (my/gh//current-branch)))))
+
+(ert-deftest my/gh//pr-number-from-gh ()
+  (cl-letf (((symbol-function 'shell-command-to-string)
+             (lambda (x)
+               (should (equal x "gh pr view --json number --jq .number"))
+               " 1234 \n")))
+    (should (equal "1234" (my/gh//pr-number-from-gh)))))
+
+(ert-deftest my/gh//current-pr-number ()
+  ;; From current branch
+  (cl-letf (((symbol-function 'my/gh//current-branch) (lambda () "pr-1234-merge")))
+    (should (equal "1234" (my/gh//current-pr-number))))
+
+  ;; From gh
+  (cl-letf (((symbol-function 'my/gh//current-branch) (lambda () ""))
+            ((symbol-function 'my/gh//pr-number-from-gh) (lambda () "1234")))
+    (should (equal "1234" (my/gh//current-pr-number)))))
+
+(ert-deftest my/gh//pr-number-from-branch ()
+  (should (not (my/gh//pr-number-from-branch "")))
+  (should (not (my/gh//pr-number-from-branch nil)))
+  (should (not (my/gh//pr-number-from-branch "foo")))
+  (should (not (my/gh//pr-number-from-branch "foo-bar-baz")))
+  (should (not (my/gh//pr-number-from-branch "foo-12345-bar")))
+  (should (equal "123" (my/gh//pr-number-from-branch "pr-123-merge"))))
+
 (ert-deftest my/gh/browse-url-to-clipboard ()
   (let* ((fake-clipboard "")
          (my/gh/copy-to-clipboard (lambda (x) (setq fake-clipboard x))))
@@ -112,8 +144,8 @@
                (lambda () (setq magit-refresh-called 't))))
       (my/gh//checkout-pr-by-number 123)
       (should (equal '("git fetch origin pull/123/merge:pr-123-merge"
-                       "git pull origin pull/123/merge:pr-123-merge"
-                       "git checkout pr-123-merge")
+                       "git checkout pr-123-merge"
+                       "git pull origin pull/123/merge:pr-123-merge")
                      (reverse cmds)))
       (should magit-refresh-called))))
 ;;; my-gh-test.el ends here
