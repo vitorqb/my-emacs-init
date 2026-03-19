@@ -252,6 +252,7 @@
 
 ;; We use `fill-paragraph a lot, and we want to have 90 characters
 (setq fill-column 90)
+(add-hook 'prog-mode-hook (lambda () (setq fill-column 90)))
 
 (defun my/copy-line-from (lineNum)
   "Copies a line to the current line"
