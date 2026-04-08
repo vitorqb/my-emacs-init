@@ -168,6 +168,16 @@
   (copy-region-as-kill (point-min) (point-max)))
 
 ;; -----------------------------------------------------------------------------
+;; JSON utils
+;; -----------------------------------------------------------------------------
+(defun myutils/parse-json-file (f)
+  "Parses a file content as JSON"
+  (with-temp-buffer
+    (insert-file-contents-literally f)
+    (goto-char (point-min))
+    (json-parse-buffer)))
+
+;; -----------------------------------------------------------------------------
 ;; Python utils
 ;; -----------------------------------------------------------------------------
 (defun myutils/python-activate-venv ()

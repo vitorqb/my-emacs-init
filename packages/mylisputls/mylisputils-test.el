@@ -157,4 +157,11 @@
   (should (equal (-map #'format-time-string myutils/known-datetime-formats)
                  (myutils/date-in-all-formats))))
 
+(ert-deftest myutils/test-parse-json-file ()
+  (let ((tempfile (make-temp-file "myutils__test-parse-json-file")))
+    (write-region "{\"foo\": \"bar\"}" nil tempfile)
+    (should (equal "bar"
+                   (->> (myutils/parse-json-file tempfile)
+                        (gethash "foo"))))))
+
 ;;; mylisputils-test.el ends here
