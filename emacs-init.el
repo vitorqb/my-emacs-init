@@ -901,15 +901,19 @@
             (global-set-key (kbd "C-x C-g") #'push-mark-and-avy-goto-char)))
 
 ;; Expand-region is the best package ever. We love it.
-(use-package expand-region
+(use-package expreg
   :config (progn
-            (global-set-key (kbd "C--") 'er/contract-region)
-            (global-set-key (kbd "C-=") 'er/expand-region)
-            ;; Adds org example blocks
+            (global-set-key (kbd "C--") 'expreg-contract)
+            (global-set-key (kbd "C-=") 'expreg-expand)
+            (defun my/expreg/org-block ()
+              (-if-let (el (org-element-context))
+                  (if (-any? (-partial #'equal (car el))
+                             '(example-block src-block verse-block quote-block comment-block))
+                      (list `(orgblock . ,(cons (org-element-begin el) (org-element-end el)))))))
             (add-hook 'org-mode-hook
                       (lambda ()
-                        (make-variable-buffer-local 'er/try-expand-list)
-                        (cl-pushnew #'orgext-mark-block er/try-expand-list)))))
+                        (make-variable-buffer-local 'expreg-functions)
+                        (cl-pushnew #'my/expreg/org-block expreg-functions)))))
 
 ;; Override xref-find-definition to xref-find-definition-other-window
 (global-set-key (kbd "M-.") #'xref-find-definitions-other-window)
