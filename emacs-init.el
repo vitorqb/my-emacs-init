@@ -457,8 +457,9 @@
   :config (progn
 	    (add-hook 'after-init-hook 'global-company-mode)
             (setq company-dabbrev-downcase 0
-	          company-idle-delay 0.2
-	          company-dabbrev-code-modes t)))
+	          company-idle-delay 0.5
+	          company-dabbrev-code-modes nil
+                  )))
 (use-package company-box
   :hook (company-mode . company-box-mode))
 (use-package company-web)
