@@ -98,6 +98,35 @@
 (setenv "TERM" "dumb")
 
 ;; -----------------------------------------------------------------------------
+;; Misc
+;; -----------------------------------------------------------------------------
+;; From https://emacsredux.com/blog/2026/04/07/stealing-from-the-best-emacs-configs/
+
+;; If you don’t edit right-to-left languages (Arabic, Hebrew, etc.), Emacs is doing a
+;; bunch of work on every redisplay cycle for nothing. These settings tell Emacs to assume
+;; left-to-right text everywhere and skip the bidirectional parenthesis algorithm:
+(setq-default bidi-display-reordering 'left-to-right
+              bidi-paragraph-direction 'left-to-right)
+(setq bidi-inhibit-bpa t)
+
+;; Emacs normally fontifies (syntax-highlights) text even while you’re actively
+;; typing. This can cause micro-stutters, especially in tree-sitter modes or large
+;; buffers. One setting fixes it:
+(setq redisplay-skip-fontification-on-input t)
+
+;; The default read-process-output-max is 64KB, which is still quite conservative. Modern
+;; LSP servers like rust-analyzer or clangd routinely send multi-megabyte
+;; responses. Bumping this reduces the number of read calls Emacs has to make:
+(setq read-process-output-max (* 4 1024 1024)) ; 4MB
+
+;; When you split a window with C-x 2 or C-x 3, Emacs halves the current window. If you
+;; already have a multi-window layout, this can produce one awkwardly tiny window while
+;; others stay large. With this setting, all windows in the frame resize proportionally:
+(setq window-combination-resize t)
+
+
+
+;; -----------------------------------------------------------------------------
 ;; Projectile
 ;; -----------------------------------------------------------------------------
 (use-package my-mise :ensure nil)
@@ -341,6 +370,10 @@
 (custom-set-variables '(hi-lock-auto-select-face t))
 (global-set-key (kbd "C-c d") #'myutils/duplicate-buffer)
 (global-set-key (kbd "C-x C-g") #'push-mark-and-avy-goto-char)
+
+;; Allow SPC after a first C-u SPC to keep popping the marker
+;; From https://emacsredux.com/blog/2026/04/07/stealing-from-the-best-emacs-configs/
+(setq set-mark-command-repeat-pop t)
 
 (defun my/temp-buffer ()
   (interactive)
