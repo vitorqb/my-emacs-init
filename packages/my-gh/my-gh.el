@@ -15,6 +15,7 @@
 (provide 'my-gh)
 (require 'my-term)
 (require 'magit)
+(require 'dash)
 
 (defvar my/gh/on-browser-open-request
   (lambda ()
@@ -28,6 +29,11 @@
 (defun my/gh//current-branch ()
   (-> (shell-command-to-string "git branch --show-current")
       (s-trim)))
+
+(defun my/gh//branch-exists? (name)
+  ;; Exit 0 means exists
+  (let ((verify-status (call-process "git" nil nil nil "rev-parse" "--verify" name)))
+    (or (equal verify-status 0) (equal verify-status "0"))))
 
 (defun my/gh//pr-number-from-branch (branch)
   (if (and branch (string-match "pr-\\([0-9]+\\)-merge" branch))
@@ -94,12 +100,22 @@
     (-first (lambda (x) (= selected-number (gethash "number" x))) (append prlist nil))))
 
 (defun my/gh//checkout-pr-by-number (number)
-  (dolist (cmd `(,(format "git fetch origin pull/%s/merge:pr-%s-merge" number number)
-                 ,(format "git checkout pr-%s-merge" number)
-                 ,(format "git pull origin pull/%s/merge:pr-%s-merge" number number)))
-    (message "Running %s" cmd)
-    (shell-command cmd))
-  (magit-refresh))
+  (let ((branchname (format "pr-%s-merge" number))
+        (refname (format "pull/%s/merge" number)))
+
+    (when (s-equals? (my/gh//current-branch) branchname)
+      (message "Checking out default branch...")
+      (magit-run-git "checkout" (my/gh/default-branch)))
+
+    (when (my/gh//branch-exists? branchname)
+      (message "Deleting existing branch %s" branchname)
+      (magit-run-git "branch" "-D" branchname))
+
+    (message "Fetching origin")
+    (magit-run-git "fetch" "origin" (format "%s:%s" refname branchname))
+
+    (message "Checkout")
+    (magit-branch-checkout branchname)))
 
 (defun my/gh/checkout-pr ()
   (interactive)
@@ -147,11 +163,29 @@
   (->> commit (format "%s") my/gh//browse-commit-cmd shell-command)
   (funcall my/gh/on-browser-open-request))
 
+(defun my/gh/fetch-and-goto (ref)
+  (magit-run-git (cons "fetch" (cons "--all" "--prune")))
+  (magit-run-git (cons "checkout" ref))
+  (magit-run-git "pull"))
+
+(defun my/gh/fetch-and-goto-default ()
+  (interactive)
+  (-> (my/gh/default-branch) (my/gh/fetch-and-goto)))
+
+(defun my/gh/fetch-and-goto-main ()
+  (interactive)
+  (my/gh/fetch-and-goto "main"))
+
+(defun my/gh/fetch-and-goto-master ()
+  (interactive)
+  (my/gh/fetch-and-goto "master"))
+
 (when (require 'hydra nil 'noerror)
   (defun my/setup-hydra/gh-hydra ()
     (defhydra my/gh-hydra (:color blue)
       ("b" #'my/gh/browse "Browses to file in github" :column "Github CLI!")
       ("B" #'my/gh/browse-url-to-clipboard "Copies github browse URL to clipboard")
+      ("d" #'my/gh/fetch-and-goto-default "Fetch and go to default branch")
       ("r" #'my/gh/open-repo-on-browser "Open repo on browser")
       ("p" #'my/gh/open-pr-on-browser "Open PR on browser")
       ("P" #'my/gh/new-pr "Creates a new PR")

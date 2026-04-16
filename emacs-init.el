@@ -630,19 +630,7 @@
   :bind ("C-c m" . magit-status)
   :config (progn
             (custom-set-variables '(magit-diff-refine-hunk 'all))
-            (defun my/magit/fetch-and-goto (ref)
-              (magit-run-git (cons "fetch" (cons "--all" "--prune")))
-              (magit-run-git (cons "checkout" ref))
-              (magit-run-git "pull"))
-            (defun my/magit/fetch-and-goto-default ()
-              (interactive)
-              (-> (my/gh/default-branch) (my/magit/fetch-and-goto )))
-            (defun my/magit/fetch-and-goto-main ()
-              (interactive)
-              (my/magit/fetch-and-goto "main"))
-            (defun my/magit/fetch-and-goto-master ()
-              (interactive)
-              (my/magit/fetch-and-goto "master"))))
+            ))
 
 (use-package magit-ext :ensure nil)
 
