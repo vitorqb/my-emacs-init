@@ -115,7 +115,7 @@
     (magit-run-git "fetch" "origin" (format "%s:%s" refname branchname))
 
     (message "Checkout")
-    (magit-branch-checkout branchname)))
+    (magit-run-git "checkout" branchname)))
 
 (defun my/gh/checkout-pr ()
   (interactive)

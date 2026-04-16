@@ -136,17 +136,47 @@
         (should (hashtable-equal? result (fake-pr)))))))
 
 (ert-deftest my/gh/test-checkout-pr-by-number ()
-  (let ((cmds (list))
-        (magit-refresh-called nil))
-    (cl-letf (((symbol-function 'shell-command)
-               (lambda (cmd) (push cmd cmds)))
-              ((symbol-function 'magit-refresh)
-               (lambda () (setq magit-refresh-called 't))))
-      (my/gh//checkout-pr-by-number 123)
-      (should (equal '("git fetch origin pull/123/merge:pr-123-merge"
-                       "git checkout pr-123-merge"
-                       "git pull origin pull/123/merge:pr-123-merge")
-                     (reverse cmds)))
-      (should magit-refresh-called))))
+
+  (my/gh-test/with-current-branch "foo"
+    (my/gh-test/with-branch-exists? nil
+      (let ((all_args (list)))
+        (cl-letf (((symbol-function 'magit-run-git)
+                   (lambda (&rest args) (push args all_args))))
+          (my/gh//checkout-pr-by-number 123)
+          (should (equal '(("fetch" "origin" "pull/123/merge:pr-123-merge")
+                           ("checkout"  "pr-123-merge"))
+                         (reverse all_args)))))))
+
+  (my/gh-test/with-current-branch "pr-123-merge" ;Same as the one to be created
+    (my/gh-test/with-branch-exists? t            ;Branch already exists
+      (my/gh-test/with-default-branch "master"
+        (let ((all_args (list)))
+          (cl-letf (((symbol-function 'magit-run-git)
+                     (lambda (&rest args) (push args all_args))))
+            (my/gh//checkout-pr-by-number 123)
+            (should (equal '(("checkout" "master")
+                             ("branch" "-D" "pr-123-merge")
+                             ("fetch" "origin" "pull/123/merge:pr-123-merge")
+                             ("checkout"  "pr-123-merge"))
+                           (reverse all_args)))))))))
+
+(defmacro my/gh-test/with-current-branch (branchname &rest program)
+  (declare (indent 1))
+  `(cl-letf (((symbol-function 'my/gh//current-branch)
+              (lambda () ,branchname)))
+     (progn ,@program)))
+
+(defmacro my/gh-test/with-branch-exists? (val &rest program)
+  (declare (indent 1))
+  `(cl-letf (((symbol-function 'my/gh//branch-exists?)
+              (lambda (_) ,val)))
+     (progn ,@program)))
+
+(defmacro my/gh-test/with-default-branch (branchname &rest program)
+  (declare (indent 1))
+  `(cl-letf (((symbol-function 'my/gh//default-branch)
+              (lambda (_) ,branchname)))
+     (progn ,@program)))
+
 ;;; my-gh-test.el ends here
 
