@@ -16,6 +16,7 @@
 (require 'my-term)
 (require 'magit)
 (require 'dash)
+(require 'markdown-mode)
 
 (defvar my/gh/on-browser-open-request
   (lambda ()
@@ -62,21 +63,84 @@
   (interactive)
   (my/term/run "gh pr create"))
 
-(defun my/gh/print-pr-body ()
+(defun my/gh/insert-pr-body ()
   "Prints the current PR body on the current buffer."
   (interactive)
-  (insert (shell-command-to-string "gh pr view --json=body --jq='.body'")))
+  (call-process "gh" nil (current-buffer) t "pr" "view" "--json=body" "--template={{.body}}")
+  (save-excursion
+    (goto-char (point-min))
+    (while (search-forward "\r" nil t)
+      (replace-match ""))))
 
+;;
+;; <EDIT PR BODY>
+;; 
+(defvar my/gh/edit-pr-body-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-c C-c") #'my/gh/edit-pr-body-done)
+    (define-key map (kbd "C-c C-k") #'my/gh/edit-pr-body-abort)
+    (set-keymap-parent map markdown-mode-map)
+    map)
+  "A map for the mode responsible of editing a PR body")
+
+(defvar my/gh/edit-pr-body-buffer-name "*my/gh/edit-pr*"
+  "Buffer name to use when editing a PR body")
+
+(defvar-local my/gh//edit-pr-metadata-current-pr-number nil
+  "Used to store metadata on a buffer that edits a PR")
+
+(defvar-local my/gh//edit-pr-metadata-default-directory nil
+  "Used to store metadata on a buffer that edits a PR")
+
+(define-derived-mode my/gh/edit-pr-body-mode markdown-mode "My/Gh/EditPrBody"
+  "Mode used to edit PR bodies."
+  :keymap my/gh/edit-pr-body-mode-map)
+
+;; TODO -> Accept PR number as argument and default to current
 (defun my/gh/edit-pr-body ()
   "Allows editing current PR body."
   (interactive)
-  (let ((buff (generate-new-buffer "*gh-pr-body*"))
-        (default-directory default-directory))
-    (switch-to-buffer buff)
-    (my/gh/print-pr-body)
-    (when (and (require 'markdown-mode nil 'noerror)
-               (fboundp 'markdown-mode))
-      (markdown-mode))))
+
+  ;; Make sure we don't have two buffers editing PRs
+  (when (buffer-live-p (get-buffer my/gh/edit-pr-body-buffer-name))
+      (user-error "Buffer %s still exists - kill it first!" my/gh/edit-pr-body-buffer-name))
+
+  (let ((root-default-directory default-directory)
+        (pr-number (my/gh//current-pr-number))
+        (buff (get-buffer-create my/gh/edit-pr-body-buffer-name)))
+    (switch-to-buffer-other-window buff)
+    (my/gh/insert-pr-body)
+    (goto-char (point-min))
+    (my/gh/edit-pr-body-mode)
+    (setq-local my/gh//edit-pr-metadata-default-directory root-default-directory)
+    (setq-local my/gh//edit-pr-metadata-current-pr-number pr-number)))
+
+(defun my/gh/edit-pr-body-done ()
+  "User saying they are done editing the PR body"
+  (interactive)
+  (let* ((default-directory my/gh//edit-pr-metadata-default-directory)
+         (pr-number my/gh//edit-pr-metadata-current-pr-number)
+         (tmpfile (make-temp-file "gh-pr-body-")))
+    (unless default-directory
+      (user-error "Failed to load default directory from metadata"))
+    (unless pr-number
+      (user-error "Failed to load pr-number from metadata"))
+    (write-region nil nil tmpfile)      ;Write to file
+    (message "Submitting PR Body for pr %s directory %s" pr-number default-directory)
+    (let ((exitcode (call-process "gh" nil "*gh-submit-pr-body*" t "pr" "edit" pr-number "--body-file" tmpfile)))
+      (unless (= exitcode 0)
+        (user-error "Failed: check *gh-submit-pr-body*")))
+    (kill-buffer)
+    (message "Submitted!")))
+
+(defun my/gh/edit-pr-body-abort ()
+  "User saying they gave up editing the PR body"
+  (interactive)
+  (message "Bailing!")
+  (kill-buffer))
+;;
+;; </EDIT PR BODY>
+;; 
 
 (defun my/gh//get-pr-list ()
   "Returns a list of objects representing PRs"
