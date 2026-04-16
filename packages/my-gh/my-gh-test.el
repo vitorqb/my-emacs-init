@@ -160,10 +160,54 @@
                              ("checkout"  "pr-123-merge"))
                            (reverse all_args)))))))))
 
+(ert-deftest my/gh/edit-pr-body__success ()
+  (my/gh-test/with-current-pr-number "123"
+    (my/gh-test/with-buffer-cleanup my/gh/edit-pr-body-buffer-name
+      (my/gh-test/with-insert-pr-body "BODY!"
+        (let ((default-directory "/tmp/foo"))
+          (call-interactively #'my/gh/edit-pr-body)
+          (should (equal (buffer-name) my/gh/edit-pr-body-buffer-name))
+          (should (equal (buffer-substring (point-min) (point-max)) "BODY!"))
+          (should (equal my/gh//edit-pr-metadata-default-directory "/tmp/foo"))
+          (should (equal my/gh//edit-pr-metadata-current-pr-number "123"))
+          (should (equal major-mode 'my/gh/edit-pr-body-mode)))))))
+
+(ert-deftest my/gh/edit-pr-body__fails-if-buffer-exists ()
+  (my/gh-test/with-buffer-cleanup my/gh/edit-pr-body-buffer-name
+    (let ((buff (get-buffer-create my/gh/edit-pr-body-buffer-name)))
+      (should-error (call-interactively #'my/gh/edit-pr-body)
+                    :type 'user-error))))
+
+(ert-deftest my/gh/edit-pr-body-done ()
+  (my/gh-test/with-current-pr-number "123"
+    (my/gh-test/with-buffer-cleanup my/gh/edit-pr-body-buffer-name
+      (my/gh-test/with-insert-pr-body "BODY!"
+        (my/gh-test/capture-edit-pr-body-request request
+          (let ((default-directory "/tmp/foo"))
+            ;; User calls `my/gh/edit-pr-body`
+            (call-interactively #'my/gh/edit-pr-body)
+            ;; User calls `my/gh/edit-pr-body-done`
+            (call-interactively #'my/gh/edit-pr-body-done)
+            (should (my/gh-test/edit-pr-body-request-equal?
+                     request
+                     (my/gh//create-edit-pr-body-request
+                      :gitrepo-directory "/tmp/foo"
+                      :pr-number "123"
+                      :src-buffer (get-buffer my/gh/edit-pr-body-buffer-name))))))))))
+
+;;
+;; Helpers
+;; 
 (defmacro my/gh-test/with-current-branch (branchname &rest program)
   (declare (indent 1))
   `(cl-letf (((symbol-function 'my/gh//current-branch)
               (lambda () ,branchname)))
+     (progn ,@program)))
+
+(defmacro my/gh-test/with-current-pr-number (pr-number &rest program)
+  (declare (indent 1))
+  `(cl-letf (((symbol-function 'my/gh//current-pr-number)
+              (lambda () ,pr-number)))
      (progn ,@program)))
 
 (defmacro my/gh-test/with-branch-exists? (val &rest program)
@@ -177,6 +221,36 @@
   `(cl-letf (((symbol-function 'my/gh//default-branch)
               (lambda (_) ,branchname)))
      (progn ,@program)))
+
+(defmacro my/gh-test/with-insert-pr-body (body &rest program)
+  (declare (indent 1))
+  `(cl-letf (((symbol-function 'my/gh/insert-pr-body)
+              (lambda (_) (insert ,body))))
+     (progn ,@program)))
+
+(defmacro my/gh-test/with-buffer-cleanup (buffname &rest program)
+  (declare (indent 1))
+  `(unwind-protect
+       (progn ,@program)
+     (when-let ((buff (get-buffer ,buffname)))
+       (when (buffer-live-p buff)
+         (kill-buffer buff)))))
+
+(defmacro my/gh-test/capture-edit-pr-body-request (bind &rest program)
+  "Capture the argument passed to `my/gh//do-edit-pr-body` and bind it to BIND for assertions in the test."
+  (declare (indent 1))
+  `(let ((,bind nil))
+     (cl-letf (((symbol-function 'my/gh//do-edit-pr-body)
+                (lambda (req) (setq ,bind req))))
+       (progn ,@program))))
+
+(defun my/gh-test/edit-pr-body-request-equal? (req1 req2)
+  "Compare if two `my/gh//edit-pr-body-request' are equal (ignoring the `tmp-file' field)"
+  (let ((new-req1 (my/gh//copy-edit-pr-body-request req1))
+        (new-req2 (my/gh//copy-edit-pr-body-request req2)))
+    (setf (my/gh//edit-pr-body-request/tmp-file new-req1) "")
+    (setf (my/gh//edit-pr-body-request/tmp-file new-req2) "")
+    (equal new-req1 new-req2)))
 
 ;;; my-gh-test.el ends here
 

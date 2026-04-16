@@ -12,10 +12,11 @@
 ;; This file is not part of GNU Emacs.
 
 ;;; code
-(provide 'my-gh)
 (require 'my-term)
 (require 'magit)
 (require 'dash)
+(require 's)
+(require 'my-gh-core)
 
 (defvar my/gh/on-browser-open-request
   (lambda ()
@@ -25,27 +26,6 @@
 
 (defvar my/gh/copy-to-clipboard
   (lambda (x) (kill-new x)))
-
-(defun my/gh//current-branch ()
-  (-> (shell-command-to-string "git branch --show-current")
-      (s-trim)))
-
-(defun my/gh//branch-exists? (name)
-  ;; Exit 0 means exists
-  (let ((verify-status (call-process "git" nil nil nil "rev-parse" "--verify" name)))
-    (or (equal verify-status 0) (equal verify-status "0"))))
-
-(defun my/gh//pr-number-from-branch (branch)
-  (if (and branch (string-match "pr-\\([0-9]+\\)-merge" branch))
-      (match-string 1 branch)))
-
-(defun my/gh//pr-number-from-gh ()
-  (-> (shell-command-to-string "gh pr view --json number --jq .number")
-      (s-trim)))
-
-(defun my/gh//current-pr-number ()
-  (or (-> (my/gh//current-branch) (my/gh//pr-number-from-branch))
-      (my/gh//pr-number-from-gh)))
 
 (defun my/gh/open-repo-on-browser ()
   (interactive)
@@ -61,22 +41,6 @@
   "Opens tmxu with prompts for a new PR"
   (interactive)
   (my/term/run "gh pr create"))
-
-(defun my/gh/print-pr-body ()
-  "Prints the current PR body on the current buffer."
-  (interactive)
-  (insert (shell-command-to-string "gh pr view --json=body --jq='.body'")))
-
-(defun my/gh/edit-pr-body ()
-  "Allows editing current PR body."
-  (interactive)
-  (let ((buff (generate-new-buffer "*gh-pr-body*"))
-        (default-directory default-directory))
-    (switch-to-buffer buff)
-    (my/gh/print-pr-body)
-    (when (and (require 'markdown-mode nil 'noerror)
-               (fboundp 'markdown-mode))
-      (markdown-mode))))
 
 (defun my/gh//get-pr-list ()
   "Returns a list of objects representing PRs"
@@ -195,5 +159,9 @@
 (defun my/gh/default-branch ()
   (-> (shell-command-to-string "gh repo view --json 'defaultBranchRef' --jq '.defaultBranchRef.name'")
       (string-trim)))
+
+(provide 'my-gh)
+(cl-eval-when (load eval)
+  (require 'my-gh-edit-pr-body))
 
 ;;; my-gh.el ends here
