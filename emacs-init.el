@@ -1012,7 +1012,6 @@
 (my/defmodule ohmycards)
 (my/defmodule php)
 (my/defmodule protobuf)
-(my/defmodule python)
 (my/defmodule python-eglot)
 (my/defmodule rust)
 (my/defmodule scala)

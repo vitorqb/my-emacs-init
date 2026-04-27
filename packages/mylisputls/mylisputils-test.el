@@ -76,24 +76,6 @@
          (major-mode 'dired-mode))
     (should (string-equal "/foo/bar/baz/boz" (myutils/priv/file-path nil)))))
 
-(ert-deftest myutils/python-activate-venv/with-venv-dir ()
-  (let ((pyvenv-activate-arg))
-    (cl-letf (((symbol-function 'myutils/python-get-default-venv-path)
-               (lambda () "abc"))
-              ((symbol-function 'pyvenv-activate)
-               (lambda (a) (setq pyvenv-activate-arg a))))
-      (myutils/python-activate-venv)
-      (should (equal pyvenv-activate-arg "abc")))))
-
-(ert-deftest myutils/python-activate-venv/with-NO-venv-dir ()
-  (let ((call-interactively-arg))
-    (cl-letf (((symbol-function 'myutils/python-get-default-venv-path)
-               (lambda () nil))
-              ((symbol-function 'call-interactively)
-               (lambda (a) (setq call-interactively-arg a))))
-      (myutils/python-activate-venv)
-      (should (equal call-interactively-arg #'pyvenv-activate)))))
-
 (ert-deftest myutils/with-compile-opts ()
   (myutils/with-compile-opts "*buffname*" "my command"
     (should (equal (funcall compilation-buffer-name-function) "*buffname*"))

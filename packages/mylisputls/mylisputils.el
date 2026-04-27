@@ -157,29 +157,5 @@
     (goto-char (point-min))
     (json-parse-buffer)))
 
-;; -----------------------------------------------------------------------------
-;; Python utils
-;; -----------------------------------------------------------------------------
-(defun myutils/python-activate-venv ()
-  "Activates a virtual environment."
-  (interactive)
-  (-if-let (venv-dir (myutils/python-get-default-venv-path))
-      (--> venv-dir
-           (progn (pyvenv-activate it) it)
-           (format "Activated venv %s!" it)
-           (myutils/message-if-display-is-empty it))
-    (call-interactively #'pyvenv-activate)))
-
-(defun myutils/python-get-default-venv-path ()
-  "Looks for a venv folder in the current dir. Either returns a string with the
-   path for it or nil."
-  (-some->> '("venv" ".venv")
-    (-map (lambda (x)
-            (-if-let (dominating-file (locate-dominating-file default-directory x))
-                (file-name-concat dominating-file x))))
-    (-filter #'identity)
-    (-filter #'file-directory-p)
-    (car)))
-
 (provide 'mylisputils)
 ;;; mylisputils.el ends here
