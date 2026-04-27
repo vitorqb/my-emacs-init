@@ -106,19 +106,6 @@
   (interactive (list (read-file-modes "New mode: " (buffer-file-name))))
   (chmod (buffer-file-name) mode))
 
-(defun myutils/message-if-display-is-empty (msg)
-  "Sends the user a message if current-message returns null"
-  (if (equal (current-message) nil)
-      (message msg)))
-
-(defmacro myutils/with-compile-opts (buffname cmd &rest body)
-  "Evaluates body after binding compilation functions to set the
-  buffer name and the default command"
-  (declare (indent 2))
-  `(-let ((compilation-buffer-name-function (-const ,buffname))
-          (compile-command ,cmd))
-     ,@body))
-
 (defun myutils/remove-with-elipsis ()
   "Removes the current line and inserts an elipsis [...]
    If an elipsis is on the current line, removes the previous one."

@@ -69,11 +69,6 @@
          (major-mode 'dired-mode))
     (should (string-equal "/foo/bar/baz/boz" (myutils/priv/file-path nil)))))
 
-(ert-deftest myutils/with-compile-opts ()
-  (myutils/with-compile-opts "*buffname*" "my command"
-    (should (equal (funcall compilation-buffer-name-function) "*buffname*"))
-    (should (equal compile-command "my command"))))
-
 (ert-deftest myutils/relative-path ()
   (-let* ((shell-command-to-string-vars) ;Stores args to shell-command-to-string
           (path "/home/foo bar baz")
