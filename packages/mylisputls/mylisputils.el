@@ -54,14 +54,6 @@
   "Concat a file in a dir"
   (concat (file-name-as-directory dir) file))
 
-(defun myutils/fill-to-end ()
-  "Fills the screen with '-' until column 80"
-  (interactive)
-  (save-excursion
-    (end-of-line)
-    (while (< (current-column) 80)
-      (insert-char ?-))))
-
 (defun myutils/date-in-all-formats ()
   "Returns a list of all date formats."
   (--map (format-time-string it) myutils/known-datetime-formats))
@@ -85,18 +77,6 @@
                   (-partial #'char-equal it)
                   (-any? it chars-to-delete))
       (delete-char 1))))
-
-;; clean-buffers
-(defun myutils/clean-buffers ()
-  "Clean buffers whose names matches myutils/clean-buffers-names-regexs"
-  (interactive)
-  (cl-flet ((should-kill? (buff)
-              (--> (buffer-name buff)
-                   (-rpartial 'string-match-p it)
-                   (-some? it myutils/clean-buffers-names-regexs))))
-    (--> (buffer-list)
-         (-filter #'should-kill? it)
-         (-each it #'kill-buffer))))
 
 (defun myutils/priv/file-path (relative-to-project-root?)
   "Returns the file to the path we are visiting. If relative-to-project-root?
