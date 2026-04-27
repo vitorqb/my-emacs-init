@@ -300,7 +300,6 @@
      "Clean - remove whitesapces and newlines."
      :column "Typing")
     ("d" #'myutils/insert-formated-date "Insert the date.")
-    ("e" #'myutils/remove-with-elipsis "Remove with elipsis." :color pink)
     ("l" #'my/copy-line-from "Copies from another line.")
     ("w" #'delete-trailing-whitespace "Delete trailing whitespaces.")))
 
