@@ -7,13 +7,6 @@
 (require 'mylisputils)
 (require 'ivy)
 
-(ert-deftest add-to-generic-path-works ()
-  (let ((stub-env "A"))
-    (cl-letf (((symbol-function 'getenv) (lambda (x) stub-env))
-              ((symbol-function 'setenv) (lambda (y x) (setq stub-env x))))
-      (myutils/add-to-generic-path "B" "")
-      (should (equal stub-env "B:A")))))
-
 (ert-deftest test-concat-file ()
   (should (equal (myutils/concat-file "/home/vitor" "file") "/home/vitor/file"))
   (should (equal (myutils/concat-file "/home/vitor/" "f") "/home/vitor/f")))

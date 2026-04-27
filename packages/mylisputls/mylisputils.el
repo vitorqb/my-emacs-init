@@ -19,10 +19,6 @@
 (require 'projectile)
 
 ;; Customizable variables
-(defvar myutils/clean-buffers-names-regexs
-  '("\\*ag search.+" "\\*Occur\\*" "magit-\\(log\\|diff\\)")
-  "A list of regexp for buffers to kill when cleaning, if name matches.")
-
 (defvar myutils/known-datetime-formats
   '("%Y-%m-%dT%H:%M:%S"
     "%Y-%m-%d"
@@ -31,10 +27,6 @@
   "A list of known date(time) formats.")
 
 ;; Functions
-(defun myutils/add-to-generic-path (x y)
-  "Adds `x` to some environmental variable `y` (like PYTHONPATH)"
-  (setenv y (concat x ":" (getenv y))))
-
 (defun myutils/relative-path (destination &optional origin)
   "Uses `realpath` to find the path for `destination` relative to `origin`"
   (let* ((origin (or origin default-directory))
