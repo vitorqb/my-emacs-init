@@ -21,7 +21,9 @@
 (defvar my/ai-tools/prompt-builder-buffer-name "*ai-tools/prompt-builder*")
 
 ;; Represents the *context* the user is when they want to write an AI prompt
-(cl-defstruct my/ai-tools/context
+(cl-defstruct (my/ai-tools/context
+               (:constructor my/ai-tools/make-context)
+               (:conc-name my/ai-tools/context/))
   buffer
   major-mode
   default-directory
@@ -33,7 +35,7 @@
 
 (defun my/ai-tools/capture-context ()
   "Captures the current user context"
-  (make-my/ai-tools/context
+  (my/ai-tools/make-context
    :buffer            (current-buffer)
    :major-mode        major-mode
    :default-directory default-directory
@@ -45,17 +47,17 @@
 
 (defun my/ai-tools/context-to-string (context)
   "Generates a string describing the user context (in markdown)"
-  (let ((ctx-major-mode (my/ai-tools/context-major-mode context)))
+  (let ((ctx-major-mode (my/ai-tools/context/major-mode context)))
     (format "## Context\n\n%s" (my/ai-tools//context-to-string-by-mode ctx-major-mode context))))
 
 (cl-defgeneric my/ai-tools//context-to-string-by-mode (_ctx-major-mode context)
   "Formats the context considering it was captured on `ctx-major-mode`. The default implementation is useful for most modes displaying file contents. Special implementations are provided for modes like `dired-mode`."
-  (let* ((project-root  (my/ai-tools/context-project-root context))
-         (buffer        (my/ai-tools/context-buffer context))
-         (region-p      (my/ai-tools/context-region-p context))
-         (region-begin  (my/ai-tools/context-region-begin context))
-         (region-end    (my/ai-tools/context-region-end context))
-         (char-position (my/ai-tools/context-char-position context))
+  (let* ((project-root  (my/ai-tools/context/project-root context))
+         (buffer        (my/ai-tools/context/buffer context))
+         (region-p      (my/ai-tools/context/region-p context))
+         (region-begin  (my/ai-tools/context/region-begin context))
+         (region-end    (my/ai-tools/context/region-end context))
+         (char-position (my/ai-tools/context/char-position context))
          (filepath      (if project-root
                             (file-relative-name (buffer-file-name buffer) project-root)
                           (buffer-file-name buffer))))
@@ -75,12 +77,12 @@
 (cl-defmethod my/ai-tools//context-to-string-by-mode ((_ (eql 'dired-mode)) context)
   "Formats the context considering it was captured on dired-mode"
   (with-temp-buffer
-    (let* ((ctx-project-root  (my/ai-tools/context-project-root context))
-           (ctx-default-directory (my/ai-tools/context-default-directory context))
+    (let* ((ctx-project-root  (my/ai-tools/context/project-root context))
+           (ctx-default-directory (my/ai-tools/context/default-directory context))
            (relative-ctx-default-directory (if ctx-project-root
                                                (file-relative-name ctx-default-directory ctx-project-root)
                                              ctx-default-directory))
-           (ctx-buffer (my/ai-tools/context-buffer context))
+           (ctx-buffer (my/ai-tools/context/buffer context))
            (marked-files (with-current-buffer ctx-buffer
                            (dired-get-marked-files 't 'marked))))
       (insert (format "Active Directory: %s\n\n" relative-ctx-default-directory))

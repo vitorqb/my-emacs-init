@@ -12,13 +12,13 @@
     (goto-char 10)
     (let ((temp-buff (current-buffer))
           (context   (my/ai-tools/capture-context)))
-      (should (equal 10 (my/ai-tools/context-char-position context)))
-      (should (equal temp-buff (my/ai-tools/context-buffer context)))
-      (should (equal "/tmp/" (my/ai-tools/context-default-directory context)))
-      (should (equal 'foo (my/ai-tools/context-major-mode context)))
-      (should (equal nil (my/ai-tools/context-region-p context)))
-      (should (equal nil (my/ai-tools/context-region-begin context)))
-      (should (equal nil (my/ai-tools/context-region-end context)))))
+      (should (equal 10 (my/ai-tools/context/char-position context)))
+      (should (equal temp-buff (my/ai-tools/context/buffer context)))
+      (should (equal "/tmp/" (my/ai-tools/context/default-directory context)))
+      (should (equal 'foo (my/ai-tools/context/major-mode context)))
+      (should (equal nil (my/ai-tools/context/region-p context)))
+      (should (equal nil (my/ai-tools/context/region-begin context)))
+      (should (equal nil (my/ai-tools/context/region-end context)))))
 
   ;; Region
   (with-temp-buffer
@@ -28,18 +28,18 @@
     (activate-mark)
     (let ((temp-buff (current-buffer))
           (context   (my/ai-tools/capture-context)))
-      (should (equal 5 (my/ai-tools/context-char-position context)))
-      (should (equal temp-buff (my/ai-tools/context-buffer context)))
-      (should (equal t (my/ai-tools/context-region-p context)))
-      (should (equal 5 (my/ai-tools/context-region-begin context)))
-      (should (equal 10 (my/ai-tools/context-region-end context))))))
+      (should (equal 5 (my/ai-tools/context/char-position context)))
+      (should (equal temp-buff (my/ai-tools/context/buffer context)))
+      (should (equal t (my/ai-tools/context/region-p context)))
+      (should (equal 5 (my/ai-tools/context/region-begin context)))
+      (should (equal 10 (my/ai-tools/context/region-end context))))))
 
 (ert-deftest test/my/ai-tools/context-to-string/default ()
 
   ;; No region
   (let* ((tmpfile (make-temp-file "test_my_ai-tools"))
          (tmpbuff (find-file-noselect tmpfile))
-         (context (make-my/ai-tools/context :buffer tmpbuff
+         (context (my/ai-tools/make-context :buffer tmpbuff
                                             :region-p nil
                                             :region-begin nil
                                             :region-end nil
@@ -55,7 +55,7 @@
   ;; Region
   (let* ((tmpfile (make-temp-file "test_my_ai-tools"))
          (tmpbuff (find-file-noselect tmpfile))
-         (context (make-my/ai-tools/context :buffer tmpbuff
+         (context (my/ai-tools/make-context :buffer tmpbuff
                                             :region-p t
                                             :region-begin 1
                                             :region-end 3
@@ -74,7 +74,7 @@
   ;; With marked files
   (with-dired-marked-files '("foo" "bar")
     (with-temp-buffer
-      (let* ((context (make-my/ai-tools/context :buffer (current-buffer)
+      (let* ((context (my/ai-tools/make-context :buffer (current-buffer)
                                                 :region-p nil
                                                 :region-begin nil
                                                 :region-end nil
