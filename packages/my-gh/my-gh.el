@@ -150,6 +150,7 @@
       ("b" #'my/gh/browse "Browses to file in github" :column "Github CLI!")
       ("B" #'my/gh/browse-url-to-clipboard "Copies github browse URL to clipboard")
       ("d" #'my/gh/fetch-and-goto-default "Fetch and go to default branch")
+      ("e" #'my/gh/edit-pr-body "Edit PR Body")
       ("r" #'my/gh/open-repo-on-browser "Open repo on browser")
       ("p" #'my/gh/open-pr-on-browser "Open PR on browser")
       ("P" #'my/gh/new-pr "Creates a new PR")
