@@ -75,14 +75,13 @@
               ("n" . next-error)
               ("p" . previous-error)))
 (use-package ivy
-  :bind (("C-c C-r" . ivy-resume)
-         ("C-x B" . ivy-switch-buffer-other-window))
+  :bind (("C-x B" . ivy-switch-buffer-other-window))
   :custom
   (ivy-count-format "(%d/%d) ")
   (ivy-display-style 'fancy)
   (ivy-use-virtual-buffers t)
   :config (ivy-mode))
-(use-package ivy-hydra)
+(use-package ivy-hydra :after ivy)
 (use-package mylisputils :ensure nil)
 
 ;; Ensure the tempdir is created
