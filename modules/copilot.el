@@ -12,4 +12,5 @@
   :config
   (setq copilot-server-executable
         (file-name-concat my/path-to-stubs-dir "copilot-language-server"))
+  (setq copilot-idle-delay 0.5)
   :ensure t)
