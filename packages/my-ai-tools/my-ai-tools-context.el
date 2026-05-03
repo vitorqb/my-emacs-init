@@ -65,7 +65,7 @@
                             (file-relative-name (buffer-file-name buffer) project-root)
                           (buffer-file-name buffer))))
     (with-temp-buffer
-      (insert (format "File: @%s\n\n" filepath))
+      (insert (format "File: %s\n\n" filepath))
       (if region
           (insert (format "Selected Region (lines %s to %s):\n```\n%s\n```"
                           (my/ai-tools/region/begin-linum region)

@@ -55,7 +55,7 @@
     (with-current-buffer tmpbuff
       (insert "Foo\nBar"))
     (should (equal (my/ai-tools/context/to-string context)
-                   (format "## Context\n\nFile: @%s\n\nActive line: 1\n" tmpfile)))
+                   (format "## Context\n\nFile: %s\n\nActive line: 1\n" tmpfile)))
     (delete-file tmpfile)
     (set-buffer-modified-p nil)
     (kill-buffer tmpbuff))
@@ -72,7 +72,7 @@
                                                      :content "Foo!")
                                             :char-position 2)))
     (should (equal (my/ai-tools/context/to-string context)
-                   (format "## Context\n\nFile: @%s\n\nSelected Region (lines 2 to 3):\n```\nFoo!\n```"
+                   (format "## Context\n\nFile: %s\n\nSelected Region (lines 2 to 3):\n```\nFoo!\n```"
                            tmpfile)))
     (delete-file tmpfile)
     (set-buffer-modified-p nil)
