@@ -123,8 +123,6 @@
 ;; others stay large. With this setting, all windows in the frame resize proportionally:
 (setq window-combination-resize t)
 
-
-
 ;; -----------------------------------------------------------------------------
 ;; Projectile
 ;; -----------------------------------------------------------------------------
@@ -144,13 +142,6 @@
   :bind* (("C-c C-f" . 'counsel-projectile-find-file)
           ("C-c C-d" . 'counsel-projectile-dir)))
 
-;; Adds a fn to insert relative files
-(defun my/projectile/insert-relative-file ()
-  (interactive)
-  (let* ((project-root (projectile-ensure-project (projectile-project-root)))
-         (file (projectile-completing-read "File: " (projectile-project-files project-root))))
-    (insert (myutils/copy-relative-path (myutils/concat-file project-root file)))))
-
 (defun my/setup-hydra/projectile-hydra ()
   "An hydra with projectile functionalities =D"
 
@@ -164,7 +155,6 @@
              (projectile-switch-project)))
      "Open project")
     ("k" #'projectile-kill-buffers "Kill buffers for project")
-    ("r" #'my/projectile/insert-relative-file "Insert relative file")
     ("t" #'projectile-toggle-between-implementation-and-test
      "Toggle between implementation and test")
     ("m" #'my/mise/run-task "Runs (m)ise task")
@@ -247,9 +237,6 @@
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; Nice mode
-;; NOTE: the `unless` logic is to support emacs <29 and =30
-(unless (require 'which-key nil 'noerror)
-  (use-package which-key))
 (which-key-mode 1)
 
 ;; -----------------------------------------------------------------------------
@@ -378,13 +365,6 @@
   (-> (generate-new-buffer "*tmp*")
       (switch-to-buffer-other-window)))
 
-(defun my/highligh-region (beg end)
-  "Highlights text equal to the text between beg and end"
-  (interactive "r")
-  (-> (buffer-substring-no-properties beg end)
-      (regexp-quote)
-      (highlight-phrase (hi-lock-read-face-name))))  
-
 (defun my/setup-hydra/buffer-hydra ()
   (defhydra my/buffer-hydra (:color blue)
     ("c" #'myutils/copy-buffer-contents "Copy buffer contents.")
@@ -400,7 +380,6 @@
 (defun my/setup-hydra/highlight-hydra ()
   (defhydra my/highlight-hydra (:color blue)
     ("h" #'highlight-symbol-at-point "Symbol at point." :column "Highlight!")
-    ("r" #'my/highligh-region "Selected region.")
     ("p" #'highlight-phrase "Phrase.")))
 
 (defun my/setup-hydra/hideshow-hdyra ()
@@ -458,8 +437,8 @@
 	          company-idle-delay 0.5
 	          company-dabbrev-code-modes nil
                   )))
-(use-package company-box
-  :hook (company-mode . company-box-mode))
+;; (use-package company-box
+;;   :hook (company-mode . company-box-mode))
 (use-package company-web)
 
 ;; -----------------------------------------------------------------------------
@@ -485,7 +464,6 @@
 ;; Define custom apps to open files
 (setq org-file-apps
       `((auto-mode . emacs)
-        ("\\.mm\\'" . default)
         ("\\.x?html?\\'" . ,my/default-browser-cmd)
         ("\\.pdf\\'" . "evince %s")))
 
@@ -505,7 +483,6 @@
            (cons '(:results . "replace verbatim"))))
 
 ;; Some extensions
-;; https://github.com/vitorqb/orgext
 (use-package orgext :ensure nil)
 
 ;; Journal configuration
@@ -588,13 +565,6 @@
 
 ;; Nicer image handling
 (setq org-image-actual-width nil)
-
-;; ------------------------------------------------------------
-;; Verb
-;; ------------------------------------------------------------
-(use-package verb
-  :custom (verb-enable-ctrl-c-ctrl-c nil)
-  :bind (("C-x C-x" . #'verb-send-request-on-point)))
 
 ;; -----------------------------------------------------------------------------
 ;; Notes
@@ -959,14 +929,6 @@
 ;; This was just so annoying that I'll just put it here and pretend it's emacs' default
 (setq js2-basic-offset 2)
 (setq js-indent-level 2)
-
-;; -----------------------------------------------------------------------------
-;; DirEnv
-;; -----------------------------------------------------------------------------
-;; - use ‘direnv-update-environment’ to manually update the Emacs
-;;  environment so that inferior shells, linters, compilers, and test
-;;  runners start with the intended environmental variables.
-(use-package direnv)
 
 ;; -----------------------------------------------------------------------------
 ;; Grep
