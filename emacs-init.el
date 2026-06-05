@@ -989,6 +989,7 @@
 (my/defmodule typescript)
 (my/defmodule typescript-eglot)
 (my/defmodule vue)
+(my/defmodule ediff3-for-chezmoi)
 
 ;; -----------------------------------------------------------------------------
 ;; Modules loaded by default
