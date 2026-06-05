@@ -70,20 +70,6 @@
 ;; Global requirements
 ;;   the rest of the config depends on these 
 ;; -----------------------------------------------------------------------------
-(use-package counsel
-  :bind (:map ivy-occur-grep-mode-map
-              ("n" . next-error)
-              ("p" . previous-error)))
-(use-package ivy
-  :bind (("C-x B" . ivy-switch-buffer-other-window))
-  :custom
-  (ivy-count-format "(%d/%d) ")
-  (ivy-display-style 'fancy)
-  (ivy-use-virtual-buffers t)
-  :config (ivy-mode))
-(use-package ivy-hydra :after ivy)
-(use-package mylisputils :ensure nil)
-
 ;; Ensure the tempdir is created
 (and my/user-temp-directory
      (not (file-directory-p my/user-temp-directory))
@@ -95,6 +81,53 @@
 
 ;; Disable most fancy progress from CLI tools
 (setenv "TERM" "dumb")
+
+;; -----------------------------------------------------------------------------
+;; Ivy - Counsell - Swipe
+;; -----------------------------------------------------------------------------
+;; Ivy configuration from https://www.reddit.com/r/emacs/comments/910pga/tip_how_to_use_ivy_and_its_utilities_in_your/
+
+(use-package ivy
+  :bind (("C-x B" . ivy-switch-buffer-other-window))
+  :custom
+  (ivy-count-format "(%d/%d) ")
+  (ivy-display-style 'fancy)
+  (ivy-use-virtual-buffers t)
+  :config (ivy-mode))
+
+(use-package ivy-hydra :after ivy)
+
+(use-package counsel
+  :after ivy
+  :config (counsel-mode)
+  :bind (("C-x C-f" . counsel-find-file)
+         ((:map ivy-occur-grep-mode-map
+              ("n" . next-error)
+              ("p" . previous-error))))
+  :config (progn
+            ;; Adds extra action for find-file
+            (ivy-add-actions
+             'counsel-find-file
+             '(("W" myutils/copy-relative-path "Copies relative path.")))))
+
+(use-package swiper
+  :after ivy
+  :bind (("C-s" . swiper)
+         ("C-r" . swiper)))
+
+(use-package counsel-projectile
+  :bind* (("C-c C-f" . 'counsel-projectile-find-file)
+          ("C-c C-d" . 'counsel-projectile-dir)))
+
+;; -----------------------------------------------------------------------------
+;; Markdown mode
+;; -----------------------------------------------------------------------------
+(use-package markdown-mode)
+
+;; -----------------------------------------------------------------------------
+;; Utils
+;; -----------------------------------------------------------------------------
+(use-package mylisputils :ensure nil)
 
 ;; -----------------------------------------------------------------------------
 ;; Misc
@@ -201,6 +234,23 @@
        ,load-module-fn-docstring
        (interactive)
        (my/load-module ,load-module-file-name))))
+
+;; -----------------------------------------------------------------------------
+;; Git Magit
+;; -----------------------------------------------------------------------------
+;; Magit: Love is in the air S2
+(use-package magit
+  :bind ("C-c m" . magit-status)
+  :config (progn
+            (custom-set-variables '(magit-diff-refine-hunk 'all))
+            ))
+
+(use-package magit-ext :ensure nil)
+
+;; -----------------------------------------------------------------------------
+;; Github CLI integration
+;; -----------------------------------------------------------------------------
+(require 'my-gh)
 
 ;; ------------------------------------------------------------------------------
 ;; Global Appearence
@@ -382,13 +432,17 @@
     ("h" #'highlight-symbol-at-point "Symbol at point." :column "Highlight!")
     ("p" #'highlight-phrase "Phrase.")))
 
+(use-package treesit-fold
+  :vc (:url "https://github.com/emacs-tree-sitter/treesit-fold.git")
+  :config (setq treesit-fold-line-count-show t))  ; Show line count in folded regions
+
 (defun my/setup-hydra/hideshow-hdyra ()
   (defhydra my/hideshow-hydra (:color blue)
-    ("h" #'hs-hide-block "Hide" :column "HideShow!")
-    ("H" #'hs-hide-all "Hide All")
-    ("s" #'hs-show-block "Show")
-    ("S" #'hs-show-all "Show All")
-    ("t" #'hs-toggle-hiding "Toggle")))
+    ("h" #'treesit-fold-close "Hide" :column "HideShow!")
+    ("H" #'treesit-fold-close-all "Hide All")
+    ("s" #'treesit-fold-open "Show")
+    ("S" #'treesit-fold-open-all "Show All")
+    ("t" #'treesit-fold-toggle "Toggle")))
 
 (add-hook 'emacs-lisp-mode-hook 'hs-minor-mode)
 (add-hook 'go-mode-hook 'hs-minor-mode)
@@ -423,11 +477,6 @@
   (_       (warn "Unknown terminal multiplex - check value for my/terminal-multiplex")))
 
 ;; -----------------------------------------------------------------------------
-;; Github CLI integration
-;; -----------------------------------------------------------------------------
-(require 'my-gh)
-
-;; -----------------------------------------------------------------------------
 ;; Completion (Company)
 ;; -----------------------------------------------------------------------------
 (use-package company
@@ -440,11 +489,6 @@
 ;; (use-package company-box
 ;;   :hook (company-mode . company-box-mode))
 (use-package company-web)
-
-;; -----------------------------------------------------------------------------
-;; Markdown mode
-;; -----------------------------------------------------------------------------
-(use-package markdown-mode)
 
 ;; -----------------------------------------------------------------------------
 ;; Org Mode
@@ -589,18 +633,6 @@
     ("w" bookmark-write "Write bookmarks to file")
     ("o" bookmark-load "Load bookmarks from file")
     ("q" nil "Quit")))
-
-;; -----------------------------------------------------------------------------
-;; Git Magit
-;; -----------------------------------------------------------------------------
-;; Magit: Love is in the air S2
-(use-package magit
-  :bind ("C-c m" . magit-status)
-  :config (progn
-            (custom-set-variables '(magit-diff-refine-hunk 'all))
-            ))
-
-(use-package magit-ext :ensure nil)
 
 ;; -----------------------------------------------------------------------------
 ;; Dired and files manipulation
@@ -794,28 +826,6 @@
 (use-package hydra
   :config (my/hydras-setup)
   :bind ("C-." . (lambda () (interactive) (myhydra/body))))
-
-;; -----------------------------------------------------------------------------
-;; Ivy - Counsell - Swipe
-;; -----------------------------------------------------------------------------
-;; Ivy configuration from https://www.reddit.com/r/emacs/comments/910pga/tip_how_to_use_ivy_and_its_utilities_in_your/
-
-;; Notice we installed ivy up because it is a dep for other things.
-;; However, we configure it here.
-(use-package counsel
-  :after ivy
-  :config (counsel-mode)
-  :bind (("C-x C-f" . counsel-find-file))
-  :config (progn
-            ;; Adds extra action for find-file
-            (ivy-add-actions
-             'counsel-find-file
-             '(("W" myutils/copy-relative-path "Copies relative path.")))))
-
-(use-package swiper
-  :after ivy
-  :bind (("C-s" . swiper)
-         ("C-r" . swiper)))
 
 ;; -----------------------------------------------------------------------------
 ;; Text movements/search/grep/selection/cleanup utils
