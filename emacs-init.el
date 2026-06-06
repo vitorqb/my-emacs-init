@@ -486,9 +486,6 @@
 	          company-idle-delay 0.5
 	          company-dabbrev-code-modes nil
                   )))
-;; (use-package company-box
-;;   :hook (company-mode . company-box-mode))
-(use-package company-web)
 
 ;; -----------------------------------------------------------------------------
 ;; Org Mode
