@@ -12,3 +12,11 @@
         (file-name-concat my/path-to-stubs-dir "copilot-language-server"))
   (setq copilot-idle-delay 0.5)
   :ensure t)
+
+;; To avoid clashes with inline completion, we need to use company-box
+(use-package company-box
+  :hook (company-mode . company-box-mode)
+  :config
+  (setq company-box-doc-enable t)
+  (setq company-box-doc-delay 0.5)
+  :ensure t)
