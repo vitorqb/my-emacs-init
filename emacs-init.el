@@ -638,6 +638,11 @@
 (add-hook 'dired-load-hook '(lambda () (require 'dired-x))) ;Use dired-x
 (add-hook 'dired-mode-hook '(lambda () (dired-hide-details-mode t)))
 
+;; Put emojis on files
+(use-package nerd-icons-dired
+  :hook
+  (dired-mode . nerd-icons-dired-mode))
+
 (defun my/find-file-home ()
   (interactive)
   (counsel-find-file "~"))
