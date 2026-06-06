@@ -686,6 +686,11 @@
 ;; -----------------------------------------------------------------------------
 ;; Ediff
 ;; -----------------------------------------------------------------------------
+;; From https://www.youtube.com/watch?v=pSvsAutseO0&t=30s
+(setq ediff-keep-variants nil)
+(setq ediff-make-buffers-readonly-at-startup nil)
+(setq ediff-show-clashes-only t)
+(setq ediff-split-window-function 'split-window-horizontally)
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
 ;; -----------------------------------------------------------------------------
