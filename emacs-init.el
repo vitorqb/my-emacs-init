@@ -639,6 +639,10 @@
 (add-hook 'dired-mode-hook '(lambda () (dired-hide-details-mode t)))
 
 ;; Put emojis on files
+;; NOTE: requires installing "Symbols Nerd Font" from
+;; https://www.nerdfonts.com/font-downloads
+;; Archlinux: https://archlinux.org/groups/x86_64/nerd-fonts/
+;; Ubuntu: https://gist.github.com/matthewjberger/7dd7e079f282f8138a9dc3b045ebefa0
 (use-package nerd-icons-dired
   :hook
   (dired-mode . nerd-icons-dired-mode))
