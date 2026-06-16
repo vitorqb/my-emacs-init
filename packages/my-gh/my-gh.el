@@ -155,7 +155,8 @@
       ("p" #'my/gh/open-pr-on-browser "Open PR on browser")
       ("P" #'my/gh/new-pr "Creates a new PR")
       ("c" #'my/gh/browse-commit "See the commit on github web")
-      ("o" #'my/gh/checkout-pr "Checkout PR"))))
+      ("o" #'my/gh/checkout-pr "Checkout PR")
+      ("l" #'magit-reflog-head "Reflog HEAD"))))
 
 (defun my/gh/default-branch ()
   (-> (shell-command-to-string "gh repo view --json 'defaultBranchRef' --jq '.defaultBranchRef.name'")
