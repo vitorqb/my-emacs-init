@@ -184,7 +184,7 @@
     ("h" #'projectile-dired "Dired at to project root")
     ("H" #'projectile-dired-other-window "Dired at to project root (other window)")
     ("o" (lambda () (interactive)
-           (-let [projectile-switch-project-action #'projectile-dired]
+           (-let [projectile-switch-project-action #'projectile-vc]
              (projectile-switch-project)))
      "Open project")
     ("k" #'projectile-kill-buffers "Kill buffers for project")
