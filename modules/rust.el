@@ -33,3 +33,7 @@
 ;; > https://github.com/tree-sitter/tree-sitter-rust
 ;; RET RET RET
 (add-to-list 'major-mode-remap-alist '(rust-mode . rust-ts-mode))
+
+;; Use yasnippets
+(add-hook 'rust-mode-hook 'yas-minor-mode)
+(add-hook 'rust-ts-mode-hook 'yas-minor-mode)
