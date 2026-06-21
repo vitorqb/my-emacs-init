@@ -951,6 +951,11 @@
 (setq js2-basic-offset 2)
 (setq js-indent-level 2)
 
+;; Use treesitter mode for JSON
+(if (treesit-language-available-p 'json)
+    (add-to-list 'major-mode-remap-alist '(json-mode . json-ts-mode))
+  (warn "Tree-sitter not available for JSON, using default json-mode"))
+
 ;; -----------------------------------------------------------------------------
 ;; Grep
 ;; -----------------------------------------------------------------------------
