@@ -17,6 +17,7 @@
 (require 'dash)
 (require 's)
 (require 'my-gh-core)
+(require 'my-gh-edit-pr-body)
 
 (defvar my/gh/on-browser-open-request
   (lambda ()
@@ -128,13 +129,34 @@
   (funcall my/gh/on-browser-open-request))
 
 (defun my/gh/fetch-and-goto (ref)
-  (magit-run-git (cons "fetch" (cons "--all" "--prune")))
-  (magit-run-git (cons "checkout" ref))
+  (magit-run-git (list "fetch" "--all" "--prune"))
+  (magit-run-git (list "checkout" ref))
   (magit-run-git "pull"))
+
+(defun my/gh/fetch-and-goto-async (ref)
+  (cl-labels ((on-success (next)
+                (lambda (p _)
+                  (pcase `(,(process-status p) ,(process-exit-status p))
+                    ('(exit 0) (funcall next))
+                    (`(,a ,b) (message "Unexpected process status (code %s): %s" b a)))))
+              (done ()
+                (magit-refresh-all)
+                (message "Done!"))
+              (pull-run ()
+                (set-process-sentinel (magit-run-git-async "pull") (on-success #'done)))
+              (checkout-run ()
+                (set-process-sentinel (magit-run-git-async (list "checkout" ref)) (on-success #'pull-run)))
+              (fetch-run ()
+                (set-process-sentinel (magit-run-git-async (list "fetch" "--all" "--prune")) (on-success #'checkout-run))))
+    (fetch-run)))
 
 (defun my/gh/fetch-and-goto-default ()
   (interactive)
   (-> (my/gh/default-branch) (my/gh/fetch-and-goto)))
+
+(defun my/gh/fetch-and-goto-default-async ()
+  (interactive)
+  (-> (my/gh/default-branch) (my/gh/fetch-and-goto-async)))
 
 (defun my/gh/fetch-and-goto-main ()
   (interactive)
@@ -149,7 +171,7 @@
     (defhydra my/gh-hydra (:color blue)
       ("b" #'my/gh/browse "Browses to file in github" :column "Github CLI!")
       ("B" #'my/gh/browse-url-to-clipboard "Copies github browse URL to clipboard")
-      ("d" #'my/gh/fetch-and-goto-default "Fetch and go to default branch")
+      ("d" #'my/gh/fetch-and-goto-default-async "Fetch and go to default branch")
       ("e" #'my/gh/edit-pr-body "Edit PR Body")
       ("r" #'my/gh/open-repo-on-browser "Open repo on browser")
       ("p" #'my/gh/open-pr-on-browser "Open PR on browser")
@@ -163,7 +185,4 @@
       (string-trim)))
 
 (provide 'my-gh)
-(cl-eval-when (load eval)
-  (require 'my-gh-edit-pr-body))
-
 ;;; my-gh.el ends here

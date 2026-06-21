@@ -195,6 +195,14 @@
                       :pr-number "123"
                       :src-buffer (get-buffer my/gh/edit-pr-body-buffer-name))))))))))
 
+(ert-deftest my/gh/fetch-and-goto-async ()
+  (my/gh-test/capture-run-git-async run-git-args
+    (my/gh/fetch-and-goto-async "mybranch")
+    (my/gh-test/wait-for (length= run-git-args 3))
+    (should (equal (nth 2 run-git-args) '("fetch" "--all" "--prune")))
+    (should (equal (nth 1 run-git-args) '("checkout" "mybranch")))
+    (should (equal (nth 0 run-git-args) "pull"))))
+
 ;;
 ;; Helpers
 ;; 
@@ -244,6 +252,23 @@
                 (lambda (req) (setq ,bind req))))
        (progn ,@program))))
 
+(defmacro my/gh-test/capture-run-git-async (bind &rest program)
+  "Capture calls to `magit-run-git-async` and add them to `bind`. The mocked version simply starts a program that echos \"success\""
+  (declare (indent 1))
+  `(let ((,bind nil)
+         (old-magit-run-git-async (symbol-function #'magit-run-git-async)))
+     (unwind-protect
+         (progn
+           (fset 'magit-run-git-async (lambda (args)
+                                        (push args ,bind)
+                                        (start-process
+                                         "magit-run-git-async-mock"
+                                         nil
+                                         "echo"
+                                         "success")))
+           ,@program)
+       (progn (fset 'magit-run-git-async old-magit-run-git-async)))))
+
 (defun my/gh-test/edit-pr-body-request-equal? (req1 req2)
   "Compare if two `my/gh//edit-pr-body-request' are equal (ignoring the `tmp-file' field)"
   (let ((new-req1 (my/gh//copy-edit-pr-body-request req1))
@@ -251,6 +276,15 @@
     (setf (my/gh//edit-pr-body-request/tmp-file new-req1) "")
     (setf (my/gh//edit-pr-body-request/tmp-file new-req2) "")
     (equal new-req1 new-req2)))
+
+(defmacro my/gh-test/wait-for (condition)
+  "Waits for a condition to be true"
+  `(let ((attempt 0))
+     (while (not ,condition)
+       (sleep-for 0.3)
+       (setq attempt (+ attempt 1))
+       (when (>= attempt 10)
+         (error "Wait for failed for condition %s" (quote ,condition))))))
 
 ;;; my-gh-test.el ends here
 
