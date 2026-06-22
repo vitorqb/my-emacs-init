@@ -3,12 +3,14 @@
 
 (package-file "my-gh-core.el")
 (package-file "my-gh-edit-pr-body.el")
+(package-file "my-gh-commit-msg.el")
 (package-file "my-gh.el")
 
 (depends-on "dash")
 (depends-on "s")
 (depends-on "magit")
 (depends-on "markdown-mode")
+(depends-on "projectile")
 
 (development
   (depends-on "hydra"))

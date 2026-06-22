@@ -18,6 +18,7 @@
 (require 's)
 (require 'my-gh-core)
 (require 'my-gh-edit-pr-body)
+(require 'my-gh-commit-msg)
 
 (defvar my/gh/on-browser-open-request
   (lambda ()
@@ -178,7 +179,8 @@
       ("P" #'my/gh/new-pr "Creates a new PR")
       ("c" #'my/gh/browse-commit "See the commit on github web")
       ("o" #'my/gh/checkout-pr "Checkout PR")
-      ("l" #'magit-reflog-head "Reflog HEAD"))))
+      ("l" #'magit-reflog-head "Reflog HEAD")
+      ("m" #'my/gh/insert-commit-msg "Insert a commit msg"))))
 
 (defun my/gh/default-branch ()
   (-> (shell-command-to-string "gh repo view --json 'defaultBranchRef' --jq '.defaultBranchRef.name'")

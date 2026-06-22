@@ -203,6 +203,19 @@
     (should (equal (nth 1 run-git-args) '("checkout" "mybranch")))
     (should (equal (nth 0 run-git-args) "pull"))))
 
+(ert-deftest my/gh/insert-commit-msg ()
+  (with-temp-buffer
+    (rename-buffer "COMMIT_EDITMSG")
+    (let ((my/gh/ai-commit-msg-command "echo"))
+      (cl-letf (((symbol-function 'my/gh//check-before-insert-commit-msg)
+                 (lambda (repo buffer)
+                   (should (equal repo "/tmp"))
+                   (should (equal buffer (current-buffer)))))))
+      (-> (my/gh/insert-commit-msg "/tmp" (current-buffer))
+          (accept-process-output 5))
+      (should (equal "--git-repo /tmp\n"
+                     (buffer-substring-no-properties (point-min) (point-max)))))))
+
 ;;
 ;; Helpers
 ;; 
