@@ -216,6 +216,32 @@
       (should (equal "--git-repo /tmp\n"
                      (buffer-substring-no-properties (point-min) (point-max)))))))
 
+(ert-deftest my/gh//extract-previous-msg ()
+  (with-temp-buffer
+    (insert "Foo Bar\nBaz Boz\n")
+    (insert "# I SHOULD BE IGNORED\n")
+    (insert "# ------------------------ >8 ------------------------")
+    (insert "I should also be ignored")
+    (should (equal "Foo Bar\nBaz Boz"
+                   (my/gh//extract-previous-msg (current-buffer))))))
+
+(ert-deftest my/gh//prepare-buffer-for-update-commit-msg ()
+  (with-temp-buffer
+    (insert "Foo Bar\nBaz Boz\n")
+    (insert "\n")
+    (insert "\n")
+    (insert "foo\n")
+    (insert "# I SHOULD BE IGNORED\n")
+    (insert my/gh/git-scissors-line "\n")
+    (insert "I should also be ignored")
+    (my/gh//prepare-buffer-for-update-commit-msg (current-buffer))
+    (should (equal (list ""
+                         ""
+                         "# I SHOULD BE IGNORED"
+                         my/gh/git-scissors-line
+                         "I should also be ignored")
+                   (s-lines (buffer-substring-no-properties (point-min) (point-max)))))))
+
 ;;
 ;; Helpers
 ;; 
@@ -239,8 +265,8 @@
 
 (defmacro my/gh-test/with-default-branch (branchname &rest program)
   (declare (indent 1))
-  `(cl-letf (((symbol-function 'my/gh//default-branch)
-              (lambda (_) ,branchname)))
+  `(cl-letf (((symbol-function 'my/gh/default-branch)
+              (lambda () ,branchname)))
      (progn ,@program)))
 
 (defmacro my/gh-test/with-insert-pr-body (body &rest program)
