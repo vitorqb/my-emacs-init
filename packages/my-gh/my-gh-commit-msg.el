@@ -15,8 +15,10 @@
 (require 'projectile)
 (require 's)
 
+;; TODO - Should be configurable
 (defconst my/gh/git-scissors-line "# ------------------------ >8 ------------------------")
 
+;; TODO - Fix description
 (defvar my/gh/ai-commit-msg-command nil
   "An executable called to generate a commit msg. Must receive `--git-repo` argument with the path to a repository for which the git commit msg must be created.")
 
