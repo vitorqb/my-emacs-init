@@ -15,12 +15,16 @@
 (require 'projectile)
 (require 's)
 
-;; TODO - Should be configurable
 (defconst my/gh/git-scissors-line "# ------------------------ >8 ------------------------")
 
-;; TODO - Fix description
 (defvar my/gh/ai-commit-msg-command nil
-  "An executable called to generate a commit msg. Must receive `--git-repo` argument with the path to a repository for which the git commit msg must be created.")
+  "An executable called to generate a commit msg.
+
+Must accept the following arguments:
+  `-r|--git-repo GIT_REPO`: the path to a repository for which the git commit msg must be created
+  `-m|--model MODEL?`: Reference to the AI model to use
+  `-p|--previous-msg MSG?`: Base64 encoded previous commit msg to update (if any)
+  `-i|--user-feedback FEEDBACK?`: User feedback on the previous commit msg (if any)")
 
 (defun my/gh//check-before-insert-commit-msg (repo buffer)
   "Sanity checks before we try to insert commit msg"
