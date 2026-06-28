@@ -180,7 +180,7 @@
       ("c" #'my/gh/browse-commit "See the commit on github web")
       ("o" #'my/gh/checkout-pr "Checkout PR")
       ("l" #'magit-reflog-head "Reflog HEAD")
-      ("m" #'my/gh/insert-commit-msg "Insert a commit msg"))))
+      ("m" #'my/gh/insert-or-update-commit-msg "Inserts or updates the commit msg"))))
 
 (defun my/gh/default-branch ()
   (-> (shell-command-to-string "gh repo view --json 'defaultBranchRef' --jq '.defaultBranchRef.name'")

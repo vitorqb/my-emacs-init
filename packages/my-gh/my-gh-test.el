@@ -210,6 +210,18 @@
                          "I should also be ignored")
                    (s-lines (buffer-substring-no-properties (point-min) (point-max)))))))
 
+(my/gh-test/deftest my/gh//has-previous-msg ()
+  (with-temp-buffer
+    (insert "\n\n#Foo\n#Bar\n ")
+    (should (not (my/gh//has-previous-msg (current-buffer)))))
+  (with-temp-buffer
+    (insert "\n\n#Foo\n#Bar\n Baz")
+    (should (my/gh//has-previous-msg (current-buffer))))
+  (with-temp-buffer
+    (insert my/gh/git-scissors-line)
+    (insert "\n\n#Foo\n#Bar\n Baz")
+    (should (not (my/gh//has-previous-msg (current-buffer))))))
+
 ;;
 ;; Helpers
 ;; 

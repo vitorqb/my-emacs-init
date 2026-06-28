@@ -78,6 +78,12 @@
                                      (eq (current-buffer) buffer))
                             (insert string)))))
 
+(defun my/gh/insert-or-update-commit-msg (buffer)
+  (interactive (list (current-buffer)))
+  (if (my/gh//has-previous-msg buffer)
+      (call-interactively #'my/gh/update-commit-msg)
+    (call-interactively #'my/gh/insert-commit-msg)))
+
 (defun my/gh//extract-previous-msg (buffer)
   "Extracts the current commit msg from a buffer. Assume we are on a \"commit edit\" buffer."
   (let ((result))
@@ -89,6 +95,12 @@
           (unless (s-starts-with? "#" line)
             (push line result)))))
     (->> result reverse (s-join "\n"))))
+
+(defun my/gh//has-previous-msg (buffer)
+  (-> (my/gh//extract-previous-msg buffer)
+      (s-trim)
+      (s-blank?)
+      (not)))
 
 (defun my/gh//prepare-buffer-for-update-commit-msg (buffer)
   "Cleans up the previous commit message from a buffer (before inserting a new one)"
