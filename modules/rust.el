@@ -18,13 +18,15 @@
              `((rust-ts-mode rust-mode) . (,@my/rust-analyzer-exec :initializationOptions ,my/rust-analyzer-init-opts)))
 
 ;; Some custom variables we like
-(add-hook 'rust-mode-hook
-          (lambda () (setq-local eglot-auto-shudown t
-                                 eglot-prefer-plaintext t
-                                 eglot-send-changes-idle-time 2
-                                 eglot-extend-to-xref t
-                                 eglot-connect-timeout 120
-                                 jsonrpc-default-request-timeout 120)))
+(dolist (mode-hook '(rust-mode-hook rust-ts-mode-hook))
+  (add-hook mode-hook
+            (lambda () (setq-local eglot-auto-shudown t
+                                   eglot-prefer-plaintext t
+                                   eglot-send-changes-idle-time 2
+                                   eglot-extend-to-xref t
+                                   eglot-connect-timeout 120
+                                   jsonrpc-default-request-timeout 120)))
+  (add-hook 'mode-hook 'yas-minor-mode))
 
 ;; Use tree-sitter based rust mode if available.
 ;; To install:
@@ -33,7 +35,3 @@
 ;; > https://github.com/tree-sitter/tree-sitter-rust
 ;; RET RET RET
 (add-to-list 'major-mode-remap-alist '(rust-mode . rust-ts-mode))
-
-;; Use yasnippets
-(add-hook 'rust-mode-hook 'yas-minor-mode)
-(add-hook 'rust-ts-mode-hook 'yas-minor-mode)
