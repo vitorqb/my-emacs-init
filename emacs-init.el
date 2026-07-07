@@ -117,7 +117,10 @@
 
 (use-package counsel-projectile
   :bind* (("C-c C-f" . 'counsel-projectile-find-file)
-          ("C-c C-d" . 'counsel-projectile-dir)))
+          ("C-c C-d" . 'counsel-projectile-dir))
+  :config (setq projectile-indexing-method 'alien
+                projectile-enable-caching t
+                projectile-enable-caching 'persistent))
 
 ;; -----------------------------------------------------------------------------
 ;; Markdown mode
