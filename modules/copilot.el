@@ -1,3 +1,11 @@
+(defun my/copilot/ensure-installed ()
+  "Ensure that the copilot binary installed."
+  (message "Refreshing copilot stub...")
+  (let ((proc (start-process "copilot-version" "*copilot-version*" copilot-server-executable "--version")))
+    (set-process-sentinel proc (lambda (process event)
+      (when (string= event "finished\n")
+        (message "Copilot stub refreshed."))))))
+
 ;; Requires https://github.com/orgs/github/packages/npm/package/copilot-language-server
 (use-package copilot
   :hook (prog-mode . copilot-mode)
@@ -7,10 +15,13 @@
          ("C-, w" . copilot-accept-completion-by-word)
          ("C-, N" . copilot-next-completion)
          ("C-, P" . copilot-previous-completion))
+  :init
+  (progn
+    (setq copilot-server-executable (file-name-concat my/path-to-stubs-dir "copilot-language-server"))
+    (my/copilot/ensure-installed))
   :config
-  (setq copilot-server-executable
-        (file-name-concat my/path-to-stubs-dir "copilot-language-server"))
-  (setq copilot-idle-delay 0.5)
+  (progn
+    (setq copilot-idle-delay 0.5))
   :ensure t)
 
 ;; To avoid clashes with inline completion, we need to use company-box
