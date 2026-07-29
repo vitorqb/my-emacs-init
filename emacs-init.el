@@ -178,6 +178,18 @@
   :bind* (("C-c C-f" . 'counsel-projectile-find-file)
           ("C-c C-d" . 'counsel-projectile-dir)))
 
+(defun my/projectile/switch-to-project-custom-action (&optional project-root)
+  "Switches to the given project. If it's a `vc` root open as `vc`, otherwise as dired."
+  (unless project-root
+    (setq project-root (projectile-acquire-root)))
+  ;; If we have a `.git`, open as vc
+  (if (file-exists-p (file-name-concat project-root ".git"))
+      (let ((projectile-switch-project-action #'projectile-vc))
+        (projectile-switch-project-by-name project-root))
+    ;; Else open dired
+    (let ((projectile-switch-project-action #'projectile-dired))
+      (projectile-switch-project-by-name project-root))))
+
 (defun my/setup-hydra/projectile-hydra ()
   "An hydra with projectile functionalities =D"
 
@@ -187,7 +199,7 @@
     ("h" #'projectile-dired "Dired at to project root")
     ("H" #'projectile-dired-other-window "Dired at to project root (other window)")
     ("o" (lambda () (interactive)
-           (-let [projectile-switch-project-action #'projectile-vc]
+           (-let [projectile-switch-project-action #'my/projectile/switch-to-project-custom-action]
              (projectile-switch-project)))
      "Open project")
     ("k" #'projectile-kill-buffers "Kill buffers for project")
