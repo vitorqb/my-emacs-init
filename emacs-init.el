@@ -749,6 +749,9 @@
 ;; On compilation, enable auto-scroll
 (setq compilation-scroll-output t)
 
+;; Let everyone know we are dumb
+(setq compilation-environment '("TERM=dumb" "NO_COLOR=1"))
+
 (defun my/compile-project-root ()
   "Calls `compile` interactively on project root"
   (interactive)
