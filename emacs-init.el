@@ -194,7 +194,8 @@
   "An hydra with projectile functionalities =D"
 
   (defhydra my/projectile-hydra (:color blue)
-    ("d" #'projectile-find-dir "Find's a directory" :column "Projectile!")
+    ("c" #'projectile-invalidate-cache "Clear cache" :column "Projectile!")
+    ("d" #'projectile-find-dir "Find's a directory")
     ("f" #'projectile-find-file "Find's a file")
     ("h" #'projectile-dired "Dired at to project root")
     ("H" #'projectile-dired-other-window "Dired at to project root (other window)")
