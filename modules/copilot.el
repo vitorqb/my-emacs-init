@@ -1,12 +1,5 @@
-(defun my/copilot/ensure-installed ()
-  "Ensure that the copilot binary installed."
-  (message "Refreshing copilot stub...")
-  (let ((proc (start-process "copilot-version" "*copilot-version*" copilot-server-executable "--version")))
-    (set-process-sentinel proc (lambda (process event)
-      (when (string= event "finished\n")
-        (message "Copilot stub refreshed."))))))
-
 ;; Requires https://github.com/orgs/github/packages/npm/package/copilot-language-server
+;; On mise.toml: `"github:github/copilot-language-server-release" = "xxx"`
 (use-package copilot
   :hook (prog-mode . copilot-mode)
   :bind (("C-, a" . copilot-accept-completion)
@@ -16,12 +9,13 @@
          ("C-, N" . copilot-next-completion)
          ("C-, P" . copilot-previous-completion))
   :init
-  (progn
-    (setq copilot-server-executable (file-name-concat my/path-to-stubs-dir "copilot-language-server"))
-    (my/copilot/ensure-installed))
+  (setq copilot-server-executable (->> (getenv "HOME")
+                                       (format "mise -C %s exec -- which copilot-language-server")
+                                       (shell-command-to-string)
+                                       (s-trim)))
   :config
-  (progn
-    (setq copilot-idle-delay 0.5))
+  (setq copilot-idle-delay 0.5)
+
   :ensure t)
 
 ;; To avoid clashes with inline completion, we need to use company-box
