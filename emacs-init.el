@@ -88,7 +88,6 @@
 ;; Ivy configuration from https://www.reddit.com/r/emacs/comments/910pga/tip_how_to_use_ivy_and_its_utilities_in_your/
 
 (use-package ivy
-  :bind (("C-x B" . ivy-switch-buffer-other-window))
   :custom
   (ivy-count-format "(%d/%d) ")
   (ivy-display-style 'fancy)
@@ -979,6 +978,17 @@
 ;; -----------------------------------------------------------------------------
 ;; We don't like the line turncate on grep
 (add-hook 'grep-mode-hook (lambda () (toggle-truncate-lines 1)))
+
+;; -----------------------------------------------------------------------------
+;; Bufler
+;; -----------------------------------------------------------------------------
+(use-package bufler
+  :config (setq bufler-switch-buffer-include-recent-buffers nil)
+  :bind (("C-x b" . 'bufler-switch-buffer)
+         ("C-x C-b" . 'bufler-list)
+         ("C-x B" . (lambda () (interactive)
+                      (myutils/duplicate-buffer)
+                      (call-interactively #'bufler-switch-buffer)))))
 
 ;; -----------------------------------------------------------------------------
 ;; Using emacsclient as EDITOR
