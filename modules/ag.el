@@ -1,4 +1,4 @@
-;; Very cool search package!
+;; Very cool search package!  -*- lexical-binding: t; -*-
 (use-package ag
   :load-path (lambda () (get-dep-library-load-path "ag"))
   :ensure

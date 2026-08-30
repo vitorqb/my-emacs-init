@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 ;; -----------------------------------------------------------------------------
 ;; Customizable variables
 ;; -----------------------------------------------------------------------------
@@ -1012,7 +1013,6 @@
 (my/defmodule elixir)
 (my/defmodule elm)
 (my/defmodule go)
-(my/defmodule haskell)
 (my/defmodule javascript)
 (my/defmodule kotlin)
 (my/defmodule php)

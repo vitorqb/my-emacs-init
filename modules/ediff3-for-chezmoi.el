@@ -1,4 +1,4 @@
-;; A specific function that can be called with 3 files and will nicely start an
+;; A specific function that can be called with 3 files and will nicely start an  -*- lexical-binding: t; -*-
 ;; ediff3 session for merging the files
 ;;
 ;; Use it like this:

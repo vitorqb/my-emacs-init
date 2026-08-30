@@ -1,4 +1,4 @@
-;; Use dev version for mmm-mode - REQUIRES MANUAL STEPS.
+;; Use dev version for mmm-mode - REQUIRES MANUAL STEPS.  -*- lexical-binding: t; -*-
 ;; See https://github.com/AdamNiederer/vue-mode/issues/99
 ;; https://github.com/purcell/mmm-mode/issues/99
 (use-package mmm-mode

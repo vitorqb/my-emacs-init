@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 ;; Requires https://github.com/orgs/github/packages/npm/package/copilot-language-server
 ;; On mise.toml: `"github:github/copilot-language-server-release" = "xxx"`
 (use-package copilot

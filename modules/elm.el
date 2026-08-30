@@ -1,4 +1,4 @@
-;; Source: https://www.lambdacat.com/post-modern-emacs-setup-for-elm/
+;; Source: https://www.lambdacat.com/post-modern-emacs-setup-for-elm/  -*- lexical-binding: t; -*-
 (use-package elm-mode :ensure
   :config (add-hook 'elm-mode-hook
 		    (lambda ()

@@ -1,4 +1,4 @@
-;; You will need to install the LSP somehow.
+;; You will need to install the LSP somehow.  -*- lexical-binding: t; -*-
 ;; Follow https://github.com/elixir-lsp/elixir-ls#detailed-installation-instructions
 
 (emacs-init-load-module-eglot)

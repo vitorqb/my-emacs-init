@@ -1,4 +1,4 @@
-;; This requires gopls:
+;; This requires gopls:  -*- lexical-binding: t; -*-
 ;; yay gopls
 (emacs-init-load-module-eglot)
 (require 'yasnippet)

@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 (use-package kotlin-mode :ensure)
 (use-package eglot :ensure)
 

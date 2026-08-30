@@ -1,4 +1,4 @@
-;; https://github.com/Wilfred/deadgrep
+;; https://github.com/Wilfred/deadgrep  -*- lexical-binding: t; -*-
 ;; Deadgrep is the fast, beautiful text search that your Emacs deserves.
 (use-package deadgrep :ensure)
 
