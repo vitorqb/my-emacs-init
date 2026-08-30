@@ -225,7 +225,7 @@
                              (buffer-string))))
          (collection (nreverse history)))
     (when (and collection (> (length collection) 0))
-      (when-let ((val (ivy-read (format "Bash history:") collection)))
+      (when-let* ((val (ivy-read (format "Bash history:") collection)))
         (kill-new val)
         (message "%s => kill-ring" val)))))
 

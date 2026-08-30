@@ -56,7 +56,7 @@
   :keymap my/ai-tools/prompt-builder-mode-map)
 
 (defun my/ai-tools/maybe-kill-builder-buff ()
-  (when-let (builder-buff (get-buffer my/ai-tools/prompt-builder-buffer-name))
+  (when-let* (builder-buff (get-buffer my/ai-tools/prompt-builder-buffer-name))
     (kill-buffer builder-buff)))
 
 (defun my/ai-tools/get-or-create-builder-buff ()

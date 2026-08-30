@@ -15,7 +15,7 @@
        ,@body)))
 
 (defun test-cleanup ()
-  (if-let ((buff (get-buffer orgext-element-at-point-buffer-name)))
+  (if-let* ((buff (get-buffer orgext-element-at-point-buffer-name)))
       (with-current-buffer buff
         (set-buffer-modified-p nil)
         (kill-buffer))))

@@ -9,7 +9,7 @@
 ;; How to run a python LSP
 (defun my/python-eglot/pylsp (interactive project)
   "Defines how to run the pyright server. If a `tlsp`, `lsp` mise task is found, use it. Else runs `mise exec ...`"
-  (if-let ((mise-lsp (my/eglot/guess-lsp-via-mise)))
+  (if-let* ((mise-lsp (my/eglot/guess-lsp-via-mise)))
       mise-lsp
     '("mise" "exec" "node@latest" "npm:pyright@latest" "--" "pyright-langserver" "--stdio")))
 

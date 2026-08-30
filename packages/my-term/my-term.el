@@ -59,7 +59,7 @@ interaction. It receives the command to run.")
 
 (defun my/term/zellij/do-run (cmd)
   "Runs a command on zellij, and exits after."
-  (if-let ((session (my/term/zellij/current-session)))
+  (if-let* ((session (my/term/zellij/current-session)))
       (shell-command (format "zellij -s=%s run -f -- %s" session cmd))
     (error "No zellij session")))
 
@@ -107,14 +107,14 @@ user to the end of the scroll."
 
 (defun my/term/tmux/current-session ()
   "Returns the current session to use for tmux. Returns nil if not found."
-  (if-let ((session (-> "tmux ls -F'#{session_name}' | sort | head -n 1"
+  (if-let* ((session (-> "tmux ls -F'#{session_name}' | sort | head -n 1"
                           (shell-command-to-string)
                           (s-chomp))))
       (unless (or (s-blank? session) (s-contains? "no server running" session))
         session)))
 
 (defun my/term/tmux/new-pane (&optional cwd)
-  (if-let ((session (my/term/tmux/current-session)))
+  (if-let* ((session (my/term/tmux/current-session)))
       (progn
         (shell-command (format "tmux neww -t%s:" session))
         (when (not (s-blank? cwd))
@@ -122,7 +122,7 @@ user to the end of the scroll."
     (error "No current session for tmux")))
 
 (defun my/term/tmux/do-run (cmd)
-  (if-let ((session (my/term/tmux/current-session)))
+  (if-let* ((session (my/term/tmux/current-session)))
       (shell-command (format "tmux neww -t%s: -n%s '%s'"
                              session
                              my/term/tmux/interactive-window
