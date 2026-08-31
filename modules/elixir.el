@@ -15,9 +15,11 @@
          (elixir-ts-mode . my/modules/elixir/mode-hook)))
 
 (defvar emacs-init-elixir/lsp-program
-  `("mise" "exec" "--" ,(expand-file-name "~/tools/elixir-ls/language_server.sh")))
+  ;; Require `"github:expert-lsp/expert" = "0.1.9"` on mise.toml
+  '("mise" "exec" "--" "env" "MIX_ENV=test" "expert" "--stdio"))
 
 (add-to-list 'eglot-server-programs `(elixir-mode . ,emacs-init-elixir/lsp-program))
+(add-to-list 'eglot-server-programs `(elixir-ts-mode . ,emacs-init-elixir/lsp-program))
 
 ;; Use tree-sitter based rust mode if available
 (add-to-list 'major-mode-remap-alist '(elixir-mode . elixir-ts-mode))
