@@ -984,7 +984,11 @@
 ;; Bufler
 ;; -----------------------------------------------------------------------------
 (use-package bufler
-  :config (setq bufler-switch-buffer-include-recent-buffers nil)
+  :config (setq
+           ;; We don't like recent buffers
+           bufler-switch-buffer-include-recent-buffers nil
+           ;; Always display all projects
+           bufler-workspace-switch-buffer-filter-fns '())
   :bind (("C-x b" . 'bufler-switch-buffer)
          ("C-x C-b" . 'bufler-list)
          ("C-x B" . (lambda () (interactive)
