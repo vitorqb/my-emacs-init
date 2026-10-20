@@ -765,6 +765,9 @@
 ;; Let everyone know we are dumb
 (setq compilation-environment '("TERM=dumb" "NO_COLOR=1"))
 
+;; And let long lines be
+(setq compilation-max-output-line-length 2000)
+
 (defun my/compile-project-root ()
   "Calls `compile` interactively on project root"
   (interactive)
