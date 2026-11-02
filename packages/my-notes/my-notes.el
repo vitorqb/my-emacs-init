@@ -38,7 +38,7 @@
   )
 
 (defun my/notes/open-current-file ()
-  "Opens the `current.org` file. If prefix arg is given, opens in another window."
+  "Opens the `current.md` file. If prefix arg is given, opens in another window."
   (interactive)
   (my/notes/assert-current-file)
   (when current-prefix-arg
@@ -58,13 +58,13 @@
 (defun my/notes/find (note-file)
   "Finds and opens a note Readme"
   (interactive (list (my/notes//prompt)))
-  (find-file (file-name-concat my/notes/notes-dir note-file "Readme.org")))
+  (find-file (file-name-concat my/notes/notes-dir note-file "Readme.md")))
 
 (defun my/notes//request-for (topic created_at)
   (-let*  ((note-dir (->> topic
                           (s-dashed-words)
                           (file-name-concat my/notes/notes-dir)))
-           (readme-filename (file-name-concat note-dir "Readme.org"))
+           (readme-filename (file-name-concat note-dir "Readme.md"))
            (readme-content (format "* %s\n\n" topic))
            (readme-file `(,readme-filename . ,readme-content))
            (metadata-filename (file-name-concat note-dir "metadata.json"))
