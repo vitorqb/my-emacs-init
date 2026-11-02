@@ -200,6 +200,10 @@
            (-let [projectile-switch-project-action #'my/projectile/switch-to-project-custom-action]
              (projectile-switch-project)))
      "Open project")
+    ("O" (lambda () (interactive)
+           (-let [projectile-switch-project-other-window-action #'my/projectile/switch-to-project-custom-action]
+             (projectile-switch-project-other-window)))
+     "Open project (other window)")
     ("k" #'projectile-kill-buffers "Kill buffers for project")
     ("t" #'projectile-toggle-between-implementation-and-test
      "Toggle between implementation and test")
