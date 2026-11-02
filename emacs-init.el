@@ -742,14 +742,6 @@
   (let ((buffer-read-only nil))
     (ansi-color-apply-on-region (point-min) (point-max))))
 
-(defun my/colorize-compilation-buffer ()
-  "Apply ANSI color codes in the compilation buffer."
-  (let ((inhibit-read-only t))
-    (ansi-color-apply-on-region compilation-filter-start (point))))
-
-;; Ansi on compilation buffer
-(add-hook 'compilation-filter-hook #'my/colorize-compilation-buffer)
-
 ;; Ansi on shell and comint
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 (add-hook 'comint-mode-hook 'ansi-color-for-comint-mode-on)
@@ -769,14 +761,12 @@
 ;; -----------------------------------------------------------------------------
 ;; Compilation
 ;; -----------------------------------------------------------------------------
-;; On compilation, enable auto-scroll
-(setq compilation-scroll-output t)
+(use-package fancy-compilation
+  :commands (fancy-compilation-mode)
+  :config (setq fancy-compilation-quiet-prelude nil))
 
-;; Let everyone know we are dumb
-(setq compilation-environment '("TERM=dumb" "NO_COLOR=1"))
-
-;; And let long lines be
-(setq compilation-max-output-line-length 2000)
+(with-eval-after-load 'compile
+  (fancy-compilation-mode))
 
 (defun my/compile-project-root ()
   "Calls `compile` interactively on project root"
