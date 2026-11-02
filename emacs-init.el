@@ -827,10 +827,7 @@
                 `(
                   ("1" #'my/ai-tools-hydra/body "AI Tools Hydra" :column "Main")
                   ("A" #'counsel-rg "Conusel RG" :column "Main")
-                  ,(when (functionp #'my/ag-hydra/body)
-                     '("a" #'my/ag-hydra/body "Ag Hydra" :column "Main"))
-                  ,(when (functionp #'my/deadgrep-hydra/body)
-                     '("a" #'my/deadgrep-hydra/body "Deadgrep Hydra" :column "Main"))
+                  ("a" #'rg "RG Hydra" :column "Main")
                   ("b" #'my/buffer-hydra/body "Buffer hydra" :column "Main")
                   ("B" #'my/bookmark-hydra/body "Bookmarks!" :column "Main")
                   ("c" #'mfcs-call "Calls fuzzy command selector")
@@ -983,6 +980,20 @@
 ;; We don't like the line turncate on grep
 (add-hook 'grep-mode-hook (lambda () (toggle-truncate-lines 1)))
 
+(use-package rg
+  :after fancy-compilation
+  ;; Temp solution for https://github.com/dajva/rg.el/issues/208
+  ;; :pin melpa-stable
+  ;; :load-path "/home/vitor-quintanilha/personal/git/rg.el"
+  :vc (:url "https://github.com/vitorqb/rg.el" :rev :newest)
+  :config (progn
+            (setq rg-hide-command nil)
+            ;; Don't scroll to end
+            (add-hook 'fancy-compilation-setup-hook
+                      (lambda ()
+                        (when (equal major-mode 'rg-mode)
+                          (setq compilation-scroll-output nil))))))
+
 ;; -----------------------------------------------------------------------------
 ;; Bufler
 ;; -----------------------------------------------------------------------------
@@ -1013,9 +1024,7 @@
 ;; Language specific modules
 ;; -----------------------------------------------------------------------------
 (my/defmodule R)
-(my/defmodule ag)
 (my/defmodule copilot)
-(my/defmodule deadgrep)
 (my/defmodule eglot)
 (my/defmodule elixir)
 (my/defmodule elm)
@@ -1035,7 +1044,6 @@
 ;; -----------------------------------------------------------------------------
 ;; Modules loaded by default
 ;; -----------------------------------------------------------------------------
-(emacs-init-load-module-deadgrep)
 (emacs-init-load-module-eglot)
 
 ;; -----------------------------------------------------------------------------
