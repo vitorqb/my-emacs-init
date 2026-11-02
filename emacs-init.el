@@ -432,9 +432,18 @@
   (-> (generate-new-buffer "*tmp*")
       (switch-to-buffer-other-window)))
 
+(defun my/paste-to-new-buffer ()
+  "Creates a new unique buffer with the system clipboard contents"
+  (interactive)
+  (let ((buff (generate-new-buffer "*clipboard*")))
+    (with-current-buffer buff
+      (yank))
+    (display-buffer buff nil)))
+
 (defun my/setup-hydra/buffer-hydra ()
   (defhydra my/buffer-hydra (:color blue)
     ("c" #'myutils/copy-buffer-contents "Copy buffer contents.")
+    ("C" #'my/paste-to-new-buffer "Paste clipboard content to new buffer.}")
     ("g" #'push-mark-and-avy-goto-char "Avy go to char (tree)")
     ("r" #'rename-buffer "Rename buffer")
     ("l" #'goto-line "Go to a specific line")
