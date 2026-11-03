@@ -104,6 +104,8 @@
   (ivy-count-format "(%d/%d) ")
   (ivy-display-style 'fancy)
   (ivy-use-virtual-buffers t)
+  :bind
+  (("C-x M-b" . #'ivy-switch-buffer-other-window))
   :config (progn (ivy-mode)
                  (ivy-configure 'ivy-switch-buffer :display-transformer-fn #'my-ivy-buffer-display-transformer)))
 
