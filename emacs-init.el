@@ -88,12 +88,24 @@
 ;; -----------------------------------------------------------------------------
 ;; Ivy configuration from https://www.reddit.com/r/emacs/comments/910pga/tip_how_to_use_ivy_and_its_utilities_in_your/
 
+(defun my-ivy-buffer-display-transformer (candidate)
+  (or
+   (when-let* ((buffer (get-buffer candidate)))
+     (with-current-buffer buffer
+       (when-let* ((project-name (projectile-project-name))
+                   (project-name (s-truncate 17 project-name))
+                   (prefix (format "[%s]" project-name buffer))
+                   (prefix (s-pad-right 20 " " prefix)))
+         (format "%s %s" prefix candidate))))
+   candidate))
+
 (use-package ivy
   :custom
   (ivy-count-format "(%d/%d) ")
   (ivy-display-style 'fancy)
   (ivy-use-virtual-buffers t)
-  :config (ivy-mode))
+  :config (progn (ivy-mode)
+                 (ivy-configure 'ivy-switch-buffer :display-transformer-fn #'my-ivy-buffer-display-transformer)))
 
 (use-package ivy-hydra :after ivy)
 
@@ -993,21 +1005,6 @@
                       (lambda ()
                         (when (equal major-mode 'rg-mode)
                           (setq compilation-scroll-output nil))))))
-
-;; -----------------------------------------------------------------------------
-;; Bufler
-;; -----------------------------------------------------------------------------
-(use-package bufler
-  :config (setq
-           ;; We don't like recent buffers
-           bufler-switch-buffer-include-recent-buffers nil
-           ;; Always display all projects
-           bufler-workspace-switch-buffer-filter-fns '())
-  :bind (("C-x b" . 'bufler-switch-buffer)
-         ("C-x C-b" . 'bufler-list)
-         ("C-x B" . (lambda () (interactive)
-                      (myutils/duplicate-buffer)
-                      (call-interactively #'bufler-switch-buffer)))))
 
 ;; -----------------------------------------------------------------------------
 ;; Using emacsclient as EDITOR
