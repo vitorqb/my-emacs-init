@@ -794,6 +794,8 @@
   (switch-to-buffer-other-window "*compilation*")
   (call-interactively #'recompile))
 
+(setq compile-command "mise x -- ")
+
 ;; A compilation hydra
 (defun my/setup-hydra/compile ()
   "An hydra to call compile and similars"
