@@ -321,13 +321,6 @@
 (which-key-mode 1)
 
 ;; -----------------------------------------------------------------------------
-;; Fuzzy command selector
-;; -----------------------------------------------------------------------------
-(use-package my-fuzzy-cmd-selector
-  :ensure nil
-  :config (cl-pushnew '(:mfcs-call . 20) ivy-height-alist))
-
-;; -----------------------------------------------------------------------------
 ;; Yas and Snippets
 ;; -----------------------------------------------------------------------------
 (defun personal-snippets-dir ()
@@ -349,26 +342,6 @@
 ;; We use `fill-paragraph a lot, and we want to have 90 characters
 (setq fill-column 90)
 (add-hook 'prog-mode-hook (lambda () (setq fill-column 90)))
-
-(defun my/copy-line-from (lineNum)
-  "Copies a line to the current line"
-  (interactive (list (read-number (format "Line: "))))
-  (save-excursion
-    (goto-line lineNum)
-    (kill-ring-save
-     (line-beginning-position)
-     (line-end-position)))
-  (yank))
-
-(defun my/setup-hydra/typing-hydra ()
-  "Prepares an hydra for typing shortcuts."
-  (defhydra my/typing-hydra (:color blue)
-    ("c" #'myutils/remove-whitespace-and-newline
-     "Clean - remove whitesapces and newlines."
-     :column "Typing")
-    ("d" #'myutils/insert-formated-date "Insert the date.")
-    ("l" #'my/copy-line-from "Copies from another line.")
-    ("w" #'delete-trailing-whitespace "Delete trailing whitespaces.")))
 
 ;; https://www.emacswiki.org/emacs/IncrementNumber
 (defun increment-number-at-point ()
@@ -487,10 +460,6 @@
 (add-hook 'emacs-lisp-mode-hook 'hs-minor-mode)
 (add-hook 'go-mode-hook 'hs-minor-mode)
 (add-hook 'python-mode-hook 'hs-minor-mode)
-
-;; Adds some shortcuts to fuzzy cmd match
-(mfcs-add-command :description "Buffer Rename Buffer" :command #'rename-buffer)
-(mfcs-add-command :description "ANSI Colorize Buffer")
 
 ;; ------------------------------------------------------------
 ;; Window manager manipulation
@@ -800,6 +769,7 @@
 (defun my/setup-hydra/compile ()
   "An hydra to call compile and similars"
   (defhydra my/compile-hydra (:color blue)
+    ("f" #'next-error-follow-minor-mode)
     ("k" #'my/compile-project-root "Compile (project root)" :column "Compile")
     ("K" #'compile "Compile (default-directory)")
     ("g" #'my/recompile "recompile")
@@ -829,7 +799,6 @@
   (my/setup-hydra/journal-hydra)
   (my/setup-hydra/org-hydra)
   (my/setup-hydra/projectile-hydra)
-  (my/setup-hydra/typing-hydra)
   (my/setup-hydra/bookmarks-hydra)
   (my/setu-hydra/ai-tools-hydra)
   (when (functionp #'my/setup-hydra/eglot-hydra)
@@ -846,7 +815,6 @@
                   ("a" #'rg "RG Hydra" :column "Main")
                   ("b" #'my/buffer-hydra/body "Buffer hydra" :column "Main")
                   ("B" #'my/bookmark-hydra/body "Bookmarks!" :column "Main")
-                  ("c" #'mfcs-call "Calls fuzzy command selector")
                   ("d" #'my/dired-hydra/body "Dired hydra")
                   ("e" #'my/eval-elisp-hydra/body "Evaluate Elisp hydra")
                   ,(when (functionp #'my/eglot-hydra/body)
@@ -865,8 +833,7 @@
                   ("n" #'my/notes-hydra/body "Notes!")
                   ("r" #'my/projectile-hydra/body "Projectile hydra ")
                   ("m" #'my/flymake-hydra/body "Flymake hydra")
-                  ("o" #'my/org-hydra/body "Org hydra")
-                  ("t" #'my/typing-hydra/body "Typing hydra!"))))))
+                  ("o" #'my/org-hydra/body "Org hydra"))))))
 
 (use-package hydra
   :config (my/hydras-setup)
@@ -894,11 +861,6 @@
 (defun my/occur-symbol-at-point ()
   (interactive)
   (occur (symbol-name (symbol-at-point))))
-
-;; Let's add next-error-follow-minnor-mode to mfcs
-(mfcs-add-command
- :description "Next Error Follow Minnor Mode Follow Next Error"
- :command #'next-error-follow-minor-mode)
 
 ;; Allows you to jump to text on the screen!
 ;; Jumps to text
