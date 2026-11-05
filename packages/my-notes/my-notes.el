@@ -65,7 +65,7 @@
                           (s-dashed-words)
                           (file-name-concat my/notes/notes-dir)))
            (readme-filename (file-name-concat note-dir "Readme.md"))
-           (readme-content (format "* %s\n\n" topic))
+           (readme-content (format "# %s\n\n" topic))
            (readme-file `(,readme-filename . ,readme-content))
            (metadata-filename (file-name-concat note-dir "metadata.json"))
            (metadata-content (json-encode `(("created_at" . ,created_at) ("topic" . ,topic))))
